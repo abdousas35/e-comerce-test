@@ -79,7 +79,14 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
     "fontBody",
     "contactEmail",
     "contactPhone",
+    "whatsappPhone",
     "address",
+    "freeShippingThreshold",
+    "defaultShippingRate",
+    "codEnabled",
+    "enableEmailNotifications",
+    "enableWhatsAppNotifications",
+    "manualPaymentInstructions",
     "newsletterText",
     "footerAbout",
     "aboutTitle",
@@ -105,6 +112,21 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
 
   if (Array.isArray(req.body.heroSlides)) {
     settings.heroSlides = await normalizeSlides(req.body.heroSlides);
+  }
+
+  if (Array.isArray(req.body.shippingZones)) {
+    settings.shippingZones = req.body.shippingZones
+      .map((zone) => ({
+        state: zone.state || "",
+        cities: Array.isArray(zone.cities)
+          ? zone.cities.filter(Boolean)
+          : typeof zone.cities === "string"
+            ? zone.cities.split(",").map((city) => city.trim()).filter(Boolean)
+            : [],
+        rate: Number(zone.rate) || 0,
+        estimatedDays: zone.estimatedDays || "2-4 business days",
+      }))
+      .filter((zone) => zone.state);
   }
 
   await settings.save();

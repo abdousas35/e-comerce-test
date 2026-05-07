@@ -21,6 +21,16 @@ const heroSlideSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const shippingZoneSchema = new mongoose.Schema(
+  {
+    state: { type: String, required: true, trim: true },
+    cities: { type: [String], default: [] },
+    rate: { type: Number, default: 0, min: 0 },
+    estimatedDays: { type: String, default: "2-4 business days", trim: true },
+  },
+  { _id: false }
+);
+
 const siteSettingsSchema = new mongoose.Schema(
   {
     storeName: {
@@ -166,7 +176,48 @@ const siteSettingsSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    whatsappPhone: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     address: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    freeShippingThreshold: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    defaultShippingRate: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    shippingZones: {
+      type: [shippingZoneSchema],
+      default: () => [
+        { state: "Tunis", cities: ["Tunis", "Carthage", "La Marsa"], rate: 7, estimatedDays: "1-2 business days" },
+        { state: "Ariana", cities: ["Ariana City", "Mnihla", "Raoued"], rate: 6, estimatedDays: "1-2 business days" },
+        { state: "Sousse", cities: ["Sousse City", "Hammam Sousse", "Akouda"], rate: 7, estimatedDays: "2-3 business days" },
+        { state: "Sfax", cities: ["Sfax City", "Sakiet Ezzit", "Agareb"], rate: 8, estimatedDays: "2-3 business days" },
+      ],
+    },
+    codEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    enableEmailNotifications: {
+      type: Boolean,
+      default: true,
+    },
+    enableWhatsAppNotifications: {
+      type: Boolean,
+      default: false,
+    },
+    manualPaymentInstructions: {
       type: String,
       default: "",
       trim: true,

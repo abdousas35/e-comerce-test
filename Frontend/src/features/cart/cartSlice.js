@@ -6,7 +6,7 @@ import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
 // Add items to cart
 export const addItemsToCart = createAsyncThunk(
   "cart/AddItemsToCart",
-  async ({ id, quantity }, { getState, rejectWithValue }) => {
+  async ({ id, quantity, variantId = "" }, { getState, rejectWithValue }) => {
     try {
       const { user } = getState();
       if (!user?.isAuthenticated) {
@@ -14,13 +14,26 @@ export const addItemsToCart = createAsyncThunk(
       }
       
       const {data} = await axios.get(`/api/v1/product/${id}`);
+      const selectedVariant = variantId
+        ? data.product?.variants?.find((variant) => variant._id === variantId)
+        : null;
+      const itemPrice = selectedVariant?.price ?? data.product.price;
+      const itemStock = selectedVariant?.stock ?? data.product.stock;
+      const cartKey = `${data.product._id}-${selectedVariant?._id || "default"}`;
       return{
-
+        cartKey,
         product:data.product._id,
         name:data.product.name,
-        price:data.product.price,
+        price:itemPrice,
         image:data.product.image[0].url,
-        stock:data.product.stock,
+        stock:itemStock,
+        variantId: selectedVariant?._id || "",
+        variantLabel: selectedVariant?.label || "",
+        selectedOptions: {
+          size: selectedVariant?.size || "",
+          color: selectedVariant?.color || "",
+        },
+        sku: selectedVariant?.sku || "",
         quantity
         
       } ;
@@ -62,7 +75,7 @@ const cartSlice = createSlice({
     removeItemFromCart: (state, action) => {
 
       state.removingId = action.payload;
-      state.cartItems = state.cartItems.filter( item => item.product!=action.payload );
+      state.cartItems = state.cartItems.filter( item => item.cartKey !== action.payload );
       localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
       state.removingId = null
 
@@ -94,10 +107,12 @@ const cartSlice = createSlice({
 
   builder.addCase(addItemsToCart.fulfilled, (state, action) => {
     const item = action.payload;
-    const existingItem = state.cartItems.find(i => i.product === item.product);
+    const existingItem = state.cartItems.find(i => i.cartKey === item.cartKey);
 
     if (existingItem) {
       existingItem.quantity = item.quantity;
+      existingItem.stock = item.stock;
+      existingItem.price = item.price;
       state.message = tMessage("api.cart.updatedQuantity", { name: item.name });
     } else {
       state.cartItems.push(item);

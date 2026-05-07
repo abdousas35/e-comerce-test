@@ -20,6 +20,8 @@ function CreateProduct() {
   const [description, setDescription] = useState("");
   const [keywords, setKeywords] = useState("");
   const [stock, setStock] = useState("");
+  const [category, setCategory] = useState("");
+  const [variants, setVariants] = useState([{ label: "", size: "", color: "", price: "", stock: "" }]);
   const [image, setImage] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
 
@@ -29,15 +31,18 @@ function CreateProduct() {
     setStock("");
     setDescription("");
     setKeywords("");
+    setCategory("");
+    setVariants([{ label: "", size: "", color: "", price: "", stock: "" }]);
     setImage([]);
     setImagePreview([]);
   };
 
   const createProductSubmit = async (e) => {
     e.preventDefault();
+    const activeVariants = variants.filter((variant) => variant.price || variant.stock || variant.size || variant.color || variant.label);
 
     try {
-      await dispatch(createProduct({ name, price, description, keywords, stock, image })).unwrap();
+      await dispatch(createProduct({ name, price, description, keywords, stock, category, image, variants: activeVariants })).unwrap();
       toast.success(t("admin.products.created"), { position: "top-center", autoClose: 3000 });
       resetForm();
       navigate("/admin/products");
@@ -64,6 +69,20 @@ function CreateProduct() {
     });
   };
 
+  const updateVariantField = (index, field, value) => {
+    setVariants((current) => current.map((variant, variantIndex) => (
+      variantIndex === index ? { ...variant, [field]: value } : variant
+    )));
+  };
+
+  const addVariantRow = () => {
+    setVariants((current) => [...current, { label: "", size: "", color: "", price: "", stock: "" }]);
+  };
+
+  const removeVariantRow = (index) => {
+    setVariants((current) => current.filter((_, variantIndex) => variantIndex !== index));
+  };
+
   useEffect(() => {
     if (error) {
       dispatch(removeErrors());
@@ -83,7 +102,23 @@ function CreateProduct() {
           <input type="number" className="form-input" name="price" placeholder={t("admin.products.enterPrice")} required value={price} onChange={(e) => setPrice(e.target.value)} />
           <input type="text" className="form-input" name="description" placeholder={t("admin.products.enterDescription")} required value={description} onChange={(e) => setDescription(e.target.value)} />
           <input type="text" className="form-input" name="keywords" placeholder={t("admin.products.productKeywords")} value={keywords} onChange={(e) => setKeywords(e.target.value)} />
+          <input type="text" className="form-input" name="category" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
           <input type="number" className="form-input" name="stock" placeholder={t("admin.products.enterStock")} required value={stock} onChange={(e) => setStock(e.target.value)} />
+
+          <div className="variant-editor">
+            <h3>Variants</h3>
+            {variants.map((variant, index) => (
+              <div key={index} className="variant-row">
+                <input type="text" className="form-input" placeholder="Label" value={variant.label} onChange={(e) => updateVariantField(index, "label", e.target.value)} />
+                <input type="text" className="form-input" placeholder="Size" value={variant.size} onChange={(e) => updateVariantField(index, "size", e.target.value)} />
+                <input type="text" className="form-input" placeholder="Color" value={variant.color} onChange={(e) => updateVariantField(index, "color", e.target.value)} />
+                <input type="number" className="form-input" placeholder="Variant price" value={variant.price} onChange={(e) => updateVariantField(index, "price", e.target.value)} />
+                <input type="number" className="form-input" placeholder="Variant stock" value={variant.stock} onChange={(e) => updateVariantField(index, "stock", e.target.value)} />
+                {variants.length > 1 ? <button type="button" className="submit-btn" onClick={() => removeVariantRow(index)}>Remove</button> : null}
+              </div>
+            ))}
+            <button type="button" className="submit-btn" onClick={addVariantRow}>Add variant</button>
+          </div>
 
           <div className="file-input-container">
             <div className="file-input-wrapper">

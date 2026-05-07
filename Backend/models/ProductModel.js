@@ -8,6 +8,43 @@ const createSlug = (value = "") =>
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 
+const variantSchema = new mongoose.Schema(
+    {
+        label: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        sku: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        size: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        color: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: [0, "Variant price cannot be negative"]
+        },
+        stock: {
+            type: Number,
+            required: true,
+            min: [0, "Variant stock cannot be negative"],
+            default: 0
+        }
+    },
+    { _id: true }
+);
+
 const productSchema = new mongoose.Schema({
 
     name: {
@@ -67,6 +104,10 @@ const productSchema = new mongoose.Schema({
         required: [true, "Please Enter Product Category"],
 
     },
+    variants: {
+        type: [variantSchema],
+        default: []
+    },
     stock: {
 
         type: Number,
@@ -115,6 +156,26 @@ const productSchema = new mongoose.Schema({
 productSchema.pre("validate", function (next) {
     if (this.name) {
         this.slug = createSlug(this.name);
+    }
+
+    if (Array.isArray(this.variants) && this.variants.length > 0) {
+        const totalVariantStock = this.variants.reduce((acc, variant) => acc + (Number(variant.stock) || 0), 0);
+        this.stock = totalVariantStock;
+
+        const cheapestVariant = this.variants.reduce((lowest, variant) => {
+            if (!lowest) return variant;
+            return Number(variant.price) < Number(lowest.price) ? variant : lowest;
+        }, null);
+
+        if (cheapestVariant?.price !== undefined) {
+            this.price = Number(cheapestVariant.price);
+        }
+
+        this.variants = this.variants.map((variant) => ({
+            ...variant.toObject?.() || variant,
+            label: variant.label || [variant.size, variant.color].filter(Boolean).join(" / ") || "Default variant",
+            sku: variant.sku || createSlug(`${this.name}-${variant.size || ""}-${variant.color || ""}-${variant._id || ""}`)
+        }));
     }
     next();
 });

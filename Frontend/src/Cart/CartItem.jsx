@@ -29,13 +29,13 @@ function CartItem({ item }) {
   const handleUpdate = () => {
     if (loading) return;
     if (quantity !== item.quantity) {
-      dispatch(addItemsToCart({ id: item.product, quantity }));
+      dispatch(addItemsToCart({ id: item.product, quantity, variantId: item.variantId }));
     }
   };
 
   const handleRemove = () => {
     if (loading) return;
-    dispatch(removeItemFromCart(item.product));
+    dispatch(removeItemFromCart(item.cartKey));
     toast.success(t("cart.itemRemoved"), { position: "top-center", autoClose: 3000 });
     dispatch(removeMessage());
   };
@@ -61,6 +61,7 @@ function CartItem({ item }) {
         <div className="item-details">
           <h3 className="item-name">{item.name}</h3>
           <p className="item-price"><strong>{t("product.price")}:</strong> {item.price}</p>
+          {item.variantLabel ? <p className="item-price"><strong>Variant:</strong> {item.variantLabel}</p> : null}
         </div>
       </div>
 

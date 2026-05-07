@@ -72,6 +72,7 @@ function Dashboard() {
       delivered: orders.filter((o) => o.orderStatus === "Delivered").length,
       processing: orders.filter((o) => o.orderStatus === "Processing").length,
       pending: orders.filter((o) => o.orderStatus === "Pending").length,
+      shipped: orders.filter((o) => o.orderStatus === "Shipped").length,
     };
   }, [orders]);
 
@@ -212,6 +213,12 @@ function Dashboard() {
               <ShoppingCart className="icon" />
               <h3>{t("template.dashboard.processing")}</h3>
               <p>{orderStats.processing}</p>
+            </div>
+
+            <div className="stat-box">
+              <ShoppingCart className="icon" />
+              <h3>Shipped</h3>
+              <p>{orderStats.shipped}</p>
             </div>
 
             <div className="stat-box">

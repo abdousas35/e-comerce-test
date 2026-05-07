@@ -54,7 +54,14 @@ function AdminSettings() {
         infoColor: settings.infoColor || "#3B82F6",
         contactEmail: settings.contactEmail || "",
         contactPhone: settings.contactPhone || "",
+        whatsappPhone: settings.whatsappPhone || "",
         address: settings.address || "",
+        freeShippingThreshold: settings.freeShippingThreshold || 0,
+        defaultShippingRate: settings.defaultShippingRate || 0,
+        codEnabled: settings.codEnabled ?? true,
+        enableEmailNotifications: settings.enableEmailNotifications ?? true,
+        enableWhatsAppNotifications: settings.enableWhatsAppNotifications ?? false,
+        manualPaymentInstructions: settings.manualPaymentInstructions || "",
         footerAbout: settings.footerAbout || "",
         newsletterText: settings.newsletterText || "",
         aboutTitle: settings.aboutTitle || "",
@@ -307,6 +314,10 @@ function AdminSettings() {
                   {t("template.settings.contactPhone")}
                   <input value={formData.contactPhone} onChange={(e) => handleFieldChange("contactPhone", e.target.value)} />
                 </label>
+                <label>
+                  WhatsApp phone
+                  <input value={formData.whatsappPhone} onChange={(e) => handleFieldChange("whatsappPhone", e.target.value)} />
+                </label>
                 <label className="admin-settings-full">
                   {t("template.settings.address")}
                   <input value={formData.address} onChange={(e) => handleFieldChange("address", e.target.value)} />
@@ -334,6 +345,52 @@ function AdminSettings() {
                 <label>
                   X
                   <input value={formData.socialLinks.x} onChange={(e) => handleSocialChange("x", e.target.value)} />
+                </label>
+              </div>
+            </section>
+
+            <section className="admin-settings-card">
+              <div className="admin-settings-section-title">
+                <Description />
+                <div>
+                  <h2>Shipping and Notifications</h2>
+                  <p>Control base shipping rules and order notification channels.</p>
+                </div>
+              </div>
+
+              <div className="admin-settings-grid">
+                <label>
+                  Free shipping threshold
+                  <input type="number" value={formData.freeShippingThreshold} onChange={(e) => handleFieldChange("freeShippingThreshold", Number(e.target.value) || 0)} />
+                </label>
+                <label>
+                  Default shipping rate
+                  <input type="number" value={formData.defaultShippingRate} onChange={(e) => handleFieldChange("defaultShippingRate", Number(e.target.value) || 0)} />
+                </label>
+                <label className="admin-settings-full">
+                  Manual payment instructions
+                  <textarea rows="3" value={formData.manualPaymentInstructions} onChange={(e) => handleFieldChange("manualPaymentInstructions", e.target.value)} />
+                </label>
+                <label>
+                  Cash on delivery
+                  <select value={String(formData.codEnabled)} onChange={(e) => handleFieldChange("codEnabled", e.target.value === "true")}>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                  </select>
+                </label>
+                <label>
+                  Email notifications
+                  <select value={String(formData.enableEmailNotifications)} onChange={(e) => handleFieldChange("enableEmailNotifications", e.target.value === "true")}>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                  </select>
+                </label>
+                <label>
+                  WhatsApp notifications
+                  <select value={String(formData.enableWhatsAppNotifications)} onChange={(e) => handleFieldChange("enableWhatsAppNotifications", e.target.value === "true")}>
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                  </select>
                 </label>
               </div>
             </section>

@@ -9,6 +9,8 @@ import PageTitle from "../components/PageTitle";
 import { getOrderDetails, removeErrors } from "../features/Order/orderSlice";
 import "../OrderStyles/OrderTracking.css";
 
+const ORDER_FLOW = ["Pending", "Confirmed", "Processing", "Shipped", "Delivered"];
+
 function OrderTracking() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -25,11 +27,12 @@ function OrderTracking() {
 
   const trackingSteps = useMemo(() => {
     const status = order?.orderStatus;
-    return [
-      { label: "Order placed", active: Boolean(order?._id), icon: <Inventory2 /> },
-      { label: "Processing", active: status === "Processing" || status === "Delivered", icon: <LocalShipping /> },
-      { label: "Delivered", active: status === "Delivered", icon: <CheckCircle /> },
-    ];
+    const statusIndex = ORDER_FLOW.indexOf(status);
+    return ORDER_FLOW.map((step, index) => ({
+      label: step,
+      active: status === "Cancelled" ? false : index <= statusIndex,
+      icon: index === 0 ? <Inventory2 /> : index === ORDER_FLOW.length - 1 ? <CheckCircle /> : <LocalShipping />,
+    }));
   }, [order]);
 
   const handleSubmit = (event) => {
@@ -102,6 +105,8 @@ function OrderTracking() {
                 <p>{order?.orderItems?.length || 0} {t("orders.items")}</p>
                 <p>Total: {order?.totalPrice}</p>
                 <p>Shipping: {order?.shippingPrice}</p>
+                {order?.trackingNumber ? <p>Tracking: {order.trackingNumber}</p> : null}
+                {order?.courier ? <p>Courier: {order.courier}</p> : null}
               </article>
             </div>
           </section>

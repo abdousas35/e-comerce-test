@@ -21,6 +21,8 @@ function UpdateProduct() {
   const [description, setDescription] = useState("");
   const [keywords, setKeywords] = useState("");
   const [stock, setStock] = useState("");
+  const [category, setCategory] = useState("");
+  const [variants, setVariants] = useState([{ label: "", size: "", color: "", price: "", stock: "" }]);
   const [image, setImage] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
   const [oldImages, setOldImages] = useState([]);
@@ -37,9 +39,32 @@ function UpdateProduct() {
       setDescription(product.description || "");
       setKeywords(product.keywords || "");
       setStock(product.stock || "");
+      setCategory(product.category || "");
+      setVariants(product.variants?.length ? product.variants.map((variant) => ({
+        _id: variant._id,
+        label: variant.label || "",
+        size: variant.size || "",
+        color: variant.color || "",
+        price: variant.price || "",
+        stock: variant.stock || "",
+      })) : [{ label: "", size: "", color: "", price: "", stock: "" }]);
       setOldImages(product.image || []);
     }
   }, [id, products]);
+
+  const updateVariantField = (index, field, value) => {
+    setVariants((current) => current.map((variant, variantIndex) => (
+      variantIndex === index ? { ...variant, [field]: value } : variant
+    )));
+  };
+
+  const addVariantRow = () => {
+    setVariants((current) => [...current, { label: "", size: "", color: "", price: "", stock: "" }]);
+  };
+
+  const removeVariantRow = (index) => {
+    setVariants((current) => current.filter((_, variantIndex) => variantIndex !== index));
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -61,18 +86,22 @@ function UpdateProduct() {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    const myForm = new FormData();
-    myForm.set("name", name);
-    myForm.set("price", price);
-    myForm.set("description", description);
-    myForm.set("keywords", keywords);
-    myForm.set("stock", stock);
-    image.forEach((img) => {
-      myForm.append("image", img);
-    });
+    const payload = {
+      name,
+      price,
+      description,
+      keywords,
+      stock,
+      category,
+      variants: variants.filter((variant) => variant.price || variant.stock || variant.size || variant.color || variant.label),
+    };
+
+    if (image.length > 0) {
+      payload.image = image;
+    }
 
     try {
-      await dispatch(updateProduct({ id, formData: myForm })).unwrap();
+      await dispatch(updateProduct({ id, formData: payload })).unwrap();
       toast.success(t("admin.products.updated"), { position: "top-center", autoClose: 2500 });
       navigate("/admin/products");
     } catch {
@@ -103,8 +132,26 @@ function UpdateProduct() {
             <label htmlFor="keywords">{t("admin.products.productKeywords")}</label>
             <input type="text" className="update-product-input" id="keywords" name="keywords" value={keywords} onChange={(e) => setKeywords(e.target.value)} />
 
+            <label htmlFor="category">Category</label>
+            <input type="text" className="update-product-input" id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)} />
+
             <label htmlFor="stock">{t("admin.products.productStock")}</label>
             <input type="number" className="update-product-input" required id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} />
+
+            <div className="variant-editor">
+              <h3>Variants</h3>
+              {variants.map((variant, index) => (
+                <div key={variant._id || index} className="variant-row">
+                  <input type="text" className="update-product-input" placeholder="Label" value={variant.label} onChange={(e) => updateVariantField(index, "label", e.target.value)} />
+                  <input type="text" className="update-product-input" placeholder="Size" value={variant.size} onChange={(e) => updateVariantField(index, "size", e.target.value)} />
+                  <input type="text" className="update-product-input" placeholder="Color" value={variant.color} onChange={(e) => updateVariantField(index, "color", e.target.value)} />
+                  <input type="number" className="update-product-input" placeholder="Variant price" value={variant.price} onChange={(e) => updateVariantField(index, "price", e.target.value)} />
+                  <input type="number" className="update-product-input" placeholder="Variant stock" value={variant.stock} onChange={(e) => updateVariantField(index, "stock", e.target.value)} />
+                  {variants.length > 1 ? <button type="button" className="update-product-submit-btn" onClick={() => removeVariantRow(index)}>Remove</button> : null}
+                </div>
+              ))}
+              <button type="button" className="update-product-submit-btn" onClick={addVariantRow}>Add variant</button>
+            </div>
 
             <div className="file-input-wrapper">
               <input type="file" id="update-product-images" accept="image/*" multiple onChange={handleImageChange} />

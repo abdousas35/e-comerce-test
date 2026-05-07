@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "../pageStyles/ProductDetails.css";
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/Footer";
@@ -18,6 +18,7 @@ function ProductDetails() {
   const [comment, setComment] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
   const [userRating, setUserRating] = useState(0);
+  const [selectedVariantId, setSelectedVariantId] = useState("");
 
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -26,8 +27,15 @@ function ProductDetails() {
   const { loading, error, product, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
   const { loading: cartLoading, message, error: cartError } = useSelector((state) => state.cart);
 
+  const selectedVariant = useMemo(
+    () => product?.variants?.find((variant) => variant._id === selectedVariantId) || null,
+    [product, selectedVariantId]
+  );
+  const effectiveStock = selectedVariant?.stock ?? product?.stock ?? 0;
+  const effectivePrice = selectedVariant?.price ?? product?.price ?? 0;
+
   const increase = () => {
-    if (quantity >= product.stock) {
+    if (quantity >= effectiveStock) {
       toast.error(t("productDetails.quantityStock"), { position: "top-center", autoClose: 3000 });
     } else {
       setQuantity((prev) => prev + 1);
@@ -54,11 +62,17 @@ function ProductDetails() {
   };
 
   const addToCart = () => {
-    if (!product || product.stock === 0) {
+    if (product?.variants?.length > 0 && !selectedVariantId) {
+      toast.error("Please select a variant", { position: "top-center", autoClose: 3000 });
+      return;
+    }
+
+    if (!product || effectiveStock === 0) {
       toast.error(t("productDetails.outOfStock"), { position: "top-center", autoClose: 3000 });
       return;
     }
-    dispatch(addItemsToCart({ id, quantity }));
+
+    dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId }));
   };
 
   useEffect(() => {
@@ -100,6 +114,12 @@ function ProductDetails() {
   useEffect(() => {
     if (product && product.image && product.image.length > 0) {
       setSelectedImage(product.image[0].url);
+      setQuantity(1);
+      if (product.variants?.length > 0) {
+        setSelectedVariantId(product.variants[0]._id);
+      } else {
+        setSelectedVariantId("");
+      }
     }
   }, [product]);
 
@@ -130,12 +150,12 @@ function ProductDetails() {
           name: product?.name,
           description: product?.description,
           image: product?.image?.map((item) => item.url),
-          sku: product?._id,
+          sku: selectedVariant?.sku || product?._id,
           offers: {
             "@type": "Offer",
             priceCurrency: "USD",
-            price: product?.price,
-            availability: product?.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            price: effectivePrice,
+            availability: effectiveStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           },
           aggregateRating: product?.numOfReviews
             ? {
@@ -165,7 +185,7 @@ function ProductDetails() {
           <div className="product-info">
             <h2>{product.name}</h2>
             <p className="product-description">{product.description}</p>
-            <p className="product-price">{t("product.price")} : {product.price}</p>
+            <p className="product-price">{t("product.price")} : {effectivePrice}</p>
 
             <div className="product-rating">
               <Rating value={product.ratings} disabled={true} />
@@ -176,17 +196,27 @@ function ProductDetails() {
               <span
                 className="in-stock"
                 style={{
-                  color:
-                    product.stock === 0
-                      ? "var(--danger-color)"
-                      : "var(--success-color)",
+                  color: effectiveStock === 0 ? "var(--danger-color)" : "var(--success-color)",
                 }}
               >
-                {product.stock === 0 ? t("productDetails.outOfStockLabel") : t("productDetails.inStock", { count: product.stock })}
+                {effectiveStock === 0 ? t("productDetails.outOfStockLabel") : t("productDetails.inStock", { count: effectiveStock })}
               </span>
             </div>
 
-            {product.stock > 0 && (
+            {product.variants?.length > 0 && (
+              <div className="variant-selector">
+                <span className="quantity-label">Variant:</span>
+                <select value={selectedVariantId} onChange={(e) => { setSelectedVariantId(e.target.value); setQuantity(1); }}>
+                  {product.variants.map((variant) => (
+                    <option key={variant._id} value={variant._id}>
+                      {variant.label} - {variant.price}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {effectiveStock > 0 && (
               <div className="quantity-controls">
                 <span className="quantity-label">{t("productDetails.quantity")}:</span>
                 <button className="quantity-button" onClick={decrease}>-</button>

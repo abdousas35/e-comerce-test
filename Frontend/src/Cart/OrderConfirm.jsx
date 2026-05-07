@@ -6,7 +6,6 @@ import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import shippingRates from "../utils/shippingRates";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -17,6 +16,7 @@ function OrderConfirm() {
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.order);
+  const { settings } = useSelector((state) => state.settings);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -26,7 +26,11 @@ function OrderConfirm() {
   const [couponLoading, setCouponLoading] = React.useState(false);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const shipping = (shippingInfo && shippingRates[shippingInfo.selectedState]) || 0;
+  const matchedZone = settings?.shippingZones?.find((zone) => zone.state === shippingInfo?.selectedState);
+  const shipping =
+    settings?.freeShippingThreshold && subtotal >= settings.freeShippingThreshold
+      ? 0
+      : Number(matchedZone?.rate ?? settings?.defaultShippingRate ?? 0);
   const total = subtotal + shipping - discount;
 
   const applyCoupon = async () => {
@@ -57,6 +61,8 @@ function OrderConfirm() {
           address: shippingInfo.address,
           city: shippingInfo.selectedCity,
           state: shippingInfo.selectedState,
+          pincode: shippingInfo.pincode,
+          country: shippingInfo.country || "Tunisia",
           phoneNumber: shippingInfo.phoneNumber,
         },
         orderItems: cartItems.map((item) => ({
@@ -65,8 +71,13 @@ function OrderConfirm() {
           quantity: item.quantity,
           image: item.image,
           product: item.product,
+          variantId: item.variantId || "",
+          variantLabel: item.variantLabel || "",
+          selectedOptions: item.selectedOptions || {},
+          sku: item.sku || "",
         })),
         itemPrice: subtotal,
+        taxPrice: 0,
         shippingPrice: shipping,
         discountPrice: discount,
         totalPrice: total,
@@ -114,7 +125,7 @@ function OrderConfirm() {
                   <tr>
                     <td>{user.name}</td>
                     <td>{shippingInfo.phoneNumber}</td>
-                    <td>{shippingInfo.address}, {shippingInfo.selectedCity}, {shippingInfo.selectedState}, {shippingInfo.pinCode}</td>
+                    <td>{shippingInfo.address}, {shippingInfo.selectedCity}, {shippingInfo.selectedState}, {shippingInfo.pincode}</td>
                   </tr>
                 </tbody>
               </table>
@@ -132,9 +143,9 @@ function OrderConfirm() {
                 </thead>
                 <tbody>
                   {cartItems.map((item) => (
-                    <tr key={item.product}>
+                    <tr key={item.cartKey || item.product}>
                       <td><img src={item.image} alt={item.name} className="order-product-image" /></td>
-                      <td>{item.name}</td>
+                      <td>{item.name}{item.variantLabel ? ` (${item.variantLabel})` : ""}</td>
                       <td>{item.price}</td>
                       <td>{item.quantity}</td>
                       <td>{item.quantity * item.price}</td>

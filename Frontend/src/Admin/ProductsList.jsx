@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../AdminStyles/ProductsList.css";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import PageTitle from "../components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { fetchAdminProducts, removeErrors, deleteProduct } from "../features/admin/adminSlice";
+import { fetchAdminProducts, removeErrors, deleteProduct, importProductsCsv } from "../features/admin/adminSlice";
 import { Link } from "react-router-dom";
 import { Edit, Delete } from "@mui/icons-material";
 import { toast } from "react-toastify";
@@ -14,6 +14,24 @@ function ProductsList() {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.admin);
   const { t } = useTranslation();
+  const [csvFileName, setCsvFileName] = useState("");
+
+  const handleCsvImport = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const csvText = await file.text();
+      await dispatch(importProductsCsv({ csvText })).unwrap();
+      setCsvFileName(file.name);
+      toast.success("CSV products imported successfully", { position: "top-center" });
+      dispatch(fetchAdminProducts());
+    } catch (importError) {
+      toast.error(importError || "Failed to import CSV file", { position: "top-center" });
+    } finally {
+      event.target.value = "";
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchAdminProducts());
@@ -56,6 +74,11 @@ function ProductsList() {
 
       <div className="product-list">
         <h1 className="product-list-title">{t("admin.products.allProducts")}</h1>
+        <div className="file-input-wrapper" style={{ marginBottom: "1rem" }}>
+          <input type="file" id="csv-import" accept=".csv" onChange={handleCsvImport} />
+          <label htmlFor="csv-import" className="file-input-label">Import CSV products</label>
+          {csvFileName ? <p style={{ marginTop: "0.6rem" }}>{csvFileName}</p> : null}
+        </div>
 
         {loading ? (
           <Loader />
@@ -71,6 +94,7 @@ function ProductsList() {
                 <th>{t("product.price")}</th>
                 <th>{t("admin.products.ratings")}</th>
                 <th>{t("admin.common.stock")}</th>
+                <th>Variants</th>
                 <th>{t("admin.common.createdAt")}</th>
                 <th>{t("cart.actions")}</th>
               </tr>
@@ -85,6 +109,7 @@ function ProductsList() {
                   <td>${product.price}</td>
                   <td>{product.ratings}</td>
                   <td>{product.stock}</td>
+                  <td>{product.variants?.length || 0}</td>
                   <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                   <td>
                     <Link to={`/admin/product/${product._id}`} className="action-icon edit-icon"><Edit /></Link>

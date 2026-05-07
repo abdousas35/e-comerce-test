@@ -126,12 +126,24 @@ export const fetchAllOrders = createAsyncThunk(
 
 export const updateOrderStatus = createAsyncThunk(
   "admin/updateOrderStatus",
-  async ({ id, status }, { rejectWithValue }) => {
+  async ({ id, status, trackingNumber, trackingUrl, courier, note }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(`/api/v1/admin/orderUpdate/${id}`, { status });
+      const { data } = await axios.put(`/api/v1/admin/orderUpdate/${id}`, { status, trackingNumber, trackingUrl, courier, note });
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.admin.updateOrderStatusFailed") });
+    }
+  }
+);
+
+export const importProductsCsv = createAsyncThunk(
+  "admin/importProductsCsv",
+  async ({ csvText }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post("/api/v1/admin/products/import-csv", { csvText });
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to import CSV products" });
     }
   }
 );
@@ -456,6 +468,20 @@ const adminSlice = createSlice({
       .addCase(createCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to create coupon";
+      })
+      .addCase(importProductsCsv.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(importProductsCsv.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.products = [...(action.payload.products || []), ...state.products];
+        state.productCount += action.payload.importedCount || 0;
+      })
+      .addCase(importProductsCsv.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to import CSV products";
       })
       .addCase(deleteCoupon.pending, (state) => {
         state.loading = true;

@@ -18,6 +18,10 @@ function UpdateOrderStatus() {
   const { orders, loading } = useSelector((state) => state.admin);
 
   const [status, setStatus] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingUrl, setTrackingUrl] = useState("");
+  const [courier, setCourier] = useState("");
+  const [note, setNote] = useState("");
 
   const order = orders.find((o) => o._id === id);
 
@@ -30,13 +34,16 @@ function UpdateOrderStatus() {
   useEffect(() => {
     if (order) {
       setStatus(order.orderStatus || "");
+      setTrackingNumber(order.trackingNumber || "");
+      setTrackingUrl(order.trackingUrl || "");
+      setCourier(order.courier || "");
     }
   }, [order]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(updateOrderStatus({ id, status }))
+    dispatch(updateOrderStatus({ id, status, trackingNumber, trackingUrl, courier, note }))
       .unwrap()
       .then(() => {
         toast.success(t("admin.orders.statusUpdated"), {
@@ -80,9 +87,33 @@ function UpdateOrderStatus() {
                 onChange={(e) => setStatus(e.target.value)}
               >
                 <option value="">{t("admin.orders.selectStatus")}</option>
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
                 <option value="Processing">{t("orders.processing")}</option>
+                <option value="Shipped">Shipped</option>
                 <option value="Delivered">{t("orders.delivered")}</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="trackingNumber">Tracking number</label>
+              <input type="text" id="trackingNumber" value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="trackingUrl">Tracking URL</label>
+              <input type="text" id="trackingUrl" value={trackingUrl} onChange={(e) => setTrackingUrl(e.target.value)} />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="courier">Courier</label>
+              <input type="text" id="courier" value={courier} onChange={(e) => setCourier(e.target.value)} />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="note">Admin note</label>
+              <input type="text" id="note" value={note} onChange={(e) => setNote(e.target.value)} />
             </div>
 
             <button className="btn btn-primary">{t("admin.orders.updateStatus")}</button>

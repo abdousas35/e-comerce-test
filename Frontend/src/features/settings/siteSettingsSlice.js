@@ -32,7 +32,20 @@ const defaultSettings = {
   fontBody: "'Inter', sans-serif",
   contactEmail: "hello@example.com",
   contactPhone: "+000 000 000",
+  whatsappPhone: "",
   address: "Your city, your store, your brand.",
+  freeShippingThreshold: 0,
+  defaultShippingRate: 0,
+  codEnabled: true,
+  enableEmailNotifications: true,
+  enableWhatsAppNotifications: false,
+  manualPaymentInstructions: "",
+  shippingZones: [
+    { state: "Tunis", cities: ["Tunis", "Carthage", "La Marsa"], rate: 7, estimatedDays: "1-2 business days" },
+    { state: "Ariana", cities: ["Ariana City", "Mnihla", "Raoued"], rate: 6, estimatedDays: "1-2 business days" },
+    { state: "Sousse", cities: ["Sousse City", "Hammam Sousse", "Akouda"], rate: 7, estimatedDays: "2-3 business days" },
+    { state: "Sfax", cities: ["Sfax City", "Sakiet Ezzit", "Agareb"], rate: 8, estimatedDays: "2-3 business days" },
+  ],
   newsletterText: "Subscribe for launches, limited offers, and product drops.",
   footerAbout: "A reusable white-label e-commerce template built for fast premium delivery.",
   aboutTitle: "Built for brands that want to feel premium from day one.",
@@ -121,6 +134,7 @@ const siteSettingsSlice = createSlice({
             ...(action.payload?.socialLinks || {}),
           },
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
+          shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
         };
       })
       .addCase(fetchSiteSettings.rejected, (state, action) => {
@@ -141,6 +155,7 @@ const siteSettingsSlice = createSlice({
             ...(action.payload?.socialLinks || {}),
           },
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
+          shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
         };
       })
       .addCase(updateSiteSettings.rejected, (state, action) => {

@@ -60,7 +60,7 @@ function OrderDetails() {
               {order?.orderItems?.map((item) => (
                 <tr key={item._id} className="table-row">
                   <td className="table-cell"><img src={item.image} alt={item.name} className="item-img" /></td>
-                  <td className="table-cell">{item.name}</td>
+                  <td className="table-cell">{item.name}{item.variantLabel ? ` (${item.variantLabel})` : ""}</td>
                   <td className="table-cell">{item.quantity}</td>
                   <td className="table-cell">{item.price * item.quantity}</td>
                 </tr>
@@ -92,13 +92,21 @@ function OrderDetails() {
               <tr className="table-row">
                 <th className="table-cell">{t("orders.status")}</th>
                 <td className="table-cell">
-                  {order?.orderStatus === "Processing" ? (
-                    <span className="status-tag processing">{t("orders.processing")}</span>
-                  ) : (
-                    <span className="status-tag delivered">{t("orders.delivered")}</span>
-                  )}
+                  <span className={`status-tag ${String(order?.orderStatus || "").toLowerCase()}`}>{order?.orderStatus}</span>
                 </td>
               </tr>
+              {order?.trackingNumber ? (
+                <tr className="table-row">
+                  <th className="table-cell">Tracking</th>
+                  <td className="table-cell">{order.trackingNumber}</td>
+                </tr>
+              ) : null}
+              {order?.courier ? (
+                <tr className="table-row">
+                  <th className="table-cell">Courier</th>
+                  <td className="table-cell">{order.courier}</td>
+                </tr>
+              ) : null}
               <tr className="table-row">
                 <th className="table-cell">{order?.orderItems?.length === 1 ? t("orders.itemPrice") : t("orders.itemsPrice")}</th>
                 <td className="table-cell">{order?.itemPrice}</td>

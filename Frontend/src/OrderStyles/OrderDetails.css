@@ -64,6 +64,17 @@
   background: color-mix(in srgb, var(--warning-color) 20%, transparent);
 }
 
+.status-tag.pending,
+.status-tag.confirmed {
+  color: var(--info-color);
+  background: color-mix(in srgb, var(--info-color) 20%, transparent);
+}
+
+.status-tag.shipped {
+  color: var(--primary-main);
+  background: color-mix(in srgb, var(--primary-main) 20%, transparent);
+}
+
 .status-tag.delivered {
   color: green;
   background: color-mix(in srgb, var(--success-color) 20%, transparent);

@@ -110,6 +110,21 @@
   flex: 0 0 auto;
 }
 
+.variant-editor {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--surface-color);
+}
+
+.variant-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
 .update-product-submit-btn {
   width: 100%;
   background: var(--primary-main);
@@ -177,5 +192,9 @@
   .update-product-old-image {
     width: 70px;
     height: 70px;
+  }
+
+  .variant-row {
+    grid-template-columns: 1fr;
   }
 }

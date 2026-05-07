@@ -76,6 +76,22 @@
     margin: 20px 0;
     gap: 10px;
   }
+
+  .variant-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 16px 0;
+  }
+
+  .variant-selector select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--surface-color);
+    color: var(--body-text-color);
+  }
   
   .quantity-label {
     font-weight: 500;

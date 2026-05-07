@@ -29,7 +29,7 @@ function OrdersList() {
   }, [dispatch, error, t]);
 
   const handleDelete = (id, status) => {
-    if (status === "Processing") {
+    if (["Pending", "Confirmed", "Processing", "Shipped"].includes(status)) {
       toast.error(t("admin.orders.cannotDeleteProcessing"), {
         position: "top-center",
         autoClose: 3000,
