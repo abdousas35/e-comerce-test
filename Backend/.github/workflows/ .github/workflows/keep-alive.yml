@@ -1,0 +1,13 @@
+name: Keep Render Backend Alive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # كل 10 دقايق
+  workflow_dispatch:  # يخليك تشغله يدوياً للتجربة
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: curl -s https://e-commerce-project-r86z.onrender.com
