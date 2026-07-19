@@ -3,7 +3,7 @@
   align-items: flex-start;
   gap: 20px;
   padding: 20px;
-  margin-top: 100px;
+  margin-top: 0;
 }
 
 .filter-section {
@@ -101,15 +101,14 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.9rem;
-    justify-items: end;
-    padding-left: 1.35rem;
+    justify-items: stretch;
+    padding: 0;
   }
 }
 
 @media (max-width: 450px) {
   html[dir="rtl"] .products-product-container {
-    justify-items: start;
-    padding-left: 0;
-    padding-right: 1.35rem;
+    justify-items: stretch;
+    padding: 0;
   }
 }

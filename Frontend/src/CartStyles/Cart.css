@@ -1,5 +1,5 @@
 .cart-page {
-  max-width: 1440px;
+  max-width: 1240px;
   margin: 2rem auto;
   padding: 3rem 1rem;
   display: grid;
@@ -27,8 +27,8 @@
   padding: 10px 20px; 
   font-size: 1rem; 
   font-weight: bold; 
-  color: var(--text-primary);
-  background-color: var(--bg-secondary); 
+  color: var(--text-light);
+  background-color: var(--primary-main); 
   border: none;
   border-radius: 5px; 
   transition: background-color 0.3s ease; 
@@ -36,11 +36,13 @@
 
 .viewProducts:hover {
   background-color: var(--primary-dark); 
+  color: var(--text-light);
 }
 .cart-items {
   background: var(--surface-color);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--heading-color) 8%, transparent);
+  border-radius: 1.25rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--heading-color) 7%, transparent);
   padding: 1.5rem;
   min-height: 60vh;
 }
@@ -159,13 +161,13 @@
 }
 
 .update-item-btn {
-  background: var( --primary-dark);
+  background: var(--primary-main);
   color: var(--text-light);
 }
 
 .remove-item-btn {
-  background:var( --primary-light);
-  color: var(--bg-primary)
+  background: color-mix(in srgb, var(--danger-color) 12%, var(--surface-color));
+  color: var(--danger-color)
 }
 
 .update-item-btn:hover,
@@ -173,13 +175,14 @@
   opacity: 0.9;
 }
 .remove-item-btn:hover{
-  background:var( --primary-light);
-  color: var(--bg-primary)
+  background: color-mix(in srgb, var(--danger-color) 18%, var(--surface-color));
+  color: var(--danger-color)
 }
 
 .price-summary {
   background: var(--surface-color);
-  border-radius: 12px;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border-color);
   padding: 1.5rem;
   height: fit-content;
   position: sticky;
@@ -219,7 +222,7 @@
   min-width: 260px;
   padding: 1.15rem 2rem;
   margin: 1.75rem auto 0.25rem;
-  background:var( --primary-dark);
+  background: var(--primary-main);
   color: var(--text-light);
   border: none;
   border-radius: 999px;
@@ -230,11 +233,11 @@
   box-shadow: 0 18px 34px color-mix(in srgb, var(--primary-dark) 46%, transparent);
   position: relative;
   overflow: hidden;
-  animation: checkoutPulse 2.8s ease-in-out infinite;
+  animation: none;
 }
 
 .checkout-btn:hover {
-  background: var(--bg-primary);
+  background: var(--primary-dark);
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 26px 44px color-mix(in srgb, var(--bg-primary) 56%, transparent);
 }
@@ -262,7 +265,8 @@
 @media (max-width: 768px) {
   .cart-page {
     grid-template-columns: 1fr;
-    margin: 1rem auto;
+    margin: 0 auto;
+    padding-top: 1rem;
     gap: 1rem;
   }
   

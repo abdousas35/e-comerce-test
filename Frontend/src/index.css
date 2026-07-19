@@ -40,6 +40,36 @@ body {
     font-family: var(--font-body);
     background: var(--bg-primary);
     color: var(--body-text-color);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--primary-main) 28%, transparent);
+    color: var(--heading-color);
+}
+
+button,
+input,
+select,
+textarea { font: inherit; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--primary-main) 45%, transparent);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 

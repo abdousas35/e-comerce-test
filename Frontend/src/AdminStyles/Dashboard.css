@@ -111,6 +111,14 @@
   text-decoration: none;
   color: var(--heading-color);
   box-shadow: 0 4px 18px color-mix(in srgb, var(--heading-color) 6%, transparent);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.quick-action-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--primary-main) 40%, var(--border-color));
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--heading-color) 10%, transparent);
 }
 
 .quick-action-card strong {
@@ -139,6 +147,7 @@
   box-shadow: 0 4px 18px color-mix(in srgb, var(--heading-color) 6%, transparent);
   transition: 0.25s ease;
   position: relative;
+  border: 1px solid var(--border-color);
 }
 
 .stat-box:hover {

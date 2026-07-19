@@ -1,19 +1,20 @@
 .product-details-container{
-    padding:100px;
+    padding: 2.5rem 2rem 3rem;
 }
   .product-detail-container{
     max-width: 1200px;
     margin: 0 auto;;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: clamp(1.5rem, 4vw, 4rem);
   }
   .product-image-container {
     position: sticky;
-    top: 40px;
+    top: 2rem;
     z-index: 10;
     margin-bottom: 20px;
-    width: 500px;
+    width: min(500px, 100%);
   }
   
 
@@ -21,7 +22,8 @@
     width: 100%;
     max-height: 500px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 1.25rem;
+    border: 1px solid var(--border-color);
     background: var(--surface-color);
   }
   .product-thumbnails{
@@ -47,7 +49,7 @@
   
   .product-info {
     padding: 20px;
-    width: 500px;
+    width: min(500px, 100%);
   }
   .product-description,.product-price{
     text-align: left;
@@ -123,22 +125,22 @@
     width: fit-content;
     min-width: 220px;
     padding: 14px 22px;
-    background: var(--border-color);
-    border: none;
+    background: var(--surface-soft-color);
+    border: 1px solid var(--border-color);
     border-radius: 999px;
     font-size: 16px;
     cursor: pointer;
     margin: 24px auto 10px;
-    color: var(--text-primary);
+    color: var(--heading-color);
     transition: transform 0.2s ease, box-shadow 0.25s ease, background-color 0.25s ease;
     box-shadow: 0 18px 34px color-mix(in srgb, var(--border-color) 50%, transparent);
     position: relative;
     overflow: hidden;
-    animation: detailButtonFloat 2.6s ease-in-out infinite;
+    animation: none;
   }
   
   .add-to-cart-btn:hover {
-    background: var(--bg-secondary);
+    background: color-mix(in srgb, var(--primary-main) 12%, var(--surface-color));
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 26px 44px color-mix(in srgb, var(--bg-secondary) 58%, transparent);
   }
@@ -242,7 +244,7 @@
   }
   
   .submit-review-btn {
-    background: var(--bg-primary);
+    background: var(--primary-main);
     color: var(--text-light);
     padding: 10px 20px;
     border: none;
@@ -295,10 +297,14 @@
     .product-image-container {
       position: static;
     }
+    .product-details-container {
+      padding: 1.5rem 1rem 2rem;
+    }
   }
   @media (max-width: 568px) {
     .product-details-container{
-       width:80%;
+       width:100%;
+       padding: 1.25rem 0.75rem 2rem;
        scroll-behavior:unset;
        margin:0 auto
       }  
