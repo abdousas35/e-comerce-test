@@ -49,6 +49,7 @@ const cartSlice = createSlice({
   initialState: {
 
     cartItems: JSON.parse(localStorage.getItem("cartItems")) || [],
+    quickBuyItem: null,
     loading: false,
     error: null,
     success: false,
@@ -82,6 +83,12 @@ const cartSlice = createSlice({
       state.shippingInfo = action.payload
       localStorage.setItem('shippingInfo', JSON.stringify(state.shippingInfo))
 
+    },
+    setQuickBuyItem: (state, action) => {
+      state.quickBuyItem = action.payload;
+    },
+    clearQuickBuyItem: (state) => {
+      state.quickBuyItem = null;
     },
     clearCart: (state) => {
       state.cartItems = [];
@@ -135,5 +142,5 @@ const cartSlice = createSlice({
 
 
 
-export const { removeErrors, removeMessage, removeItemFromCart, saveShippingInfo, clearCart } = cartSlice.actions;
+export const { removeErrors, removeMessage, removeItemFromCart, saveShippingInfo, setQuickBuyItem, clearQuickBuyItem, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

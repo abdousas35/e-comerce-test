@@ -11,7 +11,7 @@ import { getProductDetails, createReview, removeSuccess, removeErrors } from "..
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import MetaTags from "../components/MetaTags";
-import { addItemsToCart, clearCart, removeMessage, removeErrors as removeCartErrors } from "../features/cart/cartSlice";
+import { addItemsToCart, setQuickBuyItem, removeMessage, removeErrors as removeCartErrors } from "../features/cart/cartSlice";
 
 function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
@@ -78,7 +78,28 @@ function ProductDetails() {
     dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId }));
   };
 
-  const buyNow = async () => {
+  const buildQuickBuyItem = () => {
+    const selected = selectedVariant;
+    const itemPrice = Math.max(0, (selected?.price ?? product?.price ?? 0) - discountAmount);
+    return {
+      cartKey: `${product._id}-${selected?._id || "default"}`,
+      product: product._id,
+      name: product.name,
+      price: itemPrice,
+      image: product.image?.[0]?.url || "",
+      stock: effectiveStock,
+      variantId: selected?._id || "",
+      variantLabel: selected?.label || "",
+      selectedOptions: {
+        size: selected?.size || "",
+        color: selected?.color || "",
+      },
+      sku: selected?.sku || "",
+      quantity,
+    };
+  };
+
+  const buyNow = () => {
     if (product?.variants?.length > 0 && !selectedVariantId) {
       toast.error("Please select a variant", { position: "top-center", autoClose: 3000 });
       return;
@@ -89,13 +110,8 @@ function ProductDetails() {
       return;
     }
 
-    try {
-      dispatch(clearCart());
-      await dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId })).unwrap();
-      navigate("/shipping");
-    } catch (error) {
-      toast.error(t("productDetails.checkoutFailed"), { position: "top-center", autoClose: 3000 });
-    }
+    dispatch(setQuickBuyItem(buildQuickBuyItem()));
+    navigate("/shipping");
   };
 
   useEffect(() => {

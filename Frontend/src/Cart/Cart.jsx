@@ -4,14 +4,16 @@ import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CartItem from "./CartItem";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Loader from "../components/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { clearQuickBuyItem } from "../features/cart/cartSlice";
 
 function Cart() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const { cartItems, loading } = useSelector((state) => state.cart);
@@ -21,6 +23,7 @@ function Cart() {
   if (loading) return <Loader />;
 
   const checkoutHandler = () => {
+    dispatch(clearQuickBuyItem());
     navigate("/shipping");
   };
 

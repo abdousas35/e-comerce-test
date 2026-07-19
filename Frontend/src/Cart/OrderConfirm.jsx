@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { createOrder, removeSuccess } from "../features/Order/orderSlice";
-import { clearCart } from "../features/cart/cartSlice";
+import { clearCart, clearQuickBuyItem } from "../features/cart/cartSlice";
 
 // Generate UUID for idempotency
 const generateIdempotencyKey = () => {
@@ -22,7 +22,7 @@ const generateIdempotencyKey = () => {
 };
 
 function OrderConfirm() {
-  const { shippingInfo, cartItems } = useSelector((state) => state.cart);
+  const { shippingInfo, cartItems, quickBuyItem } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.order);
   const { settings } = useSelector((state) => state.settings);
@@ -37,7 +37,8 @@ function OrderConfirm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [idempotencyKey, setIdempotencyKey] = React.useState(() => generateIdempotencyKey());
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const checkoutItems = quickBuyItem ? [quickBuyItem] : cartItems;
+  const subtotal = checkoutItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const matchedZone = settings?.shippingZones?.find((zone) => zone.state === shippingInfo?.selectedState);
   const shipping =
     settings?.freeShippingThreshold && subtotal >= settings.freeShippingThreshold
@@ -73,7 +74,7 @@ function OrderConfirm() {
 
   const validateOrderData = () => {
     // Check if cart has items
-    if (!cartItems || cartItems.length === 0) {
+    if (!checkoutItems || checkoutItems.length === 0) {
       toast.error(t("cart.empty"), { position: "top-center", autoClose: 3000 });
       return false;
     }
@@ -118,7 +119,7 @@ function OrderConfirm() {
           country: shippingInfo.country || "Tunisia",
           phoneNumber: shippingInfo.phoneNumber,
         },
-        orderItems: cartItems.map((item) => ({
+        orderItems: checkoutItems.map((item) => ({
           name: item.name,
           price: item.price,
           quantity: item.quantity,
@@ -146,7 +147,10 @@ function OrderConfirm() {
         toast.success(t("orderConfirm.success"), { position: "top-center", autoClose: 3000 });
       }
       
-      dispatch(clearCart());
+      if (!quickBuyItem) {
+        dispatch(clearCart());
+      }
+      dispatch(clearQuickBuyItem());
       dispatch(removeSuccess());
       navigate(`/order/${response.order._id}`);
     } catch (error) {
@@ -200,7 +204,7 @@ function OrderConfirm() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cartItems.map((item) => (
+                  {checkoutItems.map((item) => (
                     <tr key={item.cartKey || item.product}>
                       <td><img src={item.image} alt={item.name} className="order-product-image" /></td>
                       <td>{item.name}{item.variantLabel ? ` (${item.variantLabel})` : ""}</td>
