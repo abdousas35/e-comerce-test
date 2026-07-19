@@ -146,7 +146,8 @@
     "price": "السعر",
     "review": "مراجعة",
     "reviews": "مراجعات",
-    "addToCart": "أضف إلى السلة"
+    "addToCart": "أضف إلى السلة",
+    "buyNow": "اشتر الآن"
   },
   "products": {
     "pageTitle": "كل المنتجات",

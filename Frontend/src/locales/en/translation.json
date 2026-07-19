@@ -146,7 +146,8 @@
     "price": "Price",
     "review": "Review",
     "reviews": "Reviews",
-    "addToCart": "Add to cart"
+    "addToCart": "Add to cart",
+    "buyNow": "Buy now"
   },
   "products": {
     "pageTitle": "All Products",

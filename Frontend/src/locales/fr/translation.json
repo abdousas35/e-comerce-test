@@ -146,7 +146,8 @@
     "price": "Prix",
     "review": "Avis",
     "reviews": "Avis",
-    "addToCart": "Ajouter au panier"
+    "addToCart": "Ajouter au panier",
+    "buyNow": "Acheter maintenant"
   },
   "products": {
     "pageTitle": "Tous les produits",
