@@ -21,6 +21,7 @@ function ProductDetails() {
   const [selectedVariantId, setSelectedVariantId] = useState("");
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
   const { t } = useTranslation();
 
