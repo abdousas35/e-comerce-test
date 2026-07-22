@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Product from "../components/Product";
@@ -24,6 +25,13 @@ function Home() {
   return (
     <>
       <Navbar />
+      <Helmet>
+        <title>{`${settings?.storeName || "Store"} - ${t("home.pageTitle")}`}</title>
+        <meta
+          name="description"
+          content={`${settings?.storeName || "Store"} offers ${settings?.tagline || "a premium shopping experience"} with featured products, easy browsing, and contact details ${settings?.contactEmail || "hello@example.com"} and ${settings?.contactPhone || "+000 000 000"}.`}
+        />
+      </Helmet>
       <PageTitle title={t("home.pageTitle")} />
       <MetaTags
         title={settings?.storeName || t("home.pageTitle")}

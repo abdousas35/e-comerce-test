@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -11,6 +12,13 @@ function TermsAndConditions() {
 
   return (
     <>
+      <Helmet>
+        <title>{`Terms and Conditions - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Read the terms for orders, payments, returns, and acceptable use when shopping at ${settings?.storeName || "this store"}.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title="Terms and Conditions" />
       <MetaTags

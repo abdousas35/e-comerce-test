@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -11,6 +12,13 @@ function PrivacyPolicy() {
 
   return (
     <>
+      <Helmet>
+        <title>{`Privacy Policy - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Review how ${settings?.storeName || "this store"} collects, uses, and protects customer information for orders, support, and account management.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title="Privacy Policy" />
       <MetaTags

@@ -1,6 +1,7 @@
 ﻿import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+import { HelmetProvider } from "react-helmet-async";
 import axios from "axios";
 import "./index.css";
 import "./i18n";
@@ -18,8 +19,10 @@ document.documentElement.style.setProperty(
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </HelmetProvider>
   </Provider>
 );

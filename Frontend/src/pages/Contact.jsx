@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
@@ -13,6 +14,13 @@ function Contact() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t("navbar.contactUs")} - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Contact ${settings?.storeName || "our store"} for support, questions, or order assistance using ${settings?.contactEmail || "hello@example.com"}, ${settings?.contactPhone || "+000 000 000"}, or the address ${settings?.address || "provided in the store details"}.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title={t("navbar.contactUs")} />
       <MetaTags

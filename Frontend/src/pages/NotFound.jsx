@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
@@ -12,6 +13,13 @@ function NotFound() {
 
   return (
     <>
+      <Helmet>
+        <title>{`404 - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`The requested page could not be found. Return to the homepage or browse the catalog at ${settings?.storeName || "this store"}.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title="Page Not Found" />
       <MetaTags

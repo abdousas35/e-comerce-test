@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import "../CartStyles/Cart.css";
 import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
@@ -17,6 +18,7 @@ function Cart() {
   const { t } = useTranslation();
 
   const { cartItems, loading } = useSelector((state) => state.cart);
+  const { settings } = useSelector((state) => state.settings);
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 50;
 
@@ -29,6 +31,13 @@ function Cart() {
 
   return (
     <>
+      <Helmet>
+        <title>{`Cart - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Review your selected items in the cart for ${settings?.storeName || "this store"} and proceed to checkout with shipping and payment details.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title={t("cart.pageTitle")} />
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import "../UserStyles/Form.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -16,6 +17,7 @@ function Register() {
 
   const { name, email, password } = user;
   const { error, isAuthenticated } = useSelector((state) => state.user);
+  const { settings } = useSelector((state) => state.settings);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -96,7 +98,15 @@ function Register() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="container container2">
+    <>
+      <Helmet>
+        <title>{`Register - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Create an account at ${settings?.storeName || "this store"} to place orders, track purchases, and manage your shopping profile.`}
+        />
+      </Helmet>
+      <div className="container container2">
       {loading && <Loader />}
       <div className="form-content">
         <div className="form-container">
@@ -154,6 +164,7 @@ function Register() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

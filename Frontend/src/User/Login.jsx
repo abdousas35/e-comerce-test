@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import "../UserStyles/Form.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +11,7 @@ function Login() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const { error, isAuthenticated } = useSelector((state) => state.user);
+  const { settings } = useSelector((state) => state.settings);
   const [loading, setLoading] = useState(false);
   const hasHandledInitialAuth = useRef(false);
   const { t } = useTranslation();
@@ -48,7 +50,15 @@ function Login() {
   }, [isAuthenticated, navigate, t]);
 
   return (
-    <div className="form-container container">
+    <>
+      <Helmet>
+        <title>{`Login - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Sign in to ${settings?.storeName || "this store"} to manage orders, saved addresses, and account details securely.`}
+        />
+      </Helmet>
+      <div className="form-container container">
       <div className="form-content">
         <form className="form" onSubmit={loginSubmit}>
           <div className="input-group">
@@ -80,6 +90,7 @@ function Login() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

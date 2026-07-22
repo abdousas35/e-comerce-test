@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
@@ -13,6 +14,13 @@ function About() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t("template.static.about")} - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`${settings?.storeName || "Store"} is built to share ${settings?.aboutTitle || "its story"}, explain its values, and connect customers with support at ${settings?.contactEmail || "hello@example.com"} and ${settings?.contactPhone || "+000 000 000"}.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title={t("template.static.about")} />
       <MetaTags

@@ -27,6 +27,7 @@
     "mongoose": "^8.19.4",
     "nodemailer": "^9.0.3",
     "nodemon": "^3.1.11",
+    "react-helmet-async": "^3.0.0",
     "react-redux": "^9.2.0",
     "react-toastify": "^11.0.5",
     "resend": "^6.18.0",

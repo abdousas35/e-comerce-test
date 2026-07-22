@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -26,6 +27,13 @@ function FAQ() {
 
   return (
     <>
+      <Helmet>
+        <title>{`FAQ - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Find answers to common questions about delivery, returns, support, and shop policies for ${settings?.storeName || "our store"}.`}
+        />
+      </Helmet>
       <Navbar />
       <PageTitle title="FAQ" />
       <MetaTags

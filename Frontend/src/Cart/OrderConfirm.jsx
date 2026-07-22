@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import "../CartStyles/OrderConfirm.css";
 import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
@@ -164,6 +165,13 @@ function OrderConfirm() {
 
   return (
     <>
+      <Helmet>
+        <title>{`Order Review - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Review your order summary, shipping details, and coupon options before confirming your purchase at ${settings?.storeName || "this store"}.`}
+        />
+      </Helmet>
       {loading ? (
         <Loader />
       ) : (

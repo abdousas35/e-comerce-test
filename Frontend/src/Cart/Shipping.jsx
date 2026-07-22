@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import "../CartStyles/Shipping.css";
 import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
@@ -66,6 +67,13 @@ function Shipping() {
 
   return (
     <>
+      <Helmet>
+        <title>{`Shipping - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`Enter your shipping details for ${settings?.storeName || "this store"} and complete your order with a fast delivery confirmation flow.`}
+        />
+      </Helmet>
       <PageTitle title={t("cart.shippingInfo")} />
       <Navbar />
       <CheckoutPath activePath={0} />

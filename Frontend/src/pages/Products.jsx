@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import "../pageStyles/Products.css";
 import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
@@ -52,6 +53,13 @@ function Products() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${t("products.pageTitle")} - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={`${settings?.storeName || "Store"} catalog includes ${products.length || "multiple"} products for browsing, searching, and ordering online with a simple and secure checkout experience.`}
+        />
+      </Helmet>
       <PageTitle title={t("products.pageTitle")} />
       <MetaTags
         title={`${t("products.pageTitle")} | ${settings?.storeName || "Store"}`}

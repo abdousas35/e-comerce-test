@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import "../pageStyles/ProductDetails.css";
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/Footer";
@@ -28,6 +29,7 @@ function ProductDetails() {
   const { loading, error, product, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
   const { loading: cartLoading, message, error: cartError } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.user);
+  const { settings } = useSelector((state) => state.settings);
 
   const selectedVariant = useMemo(
     () => product?.variants?.find((variant) => variant._id === selectedVariantId) || null,
@@ -37,6 +39,33 @@ function ProductDetails() {
   const effectivePrice = selectedVariant?.price ?? product?.price ?? 0;
   const discountAmount = Number(product?.discount || 0);
   const discountedPrice = Math.max(0, effectivePrice - discountAmount);
+
+  const productDescriptionText = useMemo(() => {
+    const parts = [];
+    const productName = product?.name || "this product";
+    const productDescription = product?.description || "Explore this product in our store.";
+    const category = product?.category ? `Category: ${product.category}.` : "";
+    const priceText = `Price: ${discountAmount > 0 ? `${discountedPrice.toFixed(2)} after discount` : `${effectivePrice.toFixed(2)}`}.`;
+    const originalPriceText = discountAmount > 0 ? `Original price: ${effectivePrice.toFixed(2)}.` : "";
+    const stockText = effectiveStock > 0 ? `Currently in stock with ${effectiveStock} available units.` : "Currently out of stock.";
+    const ratingText = product?.ratings ? `Rated ${Number(product.ratings).toFixed(1)} out of 5 by ${product.numOfReviews || 0} reviews.` : "";
+    const variantText = Array.isArray(product?.variants) && product.variants.length > 0
+      ? `Available variants: ${product.variants.map((variant) => variant.label || variant.sku || variant.size || variant.color || "Default").join(", ")}.`
+      : "";
+    const keywordsText = product?.keywords ? `Keywords: ${product.keywords}.` : "";
+
+    if (productName) parts.push(`${productName}.`);
+    if (productDescription) parts.push(productDescription);
+    if (category) parts.push(category);
+    if (priceText) parts.push(priceText);
+    if (originalPriceText) parts.push(originalPriceText);
+    if (stockText) parts.push(stockText);
+    if (ratingText) parts.push(ratingText);
+    if (variantText) parts.push(variantText);
+    if (keywordsText) parts.push(keywordsText);
+
+    return parts.join(" ");
+  }, [product, selectedVariant, effectivePrice, discountedPrice, discountAmount, effectiveStock]);
 
   const increase = () => {
     if (quantity >= effectiveStock) {
@@ -176,6 +205,13 @@ function ProductDetails() {
 
   return (
     <>
+      <Helmet>
+        <title>{`${product?.name || "Product"} - ${settings?.storeName || "Store"}`}</title>
+        <meta
+          name="description"
+          content={productDescriptionText}
+        />
+      </Helmet>
       <PageTitle title={`${product?.name} - ${t("productDetails.pageSuffix")}`} />
       <MetaTags
         title={`${product?.name} | ${product?.storeName || "Store"}`}
@@ -224,7 +260,7 @@ function ProductDetails() {
 
           <div className="product-info">
             <h2>{product.name}</h2>
-            <p className="product-description">{product.description}</p>
+            <p className="product-description">{productDescriptionText}</p>
             <div className="price-row">
               <span className="product-price">
                 {t("product.price")} : {discountAmount > 0 ? discountedPrice.toFixed(2) : effectivePrice.toFixed(2)}
