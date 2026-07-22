@@ -154,6 +154,7 @@ export const reqestPasswordReset = HandleAsyncError(async (req, res, next) => {
 
     } catch (error) {
 
+        console.error("📧 SEND EMAIL ERROR:", error); // ⬅️ زيد هذا السطر
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false });

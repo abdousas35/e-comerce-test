@@ -12,9 +12,9 @@ export const sendEmail = async(options) => {
         host: "smtp.gmail.com",
         port: 465,
         secure: true,
-        connectionTimeout: 5000,
-        greetingTimeout: 5000,
-        socketTimeout: 8000,
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 20000,
         auth: {
 
             user: process.env.SMTP_MAIL,
