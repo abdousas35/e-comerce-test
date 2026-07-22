@@ -204,10 +204,203 @@ const siteSettingsSchema = new mongoose.Schema(
     shippingZones: {
       type: [shippingZoneSchema],
       default: () => [
-        { state: "Tunis", cities: ["Tunis", "Carthage", "La Marsa"], rate: 7, estimatedDays: "1-2 business days" },
-        { state: "Ariana", cities: ["Ariana City", "Mnihla", "Raoued"], rate: 6, estimatedDays: "1-2 business days" },
-        { state: "Sousse", cities: ["Sousse City", "Hammam Sousse", "Akouda"], rate: 7, estimatedDays: "2-3 business days" },
-        { state: "Sfax", cities: ["Sfax City", "Sakiet Ezzit", "Agareb"], rate: 8, estimatedDays: "2-3 business days" },
+        {
+          state: "Tunis",
+          cities: [
+            "Bab El Bhar", "Bab Souika", "Carthage", "Cite El Khadra", "Djebel Jelloud",
+            "El Kabaria", "El Menzah", "El Omrane", "El Omrane Superieur", "El Ouardia",
+            "Ettahrir", "Ezzouhour", "Hraiiria", "La Goulette", "La Marsa",
+            "Le Bardo", "Le Kram", "Medina", "Sidi El Bechir", "Sidi Hassine", "Sijoumi",
+          ],
+          rate: 6,
+          estimatedDays: "1-2 business days",
+        },
+        {
+          state: "Ariana",
+          cities: ["Ariana City", "Ettadhamen", "Kalaat Andalous", "La Soukra", "Mnihla", "Raoued", "Sidi Thabet"],
+          rate: 6,
+          estimatedDays: "1-2 business days",
+        },
+        {
+          state: "Ben Arous",
+          cities: [
+            "Bou Mhel", "El Mourouj", "Ezzahra", "Fouchana", "Hammam Chatt", "Hammam Lif",
+            "Mhamdia", "Medina Jedida", "Megrine", "Mornag", "Rades", "Sidi Hassine",
+          ],
+          rate: 6,
+          estimatedDays: "1-2 business days",
+        },
+        {
+          state: "Manouba",
+          cities: ["Borj El Amri", "Djedeida", "Douar Hicher", "El Battan", "Manouba", "Mornaguia", "Oued Ellil", "Tebourba"],
+          rate: 6,
+          estimatedDays: "1-2 business days",
+        },
+        {
+          state: "Nabeul",
+          cities: [
+            "Beni Khalled", "Beni Khiar", "Bou Argoub", "Dar Chaabane El Fehri", "El Haouaria",
+            "El Mida", "Grombalia", "Hammam El Guezaz", "Hammamet", "Kelibia", "Korba",
+            "Menzel Bouzelfa", "Menzel Temime", "Nabeul", "Soliman", "Takelsa",
+          ],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Zaghouan",
+          cities: ["Bir Mchergua", "El Fahs", "En-Nadhour", "Ez-Zriba", "Saouaf", "Zaghouan"],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Bizerte",
+          cities: [
+            "Bizerte Nord", "Bizerte Sud", "El Alia", "Ghar El Melh", "Ghezala", "Jarzouna",
+            "Joumine", "Mateur", "Menzel Bourguiba", "Menzel Jemil", "Ras Jebel", "Sejnane", "Tinja", "Utique",
+          ],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Sousse",
+          cities: [
+            "Akouda", "Bouficha", "Enfidha", "Hammam Sousse", "Hergla", "Kalaa Kebira",
+            "Kalaa Sghira", "Kondar", "Msaken", "Sidi Bou Ali", "Sidi El Heni",
+            "Sousse Jawhara", "Sousse Medina", "Sousse Riadh", "Sousse Sidi Abdelhamid", "Zaouiet Ksiba Thrayet",
+          ],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Monastir",
+          cities: [
+            "Bekalta", "Bembla", "Beni Hassen", "Jemmal", "Ksar Hellal", "Ksibet El Mediouni",
+            "Moknine", "Monastir", "Ouerdanine", "Sahline", "Sayada Lamta Bou Hajar", "Teboulba", "Zeramdine",
+          ],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Mahdia",
+          cities: [
+            "Bou Merdes", "Chebba", "Chorbane", "El Jem", "Essouassi", "Hebira",
+            "Ksour Essef", "Mahdia", "Melloulech", "Ouled Chamekh", "Sidi Alouane",
+          ],
+          rate: 7,
+          estimatedDays: "2-3 business days",
+        },
+        {
+          state: "Beja",
+          cities: ["Amdoun", "Beja Nord", "Beja Sud", "Goubellat", "Medjez El Bab", "Nefza", "Teboursouk", "Testour", "Thibar"],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Jendouba",
+          cities: ["Ain Draham", "Balta Bou Aouane", "Bou Salem", "Fernana", "Ghar Dimaou", "Jendouba", "Jendouba Nord", "Oued Meliz", "Tabarka"],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Le Kef",
+          cities: [
+            "Dahmani", "Djerissa", "El Ksour", "Es-Sers", "Kalaat Khasba", "Kalaat Senan",
+            "Kef Est", "Kef Ouest", "Nebeur", "Sakiet Sidi Youssef", "Tajerouine",
+          ],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Siliana",
+          cities: [
+            "Bargou", "Bou Arada", "Bourouis", "El Aroussa", "El Krib", "Er-Rouhia",
+            "Gaafour", "Kesra", "Makthar", "Siliana Nord", "Siliana Sud",
+          ],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Kairouan",
+          cities: [
+            "Bouhajla", "Chebika", "Echrarda", "El Alaa", "El Ouslatia", "Haffouz",
+            "Hajeb El Ayoun", "Kairouan Nord", "Kairouan Sud", "Nasrallah", "Sbikha",
+          ],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Sfax",
+          cities: [
+            "Agareb", "Bir Ali Ben Khelifa", "El Amra", "El Hencha", "Ghraiba", "Jebiniana",
+            "Kerkennah", "Mahres", "Menzel Chaker", "Sakiet Eddaier", "Sakiet Ezzit",
+            "Sfax Ouest", "Sfax Sud", "Sfax Ville", "Skhira", "Tina",
+          ],
+          rate: 8,
+          estimatedDays: "2-4 business days",
+        },
+        {
+          state: "Kasserine",
+          cities: [
+            "Djedeliane", "El Ayoun", "Ezzouhour", "Feriana", "Foussana", "Hassi Ferid",
+            "Hidra", "Kasserine Nord", "Kasserine Sud", "Majel Bel Abbes", "Sbeitla", "Sbiba", "Thala",
+          ],
+          rate: 9,
+          estimatedDays: "3-5 business days",
+        },
+        {
+          state: "Sidi Bouzid",
+          cities: [
+            "Bir El Hafey", "Cebbala Ouled Askar", "Jilma", "Meknassy", "Menzel Bouzaiane",
+            "Mezzouna", "Ouled Haffouz", "Regueb", "Sidi Ali Ben Aoun", "Sidi Bouzid Est", "Sidi Bouzid Ouest", "Souk Jedid",
+          ],
+          rate: 9,
+          estimatedDays: "3-5 business days",
+        },
+        {
+          state: "Gafsa",
+          cities: [
+            "Belkhir", "El Guettar", "El Ksar", "Gafsa Nord", "Gafsa Sud", "Mdhila",
+            "Metlaoui", "Oum El Araies", "Redeyef", "Sidi Aich", "Sned",
+          ],
+          rate: 9,
+          estimatedDays: "3-5 business days",
+        },
+        {
+          state: "Gabes",
+          cities: [
+            "El Hamma", "Gabes Medina", "Gabes Ouest", "Gabes Sud", "Ghannouch", "Mareth",
+            "Matmata Ancienne", "Matmata Nouvelle", "Menzel El Habib", "Metouia",
+          ],
+          rate: 9,
+          estimatedDays: "3-5 business days",
+        },
+        {
+          state: "Medenine",
+          cities: [
+            "Ben Gardane", "Beni Khedache", "Djerba Ajim", "Djerba Houmt Souk", "Djerba Midoun",
+            "Medenine Nord", "Medenine Sud", "Sidi Makhlouf", "Zarzis",
+          ],
+          rate: 9,
+          estimatedDays: "3-5 business days",
+        },
+        {
+          state: "Tataouine",
+          cities: ["Bir Lahmar", "Dhehiba", "Ghomrassen", "Remada", "Smar", "Tataouine Nord", "Tataouine Sud"],
+          rate: 10,
+          estimatedDays: "4-6 business days",
+        },
+        {
+          state: "Kebili",
+          cities: ["Douz Nord", "Douz Sud", "Faouar", "Kebili Nord", "Kebili Sud", "Souk Lahad"],
+          rate: 10,
+          estimatedDays: "4-6 business days",
+        },
+        {
+          state: "Tozeur",
+          cities: ["Degache", "Hazoua", "Nefta", "Tameghza", "Tozeur"],
+          rate: 10,
+          estimatedDays: "4-6 business days",
+        },
       ],
     },
     codEnabled: {
