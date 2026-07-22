@@ -60,7 +60,7 @@
     font-size: 40px;;
   }
   .order-link{
-    color: var(--bg-secondary);
+    color: var(--primary-main);
   }
 
   @media (max-width: 768px) {

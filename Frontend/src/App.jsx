@@ -71,12 +71,12 @@ function App() {
     document.documentElement.style.setProperty("--surface-soft-color", settings?.surfaceSoftColor || "#F3F4F6");
     document.documentElement.style.setProperty("--navbar-bg", settings?.navbarBackground || "#0F172A");
     document.documentElement.style.setProperty("--footer-bg", settings?.footerBackground || "#111827");
-    document.documentElement.style.setProperty("--heading-color", settings?.headingColor || "#111827");
-    document.documentElement.style.setProperty("--body-text-color", settings?.bodyTextColor || "#374151");
-    document.documentElement.style.setProperty("--muted-text-color", settings?.mutedTextColor || "#6B7280");
+    document.documentElement.style.setProperty("--heading-color", settings?.headingColor || "#111827"); // Good contrast
+    document.documentElement.style.setProperty("--body-text-color", settings?.bodyTextColor || "#1F2937"); // Improved contrast
+    document.documentElement.style.setProperty("--muted-text-color", settings?.mutedTextColor || "#4B5563"); // Improved contrast
     document.documentElement.style.setProperty("--text-light", settings?.textLightColor || "#FFFFFF");
-    document.documentElement.style.setProperty("--text-primary", settings?.bodyTextColor || "#374151");
-    document.documentElement.style.setProperty("--text-secondary", settings?.mutedTextColor || "#6B7280");
+    document.documentElement.style.setProperty("--text-primary", settings?.bodyTextColor || "#1F2937"); // Improved contrast
+    document.documentElement.style.setProperty("--text-secondary", settings?.mutedTextColor || "#4B5563"); // Improved contrast
     document.documentElement.style.setProperty("--border-color", settings?.borderColor || "#D1D5DB");
     document.documentElement.style.setProperty("--success-color", settings?.successColor || "#22C55E");
     document.documentElement.style.setProperty("--warning-color", settings?.warningColor || "#F59E0B");

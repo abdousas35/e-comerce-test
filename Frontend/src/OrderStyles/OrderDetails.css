@@ -60,7 +60,7 @@
 }
 
 .status-tag.processing {
-  color: orange;
+  color: var(--warning-color);
   background: color-mix(in srgb, var(--warning-color) 20%, transparent);
 }
 
@@ -76,7 +76,7 @@
 }
 
 .status-tag.delivered {
-  color: green;
+  color: var(--success-color);
   background: color-mix(in srgb, var(--success-color) 20%, transparent);
 }
 

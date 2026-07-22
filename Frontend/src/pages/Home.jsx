@@ -52,7 +52,7 @@ function Home() {
       />
       <ImageSlider />
 
-      <div className="home-container">
+      <div className="home-container fade-in">
         <section className="home-intro-card">
           <p className="home-kicker">{settings?.tagline}</p>
           <h2 className="home-heading">{t("home.trendingNow")}</h2>

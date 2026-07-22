@@ -1,7 +1,6 @@
 .filter-section {
     padding: 20px;
     border-radius: 8px;
-    color: var(--bg-secondary);
     margin-top:120px;
   }
   
@@ -12,13 +11,13 @@
   .filter-heading{
     text-align: center;
     font-size: 25px;
-    color: var(--bg-secondary);
+    color: var(--heading-color);
   }
   
   .filter h4 {
     font-size: 16px;
     margin-bottom: 8px;
-    color: var(--bg-secondary);
+    color: var(--heading-color);
   }
   
   .filter select,
@@ -28,8 +27,8 @@
     margin: 5px 0;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    background-color: var(--bg-secondary);
-    color: var(--text-light);
+    background-color: var(--surface-color);
+    color: var(--body-text-color);
   }
   
   .filter input[type="range"] {

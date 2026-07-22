@@ -78,7 +78,7 @@ function Products() {
       {loading ? (
         <Loader />
       ) : (
-        <div className="products-layout">
+        <div className="products-layout fade-in">
           <div className="products-section">
             <div className="products-product-container">
               {Array.isArray(products) && products.length > 0 ? (

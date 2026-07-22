@@ -42,7 +42,7 @@
   
   .btn {
     padding: 10px;
-    background-color: var(--bg-secondary);
+    background-color: var(--primary-main);
     color: var(--text-light);
     border: none;
     border-radius: 4px;
@@ -50,7 +50,7 @@
   }
   
   .btn:hover {
-    background-color: var(--bg-primary);
+    background-color: var(--primary-dark);
   }
 
   @media (max-width: 450px) {

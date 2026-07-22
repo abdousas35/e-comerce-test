@@ -73,7 +73,7 @@
   text-align: center;
   border-radius: 6px;
   background: var(--primary-main);
-  color: var(--text-primary);
+  color: var(--text-light);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -82,7 +82,7 @@
 }
 
 .update-product-form .file-input-label {
-  color: var(--text-primary);
+  color: var(--text-light);
 }
 
 .file-input-label:hover {
@@ -128,7 +128,7 @@
 .update-product-submit-btn {
   width: 100%;
   background: var(--primary-main);
-  color: var(--text-primary);
+  color: var(--text-light);
   border: none;
   padding: 14px;
   border-radius: 5px;

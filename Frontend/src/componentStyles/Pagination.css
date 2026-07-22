@@ -14,7 +14,6 @@
   font-size: 1rem;
   font-weight: bold;
   color: var(--text-primary);
-  color:var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
@@ -29,7 +28,7 @@
 
 .pagination-btn.active {
   background-color: var(--primary-dark);
-  color: var(--text-primary);
+  color: var(--text-light);
   border-color: var(--primary-main);
   cursor: default;
   box-shadow: var(--shadow-sm);

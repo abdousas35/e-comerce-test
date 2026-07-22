@@ -217,7 +217,7 @@ function ProductDetails() {
       />
       <Navbar />
 
-      <div className="product-details-container">
+      <div className="product-details-container fade-in">
         <div className="product-detail-container">
           <div className="product-image-container">
             <img src={selectedImage} alt={product?.name || t("productDetails.productAlt")} className="product-detail-image" />
@@ -242,9 +242,7 @@ function ProductDetails() {
                 <span className="old-price">{effectivePrice.toFixed(2)}</span>
               )}
             </div>
-            {discountAmount > 0 && (
-              <div className="discount-tag">-{discountAmount.toFixed(2)} {t("productDetails.discount")}</div>
-            )}
+            {discountAmount > 0 && <div className="discount-tag">-{discountAmount.toFixed(2)}</div>}
 
             <div className="product-rating">
               <Rating value={product.ratings} disabled={true} />

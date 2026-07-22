@@ -90,6 +90,7 @@
     text-align: center;
     padding:30px;
     background-color: var(--body-text-color); 
+    color: var(--text-light);
   }
 
 .loading-message {

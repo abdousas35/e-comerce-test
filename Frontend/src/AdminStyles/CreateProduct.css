@@ -6,7 +6,6 @@
   box-sizing: border-box;
 }
 
-.procuct-form,
 .product-form {
   width: 100%;
   max-width: 400px;
@@ -71,7 +70,7 @@
   text-align: center;
   border-radius: 999px;
   background: var(--primary-main);
-  color: var(--text-primary);
+  color: var(--text-light);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -121,7 +120,7 @@
 .submit-btn {
   width: 100%;
   background: var(--primary-main);
-  color: var(--text-primary);
+  color: var(--text-light);
   border: none;
   padding: 14px;
   border-radius: 5px;
