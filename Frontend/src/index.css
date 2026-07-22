@@ -1,6 +1,6 @@
 :root { 
     
-    --primary-main: #6C5B7B; 
+    --primary-main: #5C4B6E; 
     --primary-dark: #4E4A59; 
     --primary-light: #F8B5B1; 
     --font-heading: 'Poppins', sans-serif;
@@ -14,17 +14,18 @@
     --footer-bg: #111827;
     
     --heading-color: #111827;
-    --body-text-color: #374151;
-    --muted-text-color: #6B7280;
-    --text-primary: #374151; 
-    --text-secondary: #6B7280; 
+    --body-text-color: #1F2937;
+    --muted-text-color: #4B5563;
+    --text-primary: #1F2937; 
+    --text-secondary: #4B5563; 
     --text-light: #FFFFFF; 
+    --text-dark: #111827;
     
     --border-color: #D1D5DB; 
-    --success-color: #22C55E;
-    --warning-color: #F59E0B;
-    --danger-color: #EF4444;
-    --info-color: #3B82F6;
+    --success-color: #15803D;
+    --warning-color: #B45309;
+    --danger-color: #B91C1C;
+    --info-color: #1D4ED8;
     
 
     --shadow-sm: 0 2px 8px color-mix(in srgb, var(--heading-color) 20%, transparent); 

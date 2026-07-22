@@ -35,7 +35,7 @@
   }
   
   .usersList-table th {
-    background-color: var(--bg-secondary);
+    background-color: var(--primary-main);
     color: var(--text-light);
   }
   
