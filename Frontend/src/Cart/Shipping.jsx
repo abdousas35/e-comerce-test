@@ -11,6 +11,33 @@ import { toast } from "react-toastify";
 import { saveShippingInfo } from "../features/cart/cartSlice";
 import { useNavigate } from "react-router-dom";
 
+const fallbackShippingZones = [
+  { state: "Tunis", cities: ["Bab El Bhar", "Bab Souika", "Carthage", "La Marsa", "Le Bardo"], rate: 6, estimatedDays: "1-2 business days" },
+  { state: "Ariana", cities: ["Ariana City", "Ettadhamen", "La Soukra", "Raoued"], rate: 6, estimatedDays: "1-2 business days" },
+  { state: "Ben Arous", cities: ["Bou Mhel", "El Mourouj", "Ezzahra", "Rades"], rate: 6, estimatedDays: "1-2 business days" },
+  { state: "Manouba", cities: ["Manouba", "Djedeida", "Douar Hicher", "Mornaguia"], rate: 6, estimatedDays: "1-2 business days" },
+  { state: "Nabeul", cities: ["Nabeul", "Hammamet", "Korba", "Kelibia"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Zaghouan", cities: ["Zaghouan", "El Fahs", "En-Nadhour", "Saouaf"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Bizerte", cities: ["Bizerte", "Mateur", "Menzel Bourguiba", "Utique"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Sousse", cities: ["Sousse", "Hammam Sousse", "Akouda", "Enfidha"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Monastir", cities: ["Monastir", "Ksar Hellal", "Moknine", "Teboulba"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Mahdia", cities: ["Mahdia", "Ksour Essef", "Chebba", "El Jem"], rate: 7, estimatedDays: "2-3 business days" },
+  { state: "Beja", cities: ["Beja", "Medjez El Bab", "Nefza", "Testour"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Jendouba", cities: ["Jendouba", "Tabarka", "Fernana", "Bou Salem"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Le Kef", cities: ["Le Kef", "Nebeur", "Tajerouine", "Kalaat Senan"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Siliana", cities: ["Siliana", "Kesra", "Makthar", "Bou Arada"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Kairouan", cities: ["Kairouan", "Haffouz", "Sbikha", "Nasrallah"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Sfax", cities: ["Sfax", "Agareb", "Mahres", "Skhira"], rate: 8, estimatedDays: "2-4 business days" },
+  { state: "Kasserine", cities: ["Kasserine", "Sbeitla", "Feriana", "Thala"], rate: 9, estimatedDays: "3-5 business days" },
+  { state: "Sidi Bouzid", cities: ["Sidi Bouzid", "Regueb", "Meknassy", "Jilma"], rate: 9, estimatedDays: "3-5 business days" },
+  { state: "Gafsa", cities: ["Gafsa", "Metlaoui", "Redeyef", "Sned"], rate: 9, estimatedDays: "3-5 business days" },
+  { state: "Gabes", cities: ["Gabes", "El Hamma", "Ghannouch", "Mareth"], rate: 9, estimatedDays: "3-5 business days" },
+  { state: "Medenine", cities: ["Medenine", "Ben Gardane", "Djerba", "Zarzis"], rate: 9, estimatedDays: "3-5 business days" },
+  { state: "Tataouine", cities: ["Tataouine", "Ghomrassen", "Remada", "Smar"], rate: 10, estimatedDays: "4-6 business days" },
+  { state: "Kebili", cities: ["Kebili", "Douz", "Faouar", "Souk Lahad"], rate: 10, estimatedDays: "4-6 business days" },
+  { state: "Tozeur", cities: ["Tozeur", "Nefta", "Hazoua", "Degache"], rate: 10, estimatedDays: "4-6 business days" },
+];
+
 function Shipping() {
   const { shippingInfo } = useSelector((state) => state.cart);
   const { settings } = useSelector((state) => state.settings);
@@ -28,7 +55,9 @@ function Shipping() {
   const [fullName, setFullName] = useState(shippingInfo.fullName || user?.name || "");
   const [email, setEmail] = useState(shippingInfo.email || user?.email || "");
 
-  const shippingZones = settings?.shippingZones || [];
+  const shippingZones = Array.isArray(settings?.shippingZones) && settings.shippingZones.length > 0
+    ? settings.shippingZones
+    : fallbackShippingZones;
   const statesAndCities = shippingZones.reduce((acc, zone) => {
     acc[zone.state] = zone.cities || [];
     return acc;
