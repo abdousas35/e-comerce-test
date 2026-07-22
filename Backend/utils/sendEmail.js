@@ -1,16 +1,18 @@
-import { Resend } from "resend";
+import brevo from "@getbrevo/brevo";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const apiInstance = new brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY);
 
 export const sendEmail = async (options) => {
-    if (!process.env.RESEND_API_KEY) {
-        throw new Error("Resend API key is not configured");
+    if (!process.env.BREVO_API_KEY) {
+        throw new Error("Brevo API key is not configured");
     }
 
-    await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: options.email,
-        subject: options.subject,
-        text: options.message,
-    });
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    sendSmtpEmail.sender = { email: process.env.SMTP_MAIL, name: "Your Store Name" };
+    sendSmtpEmail.to = [{ email: options.email }];
+    sendSmtpEmail.subject = options.subject;
+    sendSmtpEmail.textContent = options.message;
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
 };
