@@ -55,9 +55,28 @@ function Shipping() {
   const [fullName, setFullName] = useState(shippingInfo.fullName || user?.name || "");
   const [email, setEmail] = useState(shippingInfo.email || user?.email || "");
 
-  const shippingZones = Array.isArray(settings?.shippingZones) && settings.shippingZones.length > 0
-    ? settings.shippingZones
-    : fallbackShippingZones;
+  const shippingZones = React.useMemo(() => {
+    const mergedZones = new Map();
+
+    fallbackShippingZones.forEach((zone) => {
+      mergedZones.set(zone.state, { ...zone });
+    });
+
+    (Array.isArray(settings?.shippingZones) ? settings.shippingZones : []).forEach((zone) => {
+      if (!zone?.state) return;
+
+      const existingZone = mergedZones.get(zone.state) || {};
+      mergedZones.set(zone.state, {
+        state: zone.state,
+        cities: Array.isArray(zone.cities) && zone.cities.length > 0 ? zone.cities : existingZone.cities || [],
+        rate: Number(zone.rate) || existingZone.rate || 0,
+        estimatedDays: zone.estimatedDays || existingZone.estimatedDays || "2-4 business days",
+      });
+    });
+
+    return Array.from(mergedZones.values());
+  }, [settings?.shippingZones]);
+
   const statesAndCities = shippingZones.reduce((acc, zone) => {
     acc[zone.state] = zone.cities || [];
     return acc;
