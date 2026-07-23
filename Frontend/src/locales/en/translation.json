@@ -239,7 +239,14 @@
     "createFailed": "Order creation failed. Please try again.",
     "confirmFailed": "Order confirmation failed. Please try again.",
     "processing": "Your order is being processed. Please wait...",
-    "alreadyCreated": "This order has already been created"
+    "alreadyCreated": "This order has already been created",
+    "meta": {
+      "title": "Order Review - {{storeName}}",
+      "description": "Review your order summary, shipping details, and coupon options before confirming your purchase at {{storeName}}."
+    },
+    "tunisia": "Tunisia",
+    "creationError": "Order creation error:",
+    "paymentInstructions": "Payment Instructions"
   },
   "orders": {
     "pageTitle": "My Orders",

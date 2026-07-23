@@ -37,6 +37,7 @@ function OrderConfirm() {
   const [couponLoading, setCouponLoading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [idempotencyKey, setIdempotencyKey] = React.useState(() => generateIdempotencyKey());
+  const [instructionsAccepted, setInstructionsAccepted] = React.useState(false);
 
   const checkoutItems = quickBuyItem ? [quickBuyItem] : cartItems;
   const subtotal = checkoutItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -117,7 +118,7 @@ function OrderConfirm() {
           city: shippingInfo.selectedCity,
           state: shippingInfo.selectedState,
           pincode: shippingInfo.pincode,
-          country: shippingInfo.country || "Tunisia",
+          country: shippingInfo.country || t("orderConfirm.tunisia", "Tunisia"),
           phoneNumber: shippingInfo.phoneNumber,
         },
         orderItems: checkoutItems.map((item) => ({
@@ -155,7 +156,7 @@ function OrderConfirm() {
       dispatch(removeSuccess());
       navigate(`/order/${response.order._id}`);
     } catch (error) {
-      console.error("Order creation error:", error);
+      console.error(t("orderConfirm.creationError"), error);
       const errorMessage = error.message || t("orderConfirm.createFailed");
       toast.error(errorMessage, { position: "top-center", autoClose: 3000 });
     } finally {
@@ -166,10 +167,10 @@ function OrderConfirm() {
   return (
     <>
       <Helmet>
-        <title>{`Order Review - ${settings?.storeName || "Store"}`}</title>
+        <title>{t("orderConfirm.meta.title", { storeName: settings?.storeName || "Store" })}</title>
         <meta
           name="description"
-          content={`Review your order summary, shipping details, and coupon options before confirming your purchase at ${settings?.storeName || "this store"}.`}
+          content={t("orderConfirm.meta.description", { storeName: settings?.storeName || "Store" })}
         />
       </Helmet>
       {loading ? (
@@ -265,18 +266,26 @@ function OrderConfirm() {
 
             {settings?.codEnabled && settings.manualPaymentInstructions && (
               <div className="payment-instructions-box">
-                <h3 className="payment-instructions-title">Payment Instructions</h3>
+                <h3 className="payment-instructions-title">{t("orderConfirm.paymentInstructions")}</h3>
                 <p className="payment-instructions-text">{settings.manualPaymentInstructions}</p>
+                <label className="instructions-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={instructionsAccepted}
+                    onChange={(e) => setInstructionsAccepted(e.target.checked)}
+                  />
+                  {t("orderConfirm.acceptInstructions", "أوافق على شروط الدفع عند الاستلام")}
+                </label>
               </div>
             )}
 
             <button 
               className="proceed-button" 
               onClick={confirmOrder}
-              disabled={isSubmitting || loading}
-              style={{ opacity: isSubmitting || loading ? 0.6 : 1, cursor: isSubmitting || loading ? 'not-allowed' : 'pointer' }}
+              disabled={isSubmitting || loading || (settings?.codEnabled && !instructionsAccepted)}
+              style={{ opacity: isSubmitting || loading || (settings?.codEnabled && !instructionsAccepted) ? 0.6 : 1, cursor: isSubmitting || loading || (settings?.codEnabled && !instructionsAccepted) ? 'not-allowed' : 'pointer' }}
             >
-              {isSubmitting || loading ? "Processing..." : t("orderConfirm.confirmOrder")}
+              {isSubmitting || loading ? t("orderConfirm.processing") : t("orderConfirm.confirmOrder")}
             </button>
           </div>
 

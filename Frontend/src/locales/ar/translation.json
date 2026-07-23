@@ -239,7 +239,14 @@
     "createFailed": "فشل إنشاء الطلب. حاول مرة أخرى.",
     "confirmFailed": "فشل تأكيد الطلب. حاول مرة أخرى.",
     "processing": "جارٍ معالجة طلبك، يرجى الانتظار...",
-    "alreadyCreated": "تم إنشاء هذا الطلب مسبقًا"
+    "alreadyCreated": "تم إنشاء هذا الطلب مسبقًا",
+    "meta": {
+      "title": "مراجعة الطلب - {{storeName}}",
+      "description": "راجع ملخص طلبك وتفاصيل الشحن وخيارات القسيمة قبل تأكيد الشراء من {{storeName}}."
+    },
+    "tunisia": "تونس",
+    "creationError": "خطأ في إنشاء الطلب:",
+    "paymentInstructions": "تعليمات الدفع"
   },
   "orders": {
     "pageTitle": "طلباتي",

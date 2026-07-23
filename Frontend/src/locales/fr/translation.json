@@ -239,7 +239,14 @@
     "createFailed": "Echec de la creation de la commande. Veuillez reessayer.",
     "confirmFailed": "Echec de la confirmation de commande. Veuillez reessayer.",
     "processing": "Votre commande est en cours de traitement. Veuillez patienter...",
-    "alreadyCreated": "Cette commande a deja ete creee"
+    "alreadyCreated": "Cette commande a deja ete creee",
+    "meta": {
+      "title": "Examen de la commande - {{storeName}}",
+      "description": "Examinez le resume de votre commande, les details d'expedition et les options de coupon avant de confirmer votre achat sur {{storeName}}."
+    },
+    "tunisia": "Tunisie",
+    "creationError": "Erreur de création de commande:",
+    "paymentInstructions": "Instructions de paiement"
   },
   "orders": {
     "pageTitle": "Mes commandes",
