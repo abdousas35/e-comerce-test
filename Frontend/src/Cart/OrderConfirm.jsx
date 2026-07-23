@@ -263,6 +263,13 @@ function OrderConfirm() {
               </div>
             </div>
 
+            {settings?.codEnabled && settings.manualPaymentInstructions && (
+              <div className="payment-instructions-box">
+                <h3 className="payment-instructions-title">Payment Instructions</h3>
+                <p className="payment-instructions-text">{settings.manualPaymentInstructions}</p>
+              </div>
+            )}
+
             <button 
               className="proceed-button" 
               onClick={confirmOrder}

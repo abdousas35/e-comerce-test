@@ -107,6 +107,28 @@
     transform: scale(0.97);
 }
 
+.payment-instructions-box {
+    background-color: var(--surface-soft-color);
+    padding: 16px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid var(--border-color);
+}
+
+.payment-instructions-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+}
+
+.payment-instructions-text {
+    font-size: 0.95rem;
+    color: var(--body-text-color);
+    white-space: pre-wrap;
+    margin: 0;
+}
+
 @keyframes proceedGlow {
     0%, 100% {
         transform: translateY(0) scale(1);
