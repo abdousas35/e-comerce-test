@@ -1,3 +1,4 @@
+import "./instrument.js";
 import dotenv from "dotenv";
 dotenv.config();
 dotenv.config({ path: new URL("./config/config.env", import.meta.url) });
