@@ -31,7 +31,7 @@ const loginLimiter = rateLimit({
 
 const forgotPasswordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // ساعة
-  max: 3, // 3 محاولات فالساعة
+  max: 10, // 3 محاولات فالساعة
   message: {
     success: false,
     message: "Too many password reset attempts. Please try again later.",
