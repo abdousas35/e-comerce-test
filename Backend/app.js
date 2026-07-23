@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import express from "express";
 import product from "./routes/ProductsRoute.js";
 import errorHandelMiddleware from "./middleware/error.js";
@@ -44,6 +45,8 @@ app.use((req, res, next) => {
         message: `Route not found: ${req.method} ${req.originalUrl}`
     });
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 app.use(errorHandelMiddleware);
 
