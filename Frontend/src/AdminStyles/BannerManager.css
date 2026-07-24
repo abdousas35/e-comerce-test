@@ -144,8 +144,8 @@
 }
 
 .banner-preview {
-  width: 100%;
-  aspect-ratio: 4 / 3;
+  width: 200px;
+  height: 150px;
   object-fit: cover;
   border-radius: 1rem;
 }

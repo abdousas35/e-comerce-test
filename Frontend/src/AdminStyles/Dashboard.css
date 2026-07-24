@@ -17,7 +17,7 @@
   padding: 20px;
   overflow-y: auto;
   transition: transform 0.3s ease;
-  z-index: 1000;
+  z-index: 99;
 }
 
 .sidebar.closed {
