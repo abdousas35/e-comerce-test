@@ -1,9 +1,9 @@
 .image-slider-container {
   position: relative;
-  width: 100%;
+  width: 90%;
   height: 560px;
-  overflow: hidden;
-  margin-top: 5rem;
+  overflow: visible;
+  margin: 5rem auto 0;
   background: var(--navbar-bg);
 }
 
@@ -23,6 +23,12 @@
   height: 560px;
   object-fit: cover;
   filter: brightness(0.62);
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.slider-item:hover img {
+  transform: scale(1.02);
 }
 
 .slider-overlay {

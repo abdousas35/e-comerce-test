@@ -53,7 +53,7 @@
   .profile-image a {
     display: inline-block;
     padding: 0.75rem 2rem;
-    background-color: var(--border-color);
+    background-color: var(--primary-main);
     color: var(--text-light);
     border-radius: 30px;
     text-decoration: none;
@@ -100,7 +100,7 @@
   
   .profile-detail p {
     font-size: 1.1rem;
-    color: var(--bg-primary);
+    color: var(--body-text-color);
     margin: 0;
     padding-left: 1rem;
     font-weight: 500;
@@ -115,7 +115,7 @@
   
   .profile-buttons a {
     padding: 0.875rem 2rem;
-    background-color: var(--border-color);
+    background-color: var(--primary-main);
     color: var(--text-light);
     text-decoration: none;
     border-radius: 10px;

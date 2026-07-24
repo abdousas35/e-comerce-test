@@ -306,27 +306,25 @@
 .navbar-announcement-track {
   display: flex;
   align-items: center;
-  width: max-content;
+  flex-shrink: 0;
   white-space: nowrap;
   color: var(--text-light);
   font-size: 0.9rem;
   font-weight: 600;
-  animation: marqueeMove 22s linear infinite;
+  animation: marqueeMove 40s linear infinite;
   will-change: transform;
 }
 
 .navbar-announcement-message {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  padding-inline: 2rem 4rem;
+  display: inline-block;
+  padding: 0 2rem;
 }
 
 @keyframes marqueeMove {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
+  to {
     transform: translateX(-50%);
   }
 }

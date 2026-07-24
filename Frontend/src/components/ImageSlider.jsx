@@ -7,7 +7,8 @@ import "../componentStyles/ImageSlider.css";
 function ImageSlider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.dir() === "rtl";
   const { settings } = useSelector((state) => state.settings);
   const slides = settings?.heroSlides?.length ? settings.heroSlides : [];
 
@@ -44,7 +45,7 @@ function ImageSlider() {
         className="slider-images"
         ref={sliderRef}
         style={{
-          transform: `translateX(-${currentIndex * 100}%)`,
+          transform: `translateX(${isRtl ? "" : "-"}${currentIndex * 100}%)`,
           transition: "transform 0.8s ease-in-out",
         }}
         onTransitionEnd={handleTransitionEnd}

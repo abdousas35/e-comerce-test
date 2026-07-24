@@ -192,7 +192,7 @@ function AdminSettings() {
         <main className="admin-settings-main">
           <div className="admin-settings-header">
             <div>
-              <h1>Store Settings</h1>
+              <h1>{t("template.settings.mainTitle")}</h1>
               <p>{t("template.settings.headerDesc")}</p>
             </div>
             <button type="submit" form="admin-settings-form" className="admin-settings-save-btn" disabled={saving}>
@@ -206,7 +206,7 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <Storefront />
                 <div>
-                  <h2>Brand Identity</h2>
+                  <h2>{t("template.settings.brandIdentityTitle")}</h2>
                   <p>{t("template.settings.brandDesc")}</p>
                 </div>
               </div>
@@ -251,8 +251,8 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <Palette />
                 <div>
-                  <h2>Theme Colors</h2>
-                  <p>Keep the store look clean with only the main color controls.</p>
+                  <h2>{t("template.settings.themeColorsTitle")}</h2>
+                  <p>{t("template.settings.themeColorsDesc")}</p>
                 </div>
               </div>
 
@@ -289,7 +289,7 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <ContactMail />
                 <div>
-                  <h2>Contact and Social</h2>
+                  <h2>{t("template.settings.contactSocialTitle")}</h2>
                   <p>{t("template.settings.contactDesc")}</p>
                 </div>
               </div>
@@ -304,7 +304,7 @@ function AdminSettings() {
                   <input type="tel" inputMode="numeric" value={formData.contactPhone} onChange={(e) => handleFieldChange("contactPhone", e.target.value)} />
                 </label>
                 <label>
-                  WhatsApp phone
+                  {t("template.settings.whatsappPhone")}
                   <input type="tel" inputMode="numeric" value={formData.whatsappPhone} onChange={(e) => handleFieldChange("whatsappPhone", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
@@ -320,30 +320,30 @@ function AdminSettings() {
                   <textarea rows="2" value={formData.newsletterText} onChange={(e) => handleFieldChange("newsletterText", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  Announcement text
+                  {t("template.settings.announcementText")}
                   <input value={formData.announcementText} onChange={(e) => handleFieldChange("announcementText", e.target.value)} />
                 </label>
                 <label>
-                  Announcement bar
+                  {t("template.settings.announcementBar")}
                   <select value={String(formData.announcementEnabled)} onChange={(e) => handleFieldChange("announcementEnabled", e.target.value === "true")}>
-                    <option value="true">Enabled</option>
-                    <option value="false">Disabled</option>
+                    <option value="true">{t("template.common.enabled")}</option>
+                    <option value="false">{t("template.common.disabled")}</option>
                   </select>
                 </label>
                 <label>
-                  Instagram
+                  {t("template.settings.instagram")}
                   <input value={formData.socialLinks.instagram} onChange={(e) => handleSocialChange("instagram", e.target.value)} />
                 </label>
                 <label>
-                  Facebook
+                  {t("template.settings.facebook")}
                   <input value={formData.socialLinks.facebook} onChange={(e) => handleSocialChange("facebook", e.target.value)} />
                 </label>
                 <label>
-                  TikTok
+                  {t("template.settings.tiktok")}
                   <input value={formData.socialLinks.tiktok} onChange={(e) => handleSocialChange("tiktok", e.target.value)} />
                 </label>
                 <label>
-                  X
+                  {t("template.settings.x")}
                   <input value={formData.socialLinks.x} onChange={(e) => handleSocialChange("x", e.target.value)} />
                 </label>
               </div>
@@ -353,43 +353,43 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <Description />
                 <div>
-                  <h2>Shipping and Notifications</h2>
-                  <p>Control base shipping rules and order notification channels.</p>
+                  <h2>{t("template.settings.shippingNotificationsTitle")}</h2>
+                  <p>{t("template.settings.shippingNotificationsDesc")}</p>
                 </div>
               </div>
 
               <div className="admin-settings-grid">
                 <label>
-                  Free shipping threshold
+                  {t("template.settings.freeShippingThreshold")}
                   <input type="number" value={formData.freeShippingThreshold} onChange={(e) => handleFieldChange("freeShippingThreshold", Number(e.target.value) || 0)} />
                 </label>
                 <label>
-                  Default shipping rate
+                  {t("template.settings.defaultShippingRate")}
                   <input type="number" value={formData.defaultShippingRate} onChange={(e) => handleFieldChange("defaultShippingRate", Number(e.target.value) || 0)} />
                 </label>
                 <label className="admin-settings-full">
-                  Manual payment instructions
+                  {t("template.settings.manualPaymentInstructions")}
                   <textarea rows="3" value={formData.manualPaymentInstructions} onChange={(e) => handleFieldChange("manualPaymentInstructions", e.target.value)} />
                 </label>
                 <label>
-                  Cash on delivery
+                  {t("template.settings.cod")}
                   <select value={String(formData.codEnabled)} onChange={(e) => handleFieldChange("codEnabled", e.target.value === "true")}>
-                    <option value="true">Enabled</option>
-                    <option value="false">Disabled</option>
+                    <option value="true">{t("template.common.enabled")}</option>
+                    <option value="false">{t("template.common.disabled")}</option>
                   </select>
                 </label>
                 <label>
-                  Email notifications
+                  {t("template.settings.emailNotifications")}
                   <select value={String(formData.enableEmailNotifications)} onChange={(e) => handleFieldChange("enableEmailNotifications", e.target.value === "true")}>
-                    <option value="true">Enabled</option>
-                    <option value="false">Disabled</option>
+                    <option value="true">{t("template.common.enabled")}</option>
+                    <option value="false">{t("template.common.disabled")}</option>
                   </select>
                 </label>
                 <label>
-                  WhatsApp notifications
+                  {t("template.settings.whatsappNotifications")}
                   <select value={String(formData.enableWhatsAppNotifications)} onChange={(e) => handleFieldChange("enableWhatsAppNotifications", e.target.value === "true")}>
-                    <option value="true">Enabled</option>
-                    <option value="false">Disabled</option>
+                    <option value="true">{t("template.common.enabled")}</option>
+                    <option value="false">{t("template.common.disabled")}</option>
                   </select>
                 </label>
               </div>
@@ -399,34 +399,34 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <Description />
                 <div>
-                  <h2>About and Contact Pages</h2>
-                  <p>Control the main copy shown in the public About Us and Contact Us pages.</p>
+                  <h2>{t("template.settings.aboutContactTitle")}</h2>
+                  <p>{t("template.settings.aboutContactDesc")}</p>
                 </div>
               </div>
 
               <div className="admin-settings-grid">
                 <label className="admin-settings-full">
-                  About page heading
+                  {t("template.settings.aboutHeading")}
                   <input value={formData.aboutTitle} onChange={(e) => handleFieldChange("aboutTitle", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  About page intro
+                  {t("template.settings.aboutIntro")}
                   <textarea rows="3" value={formData.aboutIntro} onChange={(e) => handleFieldChange("aboutIntro", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  About page body
+                  {t("template.settings.aboutBody")}
                   <textarea rows="5" value={formData.aboutBody} onChange={(e) => handleFieldChange("aboutBody", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  Contact page heading
+                  {t("template.settings.contactHeading")}
                   <input value={formData.contactTitle} onChange={(e) => handleFieldChange("contactTitle", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  Contact page intro
+                  {t("template.settings.contactIntro")}
                   <textarea rows="3" value={formData.contactIntro} onChange={(e) => handleFieldChange("contactIntro", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
-                  Contact support hours
+                  {t("template.settings.contactSupport")}
                   <textarea rows="2" value={formData.contactSupportHours} onChange={(e) => handleFieldChange("contactSupportHours", e.target.value)} />
                 </label>
               </div>
