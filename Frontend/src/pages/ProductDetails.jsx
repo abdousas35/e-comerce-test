@@ -78,7 +78,7 @@ function ProductDetails() {
       return;
     }
 
-    dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId }));
+    dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId, product }));
   };
 
   const buildQuickBuyItem = () => {
@@ -322,6 +322,19 @@ function ProductDetails() {
           <p className="no-reviews">{t("productDetails.noReviews")}</p>
         )}
       </div>
+
+      <div className="sticky-action-bar">
+        <div className="sticky-price-info">
+            <span className="price-value">{discountAmount > 0 ? discountedPrice.toFixed(2) : effectivePrice.toFixed(2)} TND</span>
+            {discountAmount > 0 && (
+                <span className="old-price">{effectivePrice.toFixed(2)} TND</span>
+            )}
+        </div>
+        <div className="sticky-buttons">
+              <button className="add-to-cart-btn" onClick={addToCart}>{t("product.addToCart")}</button>
+              <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
+        </div>
+    </div>
 
       <Footer />
     </>

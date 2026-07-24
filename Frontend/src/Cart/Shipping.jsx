@@ -151,12 +151,12 @@ function Shipping() {
 
             <div className="shipping-form-group">
               <label htmlFor="pinCode">{t("cart.pinCode")}</label>
-              <input type="password" required name="pinCode" id="pinCode" placeholder={t("cart.enterPinCode")} value={pincode} onChange={(e) => setPincode(e.target.value)} />
+              <input type="text" inputMode="numeric" required name="pinCode" id="pinCode" placeholder={t("cart.enterPinCode")} value={pincode} onChange={(e) => setPincode(e.target.value)} />
             </div>
 
             <div className="shipping-form-group">
               <label htmlFor="phoneNumber">{t("cart.phoneNumber")}</label>
-              <input type="number" required name="phoneNumber" id="phoneNumber" placeholder={t("cart.enterPhoneNumber")} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+              <input type="tel" inputMode="numeric" pattern="[0-9]*" required name="phoneNumber" id="phoneNumber" placeholder={t("cart.enterPhoneNumber")} value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             </div>
           </div>
 

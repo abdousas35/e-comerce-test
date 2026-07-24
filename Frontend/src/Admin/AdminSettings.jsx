@@ -301,11 +301,11 @@ function AdminSettings() {
                 </label>
                 <label>
                   {t("template.settings.contactPhone")}
-                  <input value={formData.contactPhone} onChange={(e) => handleFieldChange("contactPhone", e.target.value)} />
+                  <input type="tel" inputMode="numeric" value={formData.contactPhone} onChange={(e) => handleFieldChange("contactPhone", e.target.value)} />
                 </label>
                 <label>
                   WhatsApp phone
-                  <input value={formData.whatsappPhone} onChange={(e) => handleFieldChange("whatsappPhone", e.target.value)} />
+                  <input type="tel" inputMode="numeric" value={formData.whatsappPhone} onChange={(e) => handleFieldChange("whatsappPhone", e.target.value)} />
                 </label>
                 <label className="admin-settings-full">
                   {t("template.settings.address")}

@@ -394,11 +394,77 @@
     }
 
     .stock-status,
-    .productCardSpan {
-      font-size: 0.88rem;
-      line-height: 1.4;
+        .productCardSpan {
+          font-size: 0.88rem;
+          line-height: 1.4;
+        }
+      }
+      .sticky-action-bar {
+        display: none; 
     }
-  }
+
+    @media (max-width: 768px) {
+        .sticky-action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: var(--surface-color);
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            gap: 1rem;
+        }
+
+        .sticky-price-info {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+        }
+
+        .sticky-price-info .price-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-main);
+        }
+
+        .sticky-price-info .old-price {
+          font-size: .9rem;
+          text-decoration: line-through;
+          color: var(--muted-text-color);
+      }
+
+        .sticky-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .sticky-buttons .add-to-cart-btn,
+        .sticky-buttons .buy-now-btn {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            min-width: unset;
+            width: auto;
+            margin: 0;
+            box-shadow: none;
+        }
+
+        .product-info .action-buttons,
+        .product-info .price-row,
+        .product-info .discount-tag {
+            display: none;
+        }
+
+        .reviews-container {
+            padding-bottom: 120px; 
+        }
+    }
+
+
   
   
   

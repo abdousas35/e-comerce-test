@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
+import { fetchUserCart, mergeLocalCart, clearCart } from "../cart/cartSlice";
 
 export const register = createAsyncThunk(
   "user/register",
-  async (userData, { rejectWithValue }) => {
+  async (userData, { dispatch, getState, rejectWithValue }) => {
     try {
       const config = {
         headers: { "Content-Type": "application/json" },
@@ -12,6 +13,14 @@ export const register = createAsyncThunk(
       };
 
       const { data } = await axios.post("/api/v1/register", userData, config);
+      
+      const { cart: { cartItems: localCart } } = getState();
+      if (localCart && localCart.length > 0) {
+        await dispatch(mergeLocalCart(localCart));
+      } else {
+        await dispatch(fetchUserCart());
+      }
+
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.user.registerFailed") });
@@ -21,13 +30,21 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "user/login",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password }, { dispatch, getState, rejectWithValue }) => {
     try {
       const config = {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       };
       const { data } = await axios.post("/api/v1/login", { email, password }, config);
+      
+      const { cart: { cartItems: localCart } } = getState();
+      if (localCart && localCart.length > 0) {
+        await dispatch(mergeLocalCart(localCart));
+      } else {
+        await dispatch(fetchUserCart());
+      }
+
       return data;
     } catch (error) {
       if (error.response?.status === 401) {
@@ -40,9 +57,12 @@ export const login = createAsyncThunk(
 
 export const loadUser = createAsyncThunk(
   "user/loadUser",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const { data } = await axios.get("/api/v1/profile", { withCredentials: true });
+      if (data.user) {
+        await dispatch(fetchUserCart());
+      }
       return data;
     } catch (error) {
       if (error.response?.status === 401) {
@@ -55,9 +75,10 @@ export const loadUser = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   "user/logout",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const { data } = await axios.post("/api/v1/logout", {}, { withCredentials: true });
+      dispatch(clearCart());
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.user.logoutFailed") });

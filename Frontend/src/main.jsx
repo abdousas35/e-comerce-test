@@ -8,6 +8,7 @@ import "./i18n";
 import App from "./App.jsx";
 import { store } from "./app/store";
 import { CONFIG } from "../src/config/config.js";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL || "";
 axios.defaults.withCredentials = true;
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <HelmetProvider>
       <BrowserRouter>
-        <App />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </BrowserRouter>
     </HelmetProvider>
   </Provider>
