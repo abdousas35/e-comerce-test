@@ -144,8 +144,8 @@
 }
 
 .banner-preview {
-  width: 200px;
-  height: 150px;
+  width: 150px;
+  height: 100px;
   object-fit: cover;
   border-radius: 1rem;
 }
