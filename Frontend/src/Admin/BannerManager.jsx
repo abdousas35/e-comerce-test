@@ -149,7 +149,11 @@ function BannerManager() {
                   </label>
                 </div>
 
-                {slide.image ? <img src={slide.image} alt={`Slide ${index + 1}`} className="banner-preview" /> : null}
+                {slide.image ? (
+                  <div className="banner-preview-wrapper">
+                    <img src={slide.image} alt={`Slide ${index + 1}`} className="banner-preview-image" />
+                  </div>
+                ) : null}
 
                 <label>
                   {t("template.banners.title")}
