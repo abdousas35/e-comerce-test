@@ -2,7 +2,6 @@
   min-height: 100vh;
   display: flex;
   background: var(--bg-secondary);
-  padding-top: 5rem;
 }
 
 .banner-manager-main {
