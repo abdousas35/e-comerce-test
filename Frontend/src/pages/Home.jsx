@@ -59,7 +59,6 @@ function Home() {
           <p className="home-supporting-copy">{settings?.heroSubtitle || settings?.tagline}</p>
         </section>
 
-        <h2 className="home-heading">{t("home.trendingNow")}</h2>
         <div className="home-product-container">
           {loading && <p>{t("home.loadingProducts")}</p>}
           {error && <p>{t("home.failedLoadProducts")}</p>}
