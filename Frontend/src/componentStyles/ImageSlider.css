@@ -27,7 +27,7 @@
   transition: transform 0.3s ease;
   margin: 0 auto;
   display: block;
-  margin-top: 2rem;
+  margin-top: 200px;
 }
 
 .slider-item:hover img {
