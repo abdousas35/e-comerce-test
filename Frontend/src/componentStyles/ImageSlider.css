@@ -20,7 +20,6 @@
 
 .slider-item img {
   width: 100%;
-  max-width: 1500px;
   height: 400px;
   object-fit: contain;
   border-radius: 0.5rem;
