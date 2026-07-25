@@ -22,7 +22,7 @@ function BannerManager() {
   const { t } = useTranslation();
   const { settings, loading, saving, error } = useSelector((state) => state.settings);
   const [slides, setSlides] = useState([
-    { image: "", title: "", subtitle: "", ctaLabel: "", ctaLink: "/products" },
+    { image: "" },
   ]);
 
   useEffect(() => {
@@ -31,7 +31,8 @@ function BannerManager() {
 
   useEffect(() => {
     if (settings?.heroSlides?.length) {
-      setSlides(settings.heroSlides);
+      const imageOnlySlides = settings.heroSlides.map(s => ({ image: s.image }));
+      setSlides(imageOnlySlides);
     }
   }, [settings]);
 
@@ -56,14 +57,14 @@ function BannerManager() {
   const addSlide = () => {
     setSlides((prev) => [
       ...prev,
-      { image: "", title: "", subtitle: "", ctaLabel: "", ctaLink: "/products" },
+      { image: "" },
     ]);
   };
 
   const removeSlide = (index) => {
     setSlides((prev) => {
       if (prev.length === 1) {
-        return [{ image: "", title: "", subtitle: "", ctaLabel: "", ctaLink: "/products" }];
+        return [{ image: "" }];
       }
 
       return prev.filter((_, slideIndex) => slideIndex !== index);
@@ -72,7 +73,7 @@ function BannerManager() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const heroSlides = slides.filter((slide) => slide.image || slide.title || slide.subtitle || slide.ctaLabel);
+    const heroSlides = slides.filter((slide) => slide.image);
 
     dispatch(updateSiteSettings({ heroSlides }))
       .unwrap()
@@ -154,27 +155,6 @@ function BannerManager() {
                     <img src={slide.image} alt={`Slide ${index + 1}`} className="banner-preview-image" />
                   </div>
                 ) : null}
-
-                <label>
-                  {t("template.banners.title")}
-                  <input value={slide.title} onChange={(e) => handleSlideChange(index, "title", e.target.value)} />
-                </label>
-
-                <label>
-                  {t("template.banners.subtitle")}
-                  <textarea rows="3" value={slide.subtitle} onChange={(e) => handleSlideChange(index, "subtitle", e.target.value)} />
-                </label>
-
-                <div className="banner-inline-fields">
-                  <label>
-                    {t("template.banners.ctaLabel")}
-                    <input value={slide.ctaLabel} onChange={(e) => handleSlideChange(index, "ctaLabel", e.target.value)} />
-                  </label>
-                  <label>
-                    {t("template.banners.ctaLink")}
-                    <input value={slide.ctaLink} onChange={(e) => handleSlideChange(index, "ctaLink", e.target.value)} />
-                  </label>
-                </div>
               </section>
             ))}
           </form>

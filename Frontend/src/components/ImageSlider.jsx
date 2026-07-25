@@ -53,38 +53,14 @@ function ImageSlider() {
         {slides.map((slide, index) => (
           <div className="slider-item" key={index}>
             <img src={slide.image || settings?.heroImage} alt={slide.title || t("imageSlider.slideAlt", { index: index + 1 })} />
-            <div className="slider-overlay">
-              <p className="slider-eyebrow">{settings?.tagline}</p>
-              <h1>{slide.title || settings?.heroTitle}</h1>
-              <p>{slide.subtitle || settings?.heroSubtitle}</p>
-              <div className="slider-actions">
-                <Link to={slide.ctaLink || "/products"} className="slider-primary-btn">
-                  {slide.ctaLabel || "Explore now"}
-                </Link>
-                <Link to="/products" className="slider-secondary-btn">
-                  {t("navbar.products")}
-                </Link>
-              </div>
-            </div>
+
           </div>
         ))}
 
         {slides.length > 0 ? (
           <div className="slider-item">
             <img src={slides[0].image || settings?.heroImage} alt={t("imageSlider.slideCloneAlt")} />
-            <div className="slider-overlay">
-              <p className="slider-eyebrow">{settings?.tagline}</p>
-              <h1>{slides[0].title || settings?.heroTitle}</h1>
-              <p>{slides[0].subtitle || settings?.heroSubtitle}</p>
-              <div className="slider-actions">
-                <Link to={slides[0].ctaLink || "/products"} className="slider-primary-btn">
-                  {slides[0].ctaLabel || "Explore now"}
-                </Link>
-                <Link to="/products" className="slider-secondary-btn">
-                  {t("navbar.products")}
-                </Link>
-              </div>
-            </div>
+
           </div>
         ) : null}
       </div>
