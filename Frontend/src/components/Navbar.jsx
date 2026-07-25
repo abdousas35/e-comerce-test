@@ -14,7 +14,7 @@ import { logout, removeSuccess } from "../features/user/userSlice";
 import { toast } from "react-toastify";
 import { CONFIG } from "../config/config";
 
-const ANNOUNCEMENT_REPEAT_COUNT = 10;
+const ANNOUNCEMENT_REPEAT_COUNT = 3;
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -76,8 +76,7 @@ function Navbar() {
     return () => window.removeEventListener("resize", closeOnDesktop);
   }, []);
 
-  // يحسب ارتفاع النافبار الحقيقي (ديناميكي) ويحطو فـ CSS variable
-  // باش أي عنصر جاي بعدو (body) يعرف يعطي padding-top صحيح
+
   useEffect(() => {
     const setNavHeight = () => {
       if (navbarRef.current) {
