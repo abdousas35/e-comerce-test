@@ -14,6 +14,8 @@ import { logout, removeSuccess } from "../features/user/userSlice";
 import { toast } from "react-toastify";
 import { CONFIG } from "../config/config";
 
+const ANNOUNCEMENT_REPEAT_COUNT = 10;
+
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -134,6 +136,8 @@ function Navbar() {
     }
   };
 
+  const announcementRepeats = Array.from({ length: ANNOUNCEMENT_REPEAT_COUNT });
+
   return (
     <nav className="navbar" ref={navbarRef}>
       <div className="navbar-shell">
@@ -248,12 +252,16 @@ function Navbar() {
       {isHomeRoute && settings?.announcementEnabled && settings?.announcementText ? (
         <div className="navbar-announcement-bar" aria-label={t("navbar.storeAnnouncement")}>
           <div className="navbar-announcement-track">
-            <div className="navbar-announcement-message">
-              <span>{settings.announcementText}</span>
-            </div>
-            <div className="navbar-announcement-message" aria-hidden="true">
-              <span>{settings.announcementText}</span>
-            </div>
+            {announcementRepeats.map((_, index) => (
+              <div className="navbar-announcement-message" key={`announcement-a-${index}`}>
+                <span>{settings.announcementText}</span>
+              </div>
+            ))}
+            {announcementRepeats.map((_, index) => (
+              <div className="navbar-announcement-message" key={`announcement-b-${index}`} aria-hidden="true">
+                <span>{settings.announcementText}</span>
+              </div>
+            ))}
           </div>
         </div>
       ) : null}
