@@ -10,23 +10,22 @@
 .slider-images {
   display: flex;
   transition: transform 1s ease;
+  height: 100%;
 }
 
 .slider-item {
   min-width: 100%;
   height: 100%;
   position: relative;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .slider-item img {
   width: 100%;
-  height: 400px;
-  object-fit: contain;
-  border-radius: 20px;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease;
-  margin: 0 auto;
-  display: block;
-  margin-top: 10%;
 }
 
 .slider-item:hover img {
@@ -136,10 +135,6 @@
     height: 270px;
   }
 
-  .slider-item img {
-    height: 270px;
-  }
-
   .slider-overlay {
     padding: 2.5rem 1.5rem;
   }
@@ -151,10 +146,6 @@
 
 @media (max-width: 568px) {
   .image-slider-container {
-    height: 240px;
-  }
-
-  .slider-item img {
     height: 240px;
   }
 
@@ -177,10 +168,6 @@
   .image-slider-container {
     height: 230px;
     margin-top: 4.5rem;
-  }
-
-  .slider-item img {
-    height: 230px;
   }
 
   .slider-dots {
