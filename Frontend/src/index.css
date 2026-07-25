@@ -31,6 +31,8 @@
 
     --shadow-sm: 0 2px 8px color-mix(in srgb, var(--heading-color) 20%, transparent); 
     --shadow-md: 0 4px 6px -1px color-mix(in srgb, var(--heading-color) 15%, transparent); 
+
+    --navbar-height: 88px;
 }
 *{
     margin:0;
@@ -44,6 +46,8 @@ body {
     color: var(--body-text-color);
     min-height: 100vh;
     line-height: 1.5;
+    padding-top: var(--navbar-height);
+    transition: padding-top 0.15s ease;
 }
 
 ::selection {

@@ -20,6 +20,7 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const profileMenuRef = useRef(null);
   const menuRef = useRef(null);
+  const navbarRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -73,17 +74,28 @@ function Navbar() {
     return () => window.removeEventListener("resize", closeOnDesktop);
   }, []);
 
+  // يحسب ارتفاع النافبار الحقيقي (ديناميكي) ويحطو فـ CSS variable
+  // باش أي عنصر جاي بعدو (body) يعرف يعطي padding-top صحيح
   useEffect(() => {
-    if (isHomeRoute) {
-      document.body.style.paddingTop = "0";
-    } else {
-      document.body.style.paddingTop = isAdminRoute ? "88px" : "136px";
-    }
+    const setNavHeight = () => {
+      if (navbarRef.current) {
+        const height = navbarRef.current.offsetHeight;
+        document.documentElement.style.setProperty("--navbar-height", `${height}px`);
+      }
+    };
+
+    setNavHeight();
+
+    const resizeObserver = new ResizeObserver(setNavHeight);
+    if (navbarRef.current) resizeObserver.observe(navbarRef.current);
+
+    window.addEventListener("resize", setNavHeight);
 
     return () => {
-      document.body.style.paddingTop = "";
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", setNavHeight);
     };
-  }, [isAdminRoute, isHomeRoute]);
+  }, [isAdminRoute, isMenuOpen, isHomeRoute, settings?.announcementEnabled, settings?.announcementText]);
 
   const closeMenus = () => {
     setIsMenuOpen(false);
@@ -123,7 +135,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" ref={navbarRef}>
       <div className="navbar-shell">
         <div className="navbar-top-row">
           <div className="navbar-logo">
