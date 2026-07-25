@@ -12,6 +12,10 @@ function ImageSlider() {
   const { settings } = useSelector((state) => state.settings);
   const slides = settings?.heroSlides?.length ? settings.heroSlides : [];
 
+  const touchStartX = useRef(null);
+  const touchDeltaX = useRef(0);
+  const isSwiping = useRef(false);
+
   useEffect(() => {
     if (slides.length <= 1) return undefined;
 
@@ -39,6 +43,43 @@ function ImageSlider() {
     }
   };
 
+  const goNext = () => {
+    if (slides.length <= 1) return;
+    setCurrentIndex((prev) => prev + 1);
+  };
+
+  const goPrev = () => {
+    if (slides.length <= 1) return;
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const handleTouchStart = (e) => {
+    if (slides.length <= 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+    isSwiping.current = true;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isSwiping.current || touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping.current) return;
+    isSwiping.current = false;
+
+    const SWIPE_THRESHOLD = 50;
+    if (touchDeltaX.current <= -SWIPE_THRESHOLD) {
+      goNext();
+    } else if (touchDeltaX.current >= SWIPE_THRESHOLD) {
+      goPrev();
+    }
+
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  };
+
   return (
     <div className="image-slider-container">
       <div
@@ -49,18 +90,27 @@ function ImageSlider() {
           transition: "transform 0.8s ease-in-out",
         }}
         onTransitionEnd={handleTransitionEnd}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {slides.map((slide, index) => (
           <div className="slider-item" key={index}>
-            <img src={slide.image || settings?.heroImage} alt={slide.title || t("imageSlider.slideAlt", { index: index + 1 })} />
-
+            <img
+              src={slide.image || settings?.heroImage}
+              alt={slide.title || t("imageSlider.slideAlt", { index: index + 1 })}
+              draggable={false}
+            />
           </div>
         ))}
 
         {slides.length > 0 ? (
           <div className="slider-item">
-            <img src={slides[0].image || settings?.heroImage} alt={t("imageSlider.slideCloneAlt")} />
-
+            <img
+              src={slides[0].image || settings?.heroImage}
+              alt={t("imageSlider.slideCloneAlt")}
+              draggable={false}
+            />
           </div>
         ) : null}
       </div>
