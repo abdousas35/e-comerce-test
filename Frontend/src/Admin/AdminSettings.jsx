@@ -475,96 +475,17 @@ function AdminSettings() {
                     <div className="theme-card-swatch-row">
                       <span style={{ background: preset.primaryColor }} />
                       <span style={{ background: preset.secondaryColor }} />
-                      <span style={{ background: preset.accentColor }} />
+                      <span style={{ background: preset.navbarBackground }} />
                     </div>
-                    <h3>{preset.storeName}</h3>
-                    <p>{preset.tagline}</p>
+                    <div className="theme-card-body">
+                      <h3>{preset.storeName}</h3>
+                      <p>{preset.tagline}</p>
+                    </div>
+                    {formData.themePreset === key && (
+                      <span className="theme-card-active-badge">✓ Active</span>
+                    )}
                   </button>
                 ))}
-              </div>
-
-              <div className="admin-settings-color-grid">
-                <label>
-                  {t("template.settings.primaryColor")}
-                  <input type="color" value={formData.primaryColor} onChange={(e) => handleFieldChange("primaryColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.secondaryColor")}
-                  <input type="color" value={formData.secondaryColor} onChange={(e) => handleFieldChange("secondaryColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.accentColor")}
-                  <input type="color" value={formData.accentColor} onChange={(e) => handleFieldChange("accentColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.navbarBackground")}
-                  <input type="color" value={formData.navbarBackground} onChange={(e) => handleFieldChange("navbarBackground", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.footerBackground")}
-                  <input type="color" value={formData.footerBackground} onChange={(e) => handleFieldChange("footerBackground", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.bgPrimary")}
-                  <input type="color" value={formData.bgPrimary} onChange={(e) => handleFieldChange("bgPrimary", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.bgSecondary")}
-                  <input type="color" value={formData.bgSecondary} onChange={(e) => handleFieldChange("bgSecondary", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.surfaceColor")}
-                  <input type="color" value={formData.surfaceColor} onChange={(e) => handleFieldChange("surfaceColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.surfaceSoftColor")}
-                  <input type="color" value={formData.surfaceSoftColor} onChange={(e) => handleFieldChange("surfaceSoftColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.headingColor")}
-                  <input type="color" value={formData.headingColor} onChange={(e) => handleFieldChange("headingColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.bodyTextColor")}
-                  <input type="color" value={formData.bodyTextColor} onChange={(e) => handleFieldChange("bodyTextColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.mutedTextColor")}
-                  <input type="color" value={formData.mutedTextColor} onChange={(e) => handleFieldChange("mutedTextColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.textLightColor")}
-                  <input type="color" value={formData.textLightColor} onChange={(e) => handleFieldChange("textLightColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.borderColor")}
-                  <input type="color" value={formData.borderColor} onChange={(e) => handleFieldChange("borderColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.successColor")}
-                  <input type="color" value={formData.successColor} onChange={(e) => handleFieldChange("successColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.warningColor")}
-                  <input type="color" value={formData.warningColor} onChange={(e) => handleFieldChange("warningColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.dangerColor")}
-                  <input type="color" value={formData.dangerColor} onChange={(e) => handleFieldChange("dangerColor", e.target.value)} />
-                </label>
-                <label>
-                  {t("template.settings.infoColor")}
-                  <input type="color" value={formData.infoColor} onChange={(e) => handleFieldChange("infoColor", e.target.value)} />
-                </label>
-              </div>
-
-              <div className="admin-settings-preview">
-                <span style={{ background: formData.primaryColor }} />
-                <span style={{ background: formData.secondaryColor }} />
-                <span style={{ background: formData.accentColor }} />
-                <span style={{ background: formData.navbarBackground }} />
-                <span style={{ background: formData.surfaceColor }} />
-                <span style={{ background: formData.bgPrimary }} />
               </div>
             </section>
 
