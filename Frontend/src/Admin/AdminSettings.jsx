@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Palette, Storefront, ContactMail, Save, Description } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -64,7 +64,6 @@ function AdminSettings() {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [activePreset, setActivePreset] = useState("");
 
   useEffect(() => {
     dispatch(fetchSiteSettings());
@@ -126,7 +125,6 @@ function AdminSettings() {
         },
       });
       setIsDirty(false);
-      setActivePreset(settings.themePreset || "");
     }
   }, [settings]);
 
@@ -147,6 +145,21 @@ function AdminSettings() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
+
+  // Active preset is derived from the actual applied colors, not from the
+  // stored `themePreset` string. This guarantees the highlighted card always
+  // matches what's really on screen, even if `themePreset` in the DB is stale
+  // or was saved before this logic existed.
+  const activePreset = useMemo(() => {
+    if (!formData) return "";
+    const match = Object.entries(demoPresets).find(
+      ([, preset]) =>
+        preset.primaryColor === formData.primaryColor &&
+        preset.secondaryColor === formData.secondaryColor &&
+        preset.navbarBackground === formData.navbarBackground
+    );
+    return match ? match[0] : "";
+  }, [formData]);
 
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -230,7 +243,6 @@ function AdminSettings() {
       dangerColor: preset.dangerColor || prev.dangerColor,
       infoColor: preset.infoColor || prev.infoColor,
     }));
-    setActivePreset(presetKey);
     setIsDirty(true);
   };
 
