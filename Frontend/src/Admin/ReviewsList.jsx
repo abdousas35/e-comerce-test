@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { fetchAdminProducts, fetchProductReviews, deleteReview } from "../features/admin/adminSlice";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
+import GoToDashboard from "../components/GoToDashboard";
 
 function ReviewsList() {
   const { products, loading, reviews } = useSelector((state) => state.admin);
@@ -67,6 +68,7 @@ function ReviewsList() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("admin.reviews.allReviews")} />
 
       <div className="reviews-list-container">

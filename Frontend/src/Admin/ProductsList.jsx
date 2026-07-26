@@ -9,6 +9,7 @@ import { fetchAdminProducts, removeErrors, deleteProduct, importProductsCsv } fr
 import { Link } from "react-router-dom";
 import { Edit, Delete } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import GoToDashboard from "../components/GoToDashboard";
 
 function ProductsList() {
   const dispatch = useDispatch();
@@ -70,15 +71,11 @@ function ProductsList() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("admin.products.pageTitle")} />
 
       <div className="product-list">
         <h1 className="product-list-title">{t("admin.products.allProducts")}</h1>
-        <div className="file-input-wrapper" style={{ marginBottom: "1rem" }}>
-          <input type="file" id="csv-import" accept=".csv" onChange={handleCsvImport} />
-          <label htmlFor="csv-import" className="file-input-label">Import CSV products</label>
-          {csvFileName ? <p style={{ marginTop: "0.6rem" }}>{csvFileName}</p> : null}
-        </div>
 
         {loading ? (
           <Loader />

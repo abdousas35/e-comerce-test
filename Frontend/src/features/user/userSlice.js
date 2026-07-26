@@ -154,6 +154,30 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const fetchWishlist = createAsyncThunk(
+  "user/fetchWishlist",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/wishlist", { withCredentials: true });
+      return data.wishlist;
+    } catch (error) {
+      return rejectWithValue({ message: resolveApiMessage(error, "api.user.wishlistFailed") });
+    }
+  }
+);
+
+export const toggleWishlist = createAsyncThunk(
+  "user/toggleWishlist",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`/api/v1/wishlist/${productId}`, {}, { withCredentials: true });
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: resolveApiMessage(error, "api.user.wishlistFailed") });
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -163,6 +187,8 @@ const userSlice = createSlice({
     success: false,
     isAuthenticated: false,
     message: null,
+    wishlist: [],
+    wishlistLoading: false,
   },
   reducers: {
     removeErrors: (state) => {
@@ -288,9 +314,19 @@ const userSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || action.payload || tMessage("api.user.resetPasswordFailed");
-      });
+      })
+      .addCase(fetchWishlist.fulfilled, (state, action) => {
+        state.wishlist = action.payload || [];
+      })
+      .addCase(toggleWishlist.pending, (state) => { state.wishlistLoading = true; })
+      .addCase(toggleWishlist.fulfilled, (state, action) => {
+        state.wishlistLoading = false;
+        state.wishlist = action.payload.wishlist || [];
+      })
+      .addCase(toggleWishlist.rejected, (state) => { state.wishlistLoading = false; });
   },
 });
 
 export const { removeErrors, removeSuccess, removeMessage } = userSlice.actions;
 export default userSlice.reducer;
+export { fetchWishlist, toggleWishlist };

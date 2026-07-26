@@ -181,7 +181,20 @@
     "selectVariant": "Please select an option",
     "variant": "Option",
     "reviewLoginPrompt": "Create an account to write a review",
-    "login": "Log in"
+    "relatedProducts": "Related Products"
+  },
+  "wishlist": {
+    "pageTitle": "My Wishlist",
+    "title": "My Wishlist",
+    "empty": "Your wishlist is empty",
+    "add": "Add to wishlist",
+    "remove": "Remove"
+  },
+    "pageTitle": "My Wishlist",
+    "title": "My Wishlist",
+    "empty": "Your wishlist is empty",
+    "add": "Add to wishlist",
+    "remove": "Remove"
   },
   "cart": {
     "pageTitle": "Your Cart",
@@ -328,7 +341,9 @@
       "removeVariant": "Remove option",
       "addVariant": "Add option",
       "importSuccess": "Products imported successfully",
-      "importFailed": "Unable to import the products file"
+      "importFailed": "Unable to import the products file",
+      "imageRequired": "At least one image is required.",
+      "duplicateProduct": "A product with this name already exists."
     },
     "users": {
       "section": "Users",
@@ -416,7 +431,12 @@
       "outOfStock": "Out of Stock",
       "latestProducts": "Latest Products",
       "recentOrders": "Recent Orders",
-      "order": "Order"
+      "order": "Order",
+      "lowStockProducts": "Low Stock Products",
+      "productName": "Product Name",
+      "stock": "Stock",
+      "lowStockThreshold": "Low Stock Threshold",
+      "noLowStockProducts": "No low stock products"
     },
     "settings": {
       "pageTitle": "Admin Settings",
@@ -563,7 +583,8 @@
     "products": {
       "loadFailed": "Failed to load products. Please try again.",
       "detailsFailed": "Failed to load product details. Please try again.",
-      "reviewFailed": "Failed to submit review. Please try again."
+      "reviewFailed": "Failed to submit review. Please try again.",
+      "lowStockThreshold": "Low Stock Threshold"
     },
     "orders": {
       "createFailed": "Failed to create order. Please try again.",

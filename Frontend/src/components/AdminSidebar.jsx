@@ -12,7 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-function AdminSidebar() {
+function AdminSidebar({ lowStockCount }) {
   const { t } = useTranslation();
 
   return (
@@ -26,6 +26,7 @@ function AdminSidebar() {
           <h3>{t("template.sidebar.products")}</h3>
           <Link to="/admin/products">
             <Inventory /> {t("template.sidebar.allProducts")}
+            {lowStockCount > 0 && <span className="badge">{lowStockCount}</span>}
           </Link>
           <Link to="/admin/create/product">
             <Inventory /> {t("template.sidebar.createProduct")}

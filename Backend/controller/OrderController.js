@@ -5,8 +5,11 @@ import SiteSettings from "../models/SiteSettingsModel.js";
 import HandelError from "../utils/handelError.js";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import { sendOrderNotifications } from "../utils/orderNotifications.js";
+import { sendLowStockAlertEmail } from "../utils/lowStockAlert.js";
+import { logAdminAction } from "../utils/adminLog.js";
 
 const ORDER_STATUSES = ["Pending", "Confirmed", "Processing", "Shipped", "Delivered", "Cancelled"];
+
 
 const getStatusNote = (status) => {
   switch (status) {
@@ -41,7 +44,7 @@ const calculateShippingFromSettings = async (shippingInfo, itemPrice = 0) => {
   return Number(settings.defaultShippingRate) || 0;
 };
 
-const validateAndCalculateDiscount = async (couponCode, orderAmount, userId) => {
+const validateAndCalculateDiscount = async (couponCode, orderAmount, userId, orderItems = []) => {
   if (!couponCode || couponCode.trim() === "") {
     return { discountAmount: 0, coupon: null };
   }
@@ -51,40 +54,47 @@ const validateAndCalculateDiscount = async (couponCode, orderAmount, userId) => 
     isActive: true 
   });
 
-  if (!coupon) {
-    throw new HandelError("Invalid coupon code", 400);
-  }
-
-  // Check expiration
-  if (new Date() > new Date(coupon.expiresAt)) {
-    throw new HandelError("Coupon has expired", 400);
-  }
-
-  // Check minimum order amount
+  if (!coupon) throw new HandelError("Invalid coupon code", 400);
+  if (new Date() > new Date(coupon.expiresAt)) throw new HandelError("Coupon has expired", 400);
   if (Number(orderAmount) < Number(coupon.minOrderAmount)) {
     throw new HandelError(`Minimum order amount is ${coupon.minOrderAmount}`, 400);
   }
-
-  // Check usage limit
   if (coupon.usageLimit && coupon.usedCount >= coupon.usageLimit) {
     throw new HandelError("Coupon usage limit exceeded", 400);
   }
-
-  // Check if user already used this coupon
   if (userId) {
     const alreadyUsed = coupon.usedBy?.some(use => use.userId?.toString() === userId.toString());
-    if (alreadyUsed) {
-      throw new HandelError("You have already used this coupon", 400);
+    if (alreadyUsed) throw new HandelError("You have already used this coupon", 400);
+  }
+
+  // Check applicableCategories / applicableProducts
+  if (coupon.applicableCategories?.length > 0 || coupon.applicableProducts?.length > 0) {
+    const applicableProductIds = coupon.applicableProducts?.map(id => id.toString()) || [];
+    const hasEligibleItem = orderItems.some(item => {
+      if (applicableProductIds.includes(item.product?.toString())) return true;
+      if (coupon.applicableCategories?.length > 0) {
+        // We'll check category via product lookup — done after normalization so we use item.category if available
+        return false; // category check handled below
+      }
+      return false;
+    });
+
+    if (coupon.applicableCategories?.length > 0) {
+      const productIds = orderItems.map(i => i.product);
+      const products = await Product.find({ _id: { $in: productIds } }).select('category');
+      const categoryMatch = products.some(p => coupon.applicableCategories.includes(p.category));
+      if (!categoryMatch && !hasEligibleItem) {
+        throw new HandelError("Coupon is not applicable to items in your order", 400);
+      }
+    } else if (!hasEligibleItem) {
+      throw new HandelError("Coupon is not applicable to items in your order", 400);
     }
   }
 
-  // Calculate discount
   let discountAmount = 0;
   if (coupon.type === "percent") {
     discountAmount = (Number(orderAmount) * Number(coupon.value)) / 100;
-    if (coupon.maxDiscount) {
-      discountAmount = Math.min(discountAmount, coupon.maxDiscount);
-    }
+    if (coupon.maxDiscount) discountAmount = Math.min(discountAmount, coupon.maxDiscount);
   } else {
     discountAmount = Number(coupon.value);
   }
@@ -112,6 +122,10 @@ const reserveStock = async (orderItems) => {
     }
 
     await product.save({ validateBeforeSave: false });
+
+    if (product.stock <= product.lowStock) {
+        sendLowStockAlertEmail(product);
+    }
   }
 };
 
@@ -235,7 +249,8 @@ export const createNewOrder = HandleAsyncError(async (req, res, next) => {
     const { discountAmount, coupon } = await validateAndCalculateDiscount(
       couponCode,
       subtotalWithShipping,
-      req.user?._id || null
+      req.user?._id || null,
+      normalizedOrderItems
     );
 
     const computedTotalPrice = Number(itemPrice || 0) + Number(computedShippingPrice || 0) - Number(discountAmount || 0);
@@ -455,6 +470,7 @@ export const updateOrderStatus = HandleAsyncError(async (req, res, next) => {
     order,
     message: `Order status updated to ${status}`
   });
+  logAdminAction(req.user._id, "UPDATE_ORDER_STATUS", order._id, "Order", `Status: ${status}`);
 });
 
 export const deleteOrder = HandleAsyncError(async (req, res, next) => {
@@ -487,4 +503,5 @@ export const deleteOrder = HandleAsyncError(async (req, res, next) => {
     success: true,
     message: "Order deleted successfully"
   });
+  logAdminAction(req.user._id, "DELETE_ORDER", order._id, "Order");
 });

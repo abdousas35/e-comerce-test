@@ -9,6 +9,7 @@ import { fetchAllOrders, removeErrors, deleteOrder } from "../features/admin/adm
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Edit, Delete } from '@mui/icons-material';
+import GoToDashboard from "../components/GoToDashboard";
 
 function OrdersList() {
   const dispatch = useDispatch();
@@ -77,6 +78,7 @@ function OrdersList() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("admin.orders.allOrders")} />
 
       <div className="ordersList-container">

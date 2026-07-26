@@ -72,54 +72,77 @@ function UpdateOrderStatus() {
       <div className="order-container">
         <h1>{t("admin.orders.updateStatus")}</h1>
         {order ? (
-          <form className="update-order-status-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="id">{t("orders.orderId")}</label>
-              <input type="text" id="id" readOnly value={order._id} />
-            </div>
+          <>
+            <p className="order-subtitle">{t("orders.orderId")}: {order._id}</p>
+            <form className="update-order-status-form" onSubmit={handleSubmit}>
+              <div className="form-section-title">{t("orders.status")}</div>
+              <div className="form-group">
+                <label htmlFor="status">{t("orders.status")}</label>
+                <select
+                  id="status"
+                  required
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">{t("admin.orders.selectStatus")}</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Processing">{t("orders.processing")}</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">{t("orders.delivered")}</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="status">{t("orders.status")}</label>
-              <select
-                id="status"
-                required
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">{t("admin.orders.selectStatus")}</option>
-                <option value="Pending">Pending</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Processing">{t("orders.processing")}</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">{t("orders.delivered")}</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
-            </div>
+              <div className="form-section-title">Shipping</div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="trackingNumber">Tracking number</label>
+                  <input
+                    type="text"
+                    id="trackingNumber"
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                  />
+                </div>
 
-            <div className="form-group">
-              <label htmlFor="trackingNumber">Tracking number</label>
-              <input type="text" id="trackingNumber" value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="courier">Courier</label>
+                  <input
+                    type="text"
+                    id="courier"
+                    value={courier}
+                    onChange={(e) => setCourier(e.target.value)}
+                  />
+                </div>
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="trackingUrl">Tracking URL</label>
-              <input type="text" id="trackingUrl" value={trackingUrl} onChange={(e) => setTrackingUrl(e.target.value)} />
-            </div>
+              <div className="form-group">
+                <label htmlFor="trackingUrl">Tracking URL</label>
+                <input
+                  type="text"
+                  id="trackingUrl"
+                  value={trackingUrl}
+                  onChange={(e) => setTrackingUrl(e.target.value)}
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="courier">Courier</label>
-              <input type="text" id="courier" value={courier} onChange={(e) => setCourier(e.target.value)} />
-            </div>
+              <div className="form-section-title">Note</div>
+              <div className="form-group">
+                <label htmlFor="note">Admin note</label>
+                <input
+                  type="text"
+                  id="note"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="note">Admin note</label>
-              <input type="text" id="note" value={note} onChange={(e) => setNote(e.target.value)} />
-            </div>
-
-            <button className="btn btn-primary">{t("admin.orders.updateStatus")}</button>
-          </form>
+              <button className="btn btn-primary">{t("admin.orders.updateStatus")}</button>
+            </form>
+          </>
         ) : (
-          <p>{t("admin.orders.noOrderFound")}</p>
+          <p className="no-order">{t("admin.orders.noOrderFound")}</p>
         )}
       </div>
     </>

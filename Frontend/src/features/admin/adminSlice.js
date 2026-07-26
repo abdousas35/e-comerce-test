@@ -34,7 +34,8 @@ export const createProduct = createAsyncThunk(
       const { data } = await axios.post("/api/v1/admin/product/create", productData, config);
       return data;
     } catch (error) {
-      return rejectWithValue({ message: resolveApiMessage(error, "api.admin.createProductFailed") });
+      const message = error.response?.data?.message || tMessage("api.admin.createProductFailed");
+      return rejectWithValue({ message });
     }
   }
 );
@@ -128,7 +129,7 @@ export const updateOrderStatus = createAsyncThunk(
   "admin/updateOrderStatus",
   async ({ id, status, trackingNumber, trackingUrl, courier, note }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.put(`/api/v1/admin/orderUpdate/${id}`, { status, trackingNumber, trackingUrl, courier, note });
+      const { data } = await axios.put(`/api/v1/admin/order/${id}`, { status, trackingNumber, trackingUrl, courier, note });
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.admin.updateOrderStatusFailed") });
@@ -230,6 +231,18 @@ export const deleteReview = createAsyncThunk(
   }
 );
 
+export const getLowStockProducts = createAsyncThunk(
+  "admin/getLowStockProducts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/admin/products/low-stock");
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to fetch low stock products" });
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -249,6 +262,7 @@ const adminSlice = createSlice({
     order: [],
     reviews: [],
     coupons: [],
+    lowStockProducts: [],
   },
   reducers: {
     removeErrors: (state) => {
@@ -495,6 +509,18 @@ const adminSlice = createSlice({
       .addCase(deleteCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to delete coupon";
+      })
+      .addCase(getLowStockProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getLowStockProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lowStockProducts = action.payload.products;
+      })
+      .addCase(getLowStockProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch low stock products";
       });
   },
 });

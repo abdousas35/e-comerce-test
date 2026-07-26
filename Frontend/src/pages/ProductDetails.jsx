@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import MetaTags from "../components/MetaTags";
 import { addItemsToCart, setQuickBuyItem, removeMessage, removeErrors as removeCartErrors } from "../features/cart/cartSlice";
+import { toggleWishlist, fetchWishlist } from "../features/user/userSlice";
+import axios from "axios";
 
 function ProductDetails() {
   const [quantity, setQuantity] = useState(1);
@@ -20,6 +22,7 @@ function ProductDetails() {
   const [selectedImage, setSelectedImage] = useState("");
   const [userRating, setUserRating] = useState(0);
   const [selectedVariantId, setSelectedVariantId] = useState("");
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,8 +31,10 @@ function ProductDetails() {
 
   const { loading, error, product, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
   const { loading: cartLoading, message, error: cartError } = useSelector((state) => state.cart);
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, wishlist, wishlistLoading } = useSelector((state) => state.user);
   const { settings } = useSelector((state) => state.settings);
+
+  const isInWishlist = wishlist?.some(item => (item._id || item) === id);
 
   const selectedVariant = useMemo(
     () => product?.variants?.find((variant) => variant._id === selectedVariantId) || null,
@@ -121,6 +126,30 @@ function ProductDetails() {
     if (id) dispatch(getProductDetails(id));
     return () => dispatch(removeErrors());
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`/api/v1/product/${id}/related`)
+        .then(res => setRelatedProducts(res.data.products || []))
+        .catch(() => {});
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (isAuthenticated) dispatch(fetchWishlist());
+  }, [isAuthenticated, dispatch]);
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`/api/v1/product/${id}/related`)
+        .then(res => setRelatedProducts(res.data.products || []))
+        .catch(() => {});
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (isAuthenticated) dispatch(fetchWishlist());
+  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -285,6 +314,16 @@ function ProductDetails() {
             <div className="action-buttons">
               <button className="add-to-cart-btn" onClick={addToCart}>{t("product.addToCart")}</button>
               <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
+              {isAuthenticated && (
+                <button
+                  className={`wishlist-btn ${isInWishlist ? "in-wishlist" : ""}`}
+                  onClick={() => dispatch(toggleWishlist(id))}
+                  disabled={wishlistLoading}
+                  title={isInWishlist ? t("wishlist.remove") : t("wishlist.add")}
+                >
+                  {isInWishlist ? "❤️" : "🤍"}
+                </button>
+              )}
             </div>
 
             {isAuthenticated ? (
@@ -335,6 +374,21 @@ function ProductDetails() {
               <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
         </div>
     </div>
+
+      {relatedProducts.length > 0 && (
+        <div className="related-products-section">
+          <h3>{t("productDetails.relatedProducts")}</h3>
+          <div className="related-products-grid">
+            {relatedProducts.map(p => (
+              <Link to={`/product/${p._id}`} key={p._id} className="related-product-card">
+                <img src={p.image?.[0]?.url} alt={p.name} />
+                <p className="related-product-name">{p.name}</p>
+                <p className="related-product-price">{Math.max(0, p.price - (p.discount || 0)).toFixed(2)} TND</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>

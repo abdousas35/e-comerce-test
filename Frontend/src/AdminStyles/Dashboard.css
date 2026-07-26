@@ -61,6 +61,21 @@
   text-decoration: none;
   transition: 0.2s ease;
   font-size: 14px;
+  position: relative;
+}
+
+.badge {
+  background-color: var(--danger-color);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .nav-section a:hover {

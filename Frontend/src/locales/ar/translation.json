@@ -181,7 +181,15 @@
     "selectVariant": "يرجى اختيار الخيار المطلوب",
     "variant": "الخيار",
     "reviewLoginPrompt": "أنشئ حسابًا لتتمكن من كتابة مراجعة",
+    "relatedProducts": "منتجات مشابهة",
     "login": "تسجيل الدخول"
+  },
+  "wishlist": {
+    "pageTitle": "قائمة المفضلة",
+    "title": "قائمة المفضلة",
+    "empty": "قائمة المفضلة فارغة",
+    "add": "إضافة للمفضلة",
+    "remove": "حذف"
   },
   "cart": {
     "pageTitle": "سلتك",
@@ -328,7 +336,9 @@
       "removeVariant": "حذف الخيار",
       "addVariant": "إضافة خيار",
       "importSuccess": "تم استيراد المنتجات بنجاح",
-      "importFailed": "تعذر استيراد ملف المنتجات"
+      "importFailed": "تعذر استيراد ملف المنتجات",
+      "imageRequired": "يجب إرفاق صورة واحدة على الأقل.",
+      "duplicateProduct": "منتج بهذا الاسم موجود بالفعل."
     },
     "users": {
       "section": "المستخدمون",

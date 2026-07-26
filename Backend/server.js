@@ -5,8 +5,10 @@ dotenv.config({ path: new URL("./config/config.env", import.meta.url) });
 import app from "./app.js";
 import { connectMongoDataBase } from "./config/db.js";
 import { v2 as cloudinary } from "cloudinary";
+import setupAbandonedCartJob from "./cron/abandonedCartJob.js";
 
 connectMongoDataBase();
+setupAbandonedCartJob();
 
 cloudinary.config({
 

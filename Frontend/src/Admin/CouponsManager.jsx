@@ -8,6 +8,7 @@ import PageTitle from "../components/PageTitle";
 import AdminSidebar from "../components/AdminSidebar";
 import { createCoupon, deleteCoupon, fetchCoupons, removeErrors, removeSuccess } from "../features/admin/adminSlice";
 import "../AdminStyles/CouponsManager.css";
+import GoToDashboard from "../components/GoToDashboard";
 
 function CouponsManager() {
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ function CouponsManager() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("template.coupons.pageTitle")} />
 
       <div className="coupons-shell">

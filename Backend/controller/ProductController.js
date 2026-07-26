@@ -4,6 +4,7 @@ import HandelError from "../utils/handelError.js";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import { v2 as cloudinary } from "cloudinary";
+import { logAdminAction } from "../utils/adminLog.js";
 
 const createSlug = (value = "") =>
   value
@@ -220,6 +221,7 @@ export const updateProduct = HandleAsyncError(async (req, res, next) => {
     message: "The product has been successfully updated",
     product,
   });
+  logAdminAction(req.user._id, "UPDATE_PRODUCT", product._id, "Product");
 });
 
 export const deleteProduct = HandleAsyncError(async (req, res, next) => {
@@ -247,6 +249,7 @@ export const deleteProduct = HandleAsyncError(async (req, res, next) => {
     message: "the product has seccessfully deleted",
     deletedOrdersCount: deletedOrdersResult.deletedCount || 0,
   });
+  logAdminAction(req.user._id, "DELETE_PRODUCT", product._id, "Product", product.name);
 });
 
 export const accessingSingleProduct = HandleAsyncError(async (req, res, next) => {
@@ -418,4 +421,27 @@ export const importProductsFromCsv = HandleAsyncError(async (req, res, next) => 
     skippedRows,
     products: createdProducts,
   });
+});
+
+export const getLowStockProducts = HandleAsyncError(async (req, res, next) => {
+    const lowStockProducts = await Product.find({
+        $expr: { $lte: ["$stock", "$lowStock"] },
+    });
+
+    res.status(200).json({
+        success: true,
+        products: lowStockProducts,
+    });
+});
+
+export const getRelatedProducts = HandleAsyncError(async (req, res, next) => {
+    const product = await Product.findById(req.params.id).select('category');
+    if (!product) return next(new HandelError("Product not found", 404));
+
+    const related = await Product.find({
+        category: product.category,
+        _id: { $ne: product._id },
+    }).limit(6).select('name price image discount ratings numOfReviews stock slug');
+
+    res.status(200).json({ success: true, products: related });
 });

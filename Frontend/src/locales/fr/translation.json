@@ -181,7 +181,15 @@
     "selectVariant": "Veuillez choisir une option",
     "variant": "Option",
     "reviewLoginPrompt": "Creez un compte pour ecrire un avis",
+    "relatedProducts": "Produits similaires",
     "login": "Se connecter"
+  },
+  "wishlist": {
+    "pageTitle": "Ma liste de souhaits",
+    "title": "Ma liste de souhaits",
+    "empty": "Votre liste de souhaits est vide",
+    "add": "Ajouter aux favoris",
+    "remove": "Supprimer"
   },
   "cart": {
     "pageTitle": "Votre panier",
@@ -328,7 +336,9 @@
       "removeVariant": "Supprimer l'option",
       "addVariant": "Ajouter une option",
       "importSuccess": "Produits importes avec succes",
-      "importFailed": "Impossible d'importer le fichier de produits"
+      "importFailed": "Impossible d'importer le fichier de produits",
+      "imageRequired": "Au moins une image est requise.",
+      "duplicateProduct": "Un produit avec ce nom existe déjà."
     },
     "users": {
       "section": "Utilisateurs",

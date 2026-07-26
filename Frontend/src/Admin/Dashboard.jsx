@@ -15,14 +15,21 @@ import {
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { fetchAdminProducts, fetchAllOrders } from "../features/admin/adminSlice";
+import {
+  fetchAdminProducts,
+  fetchAllOrders,
+  getLowStockProducts,
+} from "../features/admin/adminSlice";
 import AdminSidebar from "../components/AdminSidebar";
 
 function Dashboard() {
   const dispatch = useDispatch();
-  const { products, orders, loading: loadingAdmin } = useSelector(
-    (state) => state.admin
-  );
+  const {
+    products,
+    orders,
+    loading: loadingAdmin,
+    lowStockProducts,
+  } = useSelector((state) => state.admin);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isTinyScreen, setIsTinyScreen] = useState(window.innerWidth <= 450);
@@ -31,6 +38,7 @@ function Dashboard() {
   useEffect(() => {
     dispatch(fetchAdminProducts());
     dispatch(fetchAllOrders());
+    dispatch(getLowStockProducts());
   }, [dispatch]);
 
   useEffect(() => {
@@ -43,9 +51,6 @@ function Dashboard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  /* ===================== */
-  /* 🧠 STATS */
   /* ===================== */
 
   const stats = useMemo(() => {
@@ -147,7 +152,7 @@ function Dashboard() {
 
         {/* SIDEBAR */}
         <div className={`${isTinyScreen && !isSidebarOpen ? "sidebar closed" : ""}`}>
-          <AdminSidebar />
+          <AdminSidebar lowStockCount={lowStockProducts?.length || 0} />
         </div>
 
         {/* MAIN */}
@@ -296,6 +301,42 @@ function Dashboard() {
                       <td>{order.totalPrice} TND</td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          <div className="products-section">
+            <h2>{t("template.dashboard.lowStockProducts")}</h2>
+
+            {loadingAdmin ? (
+              <p>Loading...</p>
+            ) : (
+              <table className="product-table">
+                <thead>
+                  <tr>
+                    <th>{t("template.dashboard.productName")}</th>
+                    <th>{t("template.dashboard.stock")}</th>
+                    <th>{t("template.dashboard.lowStockThreshold")}</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {lowStockProducts && lowStockProducts.length > 0 ? (
+                    lowStockProducts.map((p) => (
+                      <tr key={p._id}>
+                        <td>{p.name}</td>
+                        <td>{p.stock}</td>
+                        <td>{p.lowStock}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3">
+                        {t("template.dashboard.noLowStockProducts")}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             )}

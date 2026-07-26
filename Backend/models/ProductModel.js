@@ -121,6 +121,10 @@ const productSchema = new mongoose.Schema({
         min: [0, "Product stock cannot be negative"]
 
     },
+    lowStock: {
+        type: Number,
+        default: 3
+    },
     numOfReviews: {
 
         type: Number,

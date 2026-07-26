@@ -9,6 +9,7 @@ import { removeErrors, createProduct } from "../features/admin/adminSlice";
 import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
 import imageCompression from "browser-image-compression";
+import GoToDashboard from "../components/GoToDashboard";
 
 function CreateProduct() {
   const { loading, error } = useSelector((state) => state.admin);
@@ -22,6 +23,7 @@ function CreateProduct() {
   const [discount, setDiscount] = useState(0);
   const [keywords, setKeywords] = useState("");
   const [stock, setStock] = useState("");
+  const [lowStock, setLowStock] = useState(3);
   const [category, setCategory] = useState("");
   const [variants, setVariants] = useState([{ label: "", size: "", color: "", price: "", stock: "" }]);
   const [image, setImage] = useState([]);
@@ -31,6 +33,7 @@ function CreateProduct() {
     setName("");
     setPrice("");
     setStock("");
+    setLowStock(3);
     setDescription("");
     setKeywords("");
     setCategory("");
@@ -42,15 +45,23 @@ function CreateProduct() {
 
   const createProductSubmit = async (e) => {
     e.preventDefault();
+    if (image.length === 0) {
+      toast.error(t("admin.products.imageRequired"), { position: "top-center", autoClose: 3000 });
+      return;
+    }
     const activeVariants = variants.filter((variant) => variant.price || variant.stock || variant.size || variant.color || variant.label);
 
     try {
-      await dispatch(createProduct({ name, price, description, keywords, stock, category, discount, image, variants: activeVariants })).unwrap();
+      await dispatch(createProduct({ name, price, description, keywords, stock, lowStock, category, discount, image, variants: activeVariants })).unwrap();
       toast.success(t("admin.products.created"), { position: "top-center", autoClose: 3000 });
       resetForm();
       navigate("/admin/products");
     } catch (submitError) {
-      toast.error(submitError || t("admin.products.createFailed"), { position: "top-center", autoClose: 3000 });
+      if (submitError?.message?.includes("Duplicate slug")) {
+        toast.error(t("admin.products.duplicateProduct"), { position: "top-center", autoClose: 3000 });
+      } else {
+        toast.error(submitError?.message || t("admin.products.createFailed"), { position: "top-center", autoClose: 3000 });
+      }
       dispatch(removeErrors());
     }
   };
@@ -111,6 +122,7 @@ function CreateProduct() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("admin.products.createProduct")} />
       <div className="create-product-container">
         <h1 className="form-title">{t("admin.products.createProduct")}</h1>
@@ -122,6 +134,7 @@ function CreateProduct() {
           <input type="text" className="form-input" name="category" placeholder={t("admin.products.category")} value={category} onChange={(e) => setCategory(e.target.value)} />
           <input type="number" className="form-input" name="discount" placeholder={t("admin.products.discountAmount")} value={discount} min="0" onChange={(e) => setDiscount(e.target.value)} />
           <input type="number" className="form-input" name="stock" placeholder={t("admin.products.enterStock")} required value={stock} onChange={(e) => setStock(e.target.value)} />
+          <input type="number" className="form-input" name="lowStock" placeholder={t("admin.products.lowStockThreshold")} value={lowStock} min="0" onChange={(e) => setLowStock(e.target.value)} />
 
           <div className="variant-editor">
             <h3>Variants</h3>

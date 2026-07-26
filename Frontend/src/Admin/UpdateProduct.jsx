@@ -22,6 +22,7 @@ function UpdateProduct() {
   const [description, setDescription] = useState("");
   const [keywords, setKeywords] = useState("");
   const [stock, setStock] = useState("");
+  const [lowStock, setLowStock] = useState(3);
   const [category, setCategory] = useState("");
   const [discount, setDiscount] = useState(0);
   const [variants, setVariants] = useState([{ label: "", size: "", color: "", price: "", stock: "" }]);
@@ -41,7 +42,8 @@ function UpdateProduct() {
       setDescription(product.description || "");
       setKeywords(product.keywords || "");
       setStock(product.stock || "");
-        setDiscount(product.discount || 0);
+      setLowStock(product.lowStock || 3);
+      setDiscount(product.discount || 0);
       setCategory(product.category || "");
       setVariants(product.variants?.length ? product.variants.map((variant) => ({
         _id: variant._id,
@@ -109,6 +111,7 @@ function UpdateProduct() {
       description,
       keywords,
       stock,
+      lowStock,
       category,
       discount,
       variants: variants.filter((variant) => variant.price || variant.stock || variant.size || variant.color || variant.label),
@@ -158,6 +161,9 @@ function UpdateProduct() {
 
             <label htmlFor="stock">{t("admin.products.productStock")}</label>
             <input type="number" className="update-product-input" required id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} />
+
+            <label htmlFor="lowStock">{t("admin.products.lowStockThreshold")}</label>
+            <input type="number" className="update-product-input" required id="lowStock" name="lowStock" value={lowStock} onChange={(e) => setLowStock(e.target.value)} />
 
             <div className="variant-editor">
               <h3>Variants</h3>

@@ -3,6 +3,28 @@ import UserModel from "../models/usersModel.js";
 import ProductModel from "../models/ProductModel.js";
 import ErrorHandler from "../utils/handelError.js";
 
+const buildPopulatedCart = (user) =>
+  user.cart.map(item => {
+    if (!item.product) return null;
+    const selectedVariant = item.variantId
+      ? item.product.variants.find(v => v._id.toString() === item.variantId)
+      : null;
+    const price = selectedVariant?.price ?? item.product.price;
+    const stock = selectedVariant?.stock ?? item.product.stock;
+    const discount = item.product.discount || 0;
+    return {
+      cartKey: `${item.product._id}-${item.variantId || 'default'}`,
+      product: item.product._id,
+      name: item.product.name,
+      price: Math.max(0, price - discount),
+      image: item.product.image?.[0]?.url,
+      stock,
+      variantId: item.variantId,
+      variantLabel: selectedVariant?.label,
+      quantity: item.quantity,
+    };
+  }).filter(Boolean);
+
 /**
  * @route GET /api/v1/cart
  * @desc Get user's cart, populated with product details.
@@ -15,40 +37,9 @@ export const getUserCart = HandleAsyncError(async (req, res, next) => {
     select: 'name price image stock variants discount'
   });
 
-  if (!user) {
-    return next(new ErrorHandler("User not found", 404));
-  }
+  if (!user) return next(new ErrorHandler("User not found", 404));
 
-  const populatedCart = user.cart.map(item => {
-    if (!item.product) {
-      return null; 
-    }
-
-    const selectedVariant = item.variantId 
-      ? item.product.variants.find(v => v._id.toString() === item.variantId)
-      : null;
-
-    const price = selectedVariant?.price ?? item.product.price;
-    const stock = selectedVariant?.stock ?? item.product.stock;
-    const discount = item.product.discount || 0;
-    
-    return {
-      cartKey: `${item.product._id}-${item.variantId || 'default'}`,
-      product: item.product._id,
-      name: item.product.name,
-      price: Math.max(0, price - discount),
-      image: item.product.image?.[0]?.url,
-      stock: stock,
-      variantId: item.variantId,
-      variantLabel: selectedVariant?.label,
-      quantity: item.quantity,
-    };
-  }).filter(Boolean); // Filter out null items where product was not found
-
-  res.status(200).json({
-    success: true,
-    cart: populatedCart,
-  });
+  res.status(200).json({ success: true, cart: buildPopulatedCart(user) });
 });
 
 /**
@@ -98,40 +89,44 @@ export const mergeCarts = HandleAsyncError(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  // Now, fetch the newly merged and populated cart to return it
   const updatedUser = await UserModel.findById(userId).populate({
     path: 'cart.product',
     model: 'Product',
     select: 'name price image stock variants discount'
   });
 
-  const populatedCart = updatedUser.cart.map(item => {
-    if (!item.product) return null;
-
-    const selectedVariant = item.variantId 
-      ? item.product.variants.find(v => v._id.toString() === item.variantId)
-      : null;
-
-    const price = selectedVariant?.price ?? item.product.price;
-    const stock = selectedVariant?.stock ?? item.product.stock;
-    const discount = item.product.discount || 0;
-    
-    return {
-      cartKey: `${item.product._id}-${item.variantId || 'default'}`,
-      product: item.product._id,
-      name: item.product.name,
-      price: Math.max(0, price - discount),
-      image: item.product.image?.[0]?.url,
-      stock: stock,
-      variantId: item.variantId,
-      variantLabel: selectedVariant?.label,
-      quantity: item.quantity,
-    };
-  }).filter(Boolean);
-
   res.status(200).json({
     success: true,
     message: "Carts merged successfully.",
-    cart: populatedCart,
+    cart: buildPopulatedCart(updatedUser),
   });
+});
+
+/**
+ * @route PUT /api/v1/cart
+ * @desc Update cart items (add/remove/change quantity)
+ * @access Private
+ */
+export const updateCart = HandleAsyncError(async (req, res, next) => {
+  const { cartItems } = req.body;
+  if (!Array.isArray(cartItems)) return next(new ErrorHandler("cartItems must be an array", 400));
+
+  const user = await UserModel.findById(req.user.id);
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  user.cart = cartItems.map(item => ({
+    product: item.product,
+    variantId: item.variantId || undefined,
+    quantity: item.quantity || 1,
+  }));
+  user.cartUpdatedAt = new Date();
+  await user.save({ validateBeforeSave: false });
+
+  const updatedUser = await UserModel.findById(req.user.id).populate({
+    path: 'cart.product',
+    model: 'Product',
+    select: 'name price image stock variants discount'
+  });
+
+  res.status(200).json({ success: true, cart: buildPopulatedCart(updatedUser) });
 });

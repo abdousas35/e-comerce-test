@@ -9,20 +9,61 @@ import AdminSidebar from "../components/AdminSidebar";
 import { clearSettingsError, fetchSiteSettings, updateSiteSettings } from "../features/settings/siteSettingsSlice";
 import demoPresets from "../config/demoPresets";
 import "../AdminStyles/AdminSettings.css";
+import GoToDashboard from "../components/GoToDashboard";
 
-const toDataUrl = (file) =>
+const MAX_IMAGE_SIZE_MB = 5;
+const COMPRESS_MAX_WIDTH = 1600;
+const COMPRESS_QUALITY = 0.8;
+
+const compressImage = (file) =>
   new Promise((resolve, reject) => {
+    const img = new Image();
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
+
+    reader.onload = () => {
+      img.onload = () => {
+        const scale = Math.min(1, COMPRESS_MAX_WIDTH / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Compression failed"));
+              return;
+            }
+            const compressedReader = new FileReader();
+            compressedReader.onload = () => resolve(compressedReader.result);
+            compressedReader.onerror = reject;
+            compressedReader.readAsDataURL(blob);
+          },
+          "image/jpeg",
+          COMPRESS_QUALITY
+        );
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+
+const isValidEmail = (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const isValidUrl = (value) => !value || /^https?:\/\/.+/.test(value) || value.startsWith("data:image/");
 
 function AdminSettings() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { settings, loading, saving, error } = useSelector((state) => state.settings);
   const [formData, setFormData] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     dispatch(fetchSiteSettings());
@@ -31,6 +72,7 @@ function AdminSettings() {
   useEffect(() => {
     if (settings) {
       setFormData({
+        themePreset: settings.themePreset || "",
         storeName: settings.storeName || "",
         tagline: settings.tagline || "",
         heroTitle: settings.heroTitle || "",
@@ -82,6 +124,7 @@ function AdminSettings() {
           x: settings.socialLinks?.x || "",
         },
       });
+      setIsDirty(false);
     }
   }, [settings]);
 
@@ -92,8 +135,20 @@ function AdminSettings() {
     }
   }, [dispatch, error]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (isDirty) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
   const handleFieldChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setIsDirty(true);
   };
 
   const handleSocialChange = (field, value) => {
@@ -104,19 +159,49 @@ function AdminSettings() {
         [field]: value,
       },
     }));
+    setIsDirty(true);
   };
 
   const handleFileChange = async (event, target) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const dataUrl = await toDataUrl(file);
-    handleFieldChange(target, dataUrl);
+    if (!file.type.startsWith("image/")) {
+      toast.error(t("template.settings.invalidImageType"), { position: "top-center", autoClose: 3000 });
+      event.target.value = "";
+      return;
+    }
+
+    const sizeMb = file.size / (1024 * 1024);
+    if (sizeMb > MAX_IMAGE_SIZE_MB) {
+      toast.error(t("template.settings.imageTooLarge", { max: MAX_IMAGE_SIZE_MB }), {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      event.target.value = "";
+      return;
+    }
+
+    const setUploading = target === "logo" ? setUploadingLogo : setUploadingHero;
+    setUploading(true);
+
+    try {
+      const compressedDataUrl = await compressImage(file);
+      handleFieldChange(target, compressedDataUrl);
+    } catch (compressionError) {
+      toast.error(t("template.settings.uploadFailed"), { position: "top-center", autoClose: 3000 });
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
   };
 
   const applyThemePreset = (presetKey) => {
     const preset = demoPresets[presetKey];
     if (!preset) return;
+
+    const confirmed = window.confirm(t("template.settings.confirmApplyPreset"));
+    if (!confirmed) return;
 
     setFormData((prev) => ({
       ...prev,
@@ -143,10 +228,42 @@ function AdminSettings() {
       dangerColor: preset.dangerColor || prev.dangerColor,
       infoColor: preset.infoColor || prev.infoColor,
     }));
+    setIsDirty(true);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.storeName.trim()) {
+      errors.storeName = t("template.settings.errorRequired");
+    }
+    if (!isValidEmail(formData.contactEmail)) {
+      errors.contactEmail = t("template.settings.errorInvalidEmail");
+    }
+    if (!isValidUrl(formData.logo)) {
+      errors.logo = t("template.settings.errorInvalidUrl");
+    }
+    if (!isValidUrl(formData.heroImage)) {
+      errors.heroImage = t("template.settings.errorInvalidUrl");
+    }
+    if (formData.freeShippingThreshold < 0) {
+      errors.freeShippingThreshold = t("template.settings.errorNegative");
+    }
+    if (formData.defaultShippingRate < 0) {
+      errors.defaultShippingRate = t("template.settings.errorNegative");
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!validateForm()) {
+      toast.error(t("template.settings.fixErrorsBeforeSaving"), { position: "top-center", autoClose: 3000 });
+      return;
+    }
 
     const payload = {
       ...formData,
@@ -166,7 +283,73 @@ function AdminSettings() {
           position: "top-center",
           autoClose: 2500,
         });
+        setIsDirty(false);
+      })
+      .catch(() => {
+        toast.error(t("template.settings.saveFailed"), { position: "top-center", autoClose: 3000 });
       });
+  };
+
+  const handleCancel = () => {
+    if (!settings) return;
+    const confirmed = window.confirm(t("template.settings.confirmDiscardChanges"));
+    if (!confirmed) return;
+
+    setFormData({
+      themePreset: settings.themePreset || "",
+      storeName: settings.storeName || "",
+      tagline: settings.tagline || "",
+      heroTitle: settings.heroTitle || "",
+      heroSubtitle: settings.heroSubtitle || "",
+      primaryColor: settings.primaryColor || "#6C5B7B",
+      secondaryColor: settings.secondaryColor || "#F4A261",
+      accentColor: settings.accentColor || "#1F2937",
+      bgPrimary: settings.bgPrimary || "#F8FAFC",
+      bgSecondary: settings.bgSecondary || "#EEF2FF",
+      surfaceColor: settings.surfaceColor || "#FFFFFF",
+      surfaceSoftColor: settings.surfaceSoftColor || "#F3F4F6",
+      navbarBackground: settings.navbarBackground || "#0F172A",
+      footerBackground: settings.footerBackground || "#111827",
+      headingColor: settings.headingColor || "#111827",
+      bodyTextColor: settings.bodyTextColor || "#374151",
+      mutedTextColor: settings.mutedTextColor || "#6B7280",
+      textLightColor: settings.textLightColor || "#FFFFFF",
+      borderColor: settings.borderColor || "#D1D5DB",
+      successColor: settings.successColor || "#22C55E",
+      warningColor: settings.warningColor || "#F59E0B",
+      dangerColor: settings.dangerColor || "#EF4444",
+      infoColor: settings.infoColor || "#3B82F6",
+      announcementText: settings.announcementText || "",
+      announcementEnabled: settings.announcementEnabled ?? true,
+      contactEmail: settings.contactEmail || "",
+      contactPhone: settings.contactPhone || "",
+      whatsappPhone: settings.whatsappPhone || "",
+      address: settings.address || "",
+      freeShippingThreshold: settings.freeShippingThreshold || 0,
+      defaultShippingRate: settings.defaultShippingRate || 0,
+      codEnabled: settings.codEnabled ?? true,
+      enableEmailNotifications: settings.enableEmailNotifications ?? true,
+      enableWhatsAppNotifications: settings.enableWhatsAppNotifications ?? false,
+      manualPaymentInstructions: settings.manualPaymentInstructions || "",
+      footerAbout: settings.footerAbout || "",
+      newsletterText: settings.newsletterText || "",
+      aboutTitle: settings.aboutTitle || "",
+      aboutIntro: settings.aboutIntro || "",
+      aboutBody: settings.aboutBody || "",
+      contactTitle: settings.contactTitle || "",
+      contactIntro: settings.contactIntro || "",
+      contactSupportHours: settings.contactSupportHours || "",
+      logo: settings.logo || "",
+      heroImage: settings.heroImage || "",
+      socialLinks: {
+        instagram: settings.socialLinks?.instagram || "",
+        facebook: settings.socialLinks?.facebook || "",
+        tiktok: settings.socialLinks?.tiktok || "",
+        x: settings.socialLinks?.x || "",
+      },
+    });
+    setFieldErrors({});
+    setIsDirty(false);
   };
 
   if (!formData || loading) {
@@ -184,6 +367,7 @@ function AdminSettings() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("template.settings.pageTitle")} />
 
       <div className="admin-settings-shell">
@@ -195,10 +379,17 @@ function AdminSettings() {
               <h1>{t("template.settings.mainTitle")}</h1>
               <p>{t("template.settings.headerDesc")}</p>
             </div>
-            <button type="submit" form="admin-settings-form" className="admin-settings-save-btn" disabled={saving}>
-              <Save fontSize="small" />
-              {saving ? t("template.common.saving") : t("template.common.saveChanges")}
-            </button>
+            <div className="admin-settings-header-actions">
+              {isDirty && (
+                <button type="button" className="admin-settings-cancel-btn" onClick={handleCancel}>
+                  {t("template.common.cancel")}
+                </button>
+              )}
+              <button type="submit" form="admin-settings-form" className="admin-settings-save-btn" disabled={saving}>
+                <Save fontSize="small" />
+                {saving ? t("template.common.saving") : t("template.common.saveChanges")}
+              </button>
+            </div>
           </div>
 
           <form id="admin-settings-form" className="admin-settings-form" onSubmit={handleSubmit}>
@@ -214,7 +405,12 @@ function AdminSettings() {
               <div className="admin-settings-grid">
                 <label>
                   {t("template.settings.storeName")}
-                  <input value={formData.storeName} onChange={(e) => handleFieldChange("storeName", e.target.value)} />
+                  <input
+                    value={formData.storeName}
+                    onChange={(e) => handleFieldChange("storeName", e.target.value)}
+                    required
+                  />
+                  {fieldErrors.storeName && <span className="admin-settings-error">{fieldErrors.storeName}</span>}
                 </label>
                 <label>
                   {t("template.settings.tagline")}
@@ -230,19 +426,31 @@ function AdminSettings() {
                 </label>
                 <label>
                   {t("template.settings.logoUrl")}
-                  <input value={typeof formData.logo === "string" ? formData.logo : ""} onChange={(e) => handleFieldChange("logo", e.target.value)} placeholder="https://..." />
+                  <input
+                    value={typeof formData.logo === "string" ? formData.logo : ""}
+                    onChange={(e) => handleFieldChange("logo", e.target.value)}
+                    placeholder="https://..."
+                  />
+                  {fieldErrors.logo && <span className="admin-settings-error">{fieldErrors.logo}</span>}
                 </label>
                 <label>
                   {t("template.settings.uploadLogo")}
-                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "logo")} />
+                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "logo")} disabled={uploadingLogo} />
+                  {uploadingLogo && <span className="admin-settings-hint">{t("template.settings.uploading")}</span>}
                 </label>
                 <label>
                   {t("template.settings.heroImageUrl")}
-                  <input value={typeof formData.heroImage === "string" ? formData.heroImage : ""} onChange={(e) => handleFieldChange("heroImage", e.target.value)} placeholder="https://..." />
+                  <input
+                    value={typeof formData.heroImage === "string" ? formData.heroImage : ""}
+                    onChange={(e) => handleFieldChange("heroImage", e.target.value)}
+                    placeholder="https://..."
+                  />
+                  {fieldErrors.heroImage && <span className="admin-settings-error">{fieldErrors.heroImage}</span>}
                 </label>
                 <label>
                   {t("template.settings.uploadHeroImage")}
-                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "heroImage")} />
+                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "heroImage")} disabled={uploadingHero} />
+                  {uploadingHero && <span className="admin-settings-hint">{t("template.settings.uploading")}</span>}
                 </label>
               </div>
             </section>
@@ -256,33 +464,108 @@ function AdminSettings() {
                 </div>
               </div>
 
-                <div className="theme-selector-grid">
-                  {Object.entries(demoPresets).map(([key, preset]) => (
-                    <button
-                      key={key}
-                      type="button"
-                      className={`theme-card ${formData.themePreset === key ? "active" : ""}`}
-                      onClick={() => applyThemePreset(key)}
-                    >
-                      <div className="theme-card-swatch-row">
-                        <span style={{ background: preset.primaryColor }} />
-                        <span style={{ background: preset.secondaryColor }} />
-                        <span style={{ background: preset.accentColor }} />
-                      </div>
-                      <h3>{preset.storeName}</h3>
-                      <p>{preset.tagline}</p>
-                    </button>
-                  ))}
-                </div>
+              <div className="theme-selector-grid">
+                {Object.entries(demoPresets).map(([key, preset]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`theme-card ${formData.themePreset === key ? "active" : ""}`}
+                    onClick={() => applyThemePreset(key)}
+                  >
+                    <div className="theme-card-swatch-row">
+                      <span style={{ background: preset.primaryColor }} />
+                      <span style={{ background: preset.secondaryColor }} />
+                      <span style={{ background: preset.accentColor }} />
+                    </div>
+                    <h3>{preset.storeName}</h3>
+                    <p>{preset.tagline}</p>
+                  </button>
+                ))}
+              </div>
 
-                <div className="admin-settings-preview">
-                  <span style={{ background: formData.primaryColor }} />
-                  <span style={{ background: formData.secondaryColor }} />
-                  <span style={{ background: formData.accentColor }} />
-                  <span style={{ background: formData.navbarBackground }} />
-                  <span style={{ background: formData.surfaceColor }} />
-                  <span style={{ background: formData.bgPrimary }} />
-                </div>
+              <div className="admin-settings-color-grid">
+                <label>
+                  {t("template.settings.primaryColor")}
+                  <input type="color" value={formData.primaryColor} onChange={(e) => handleFieldChange("primaryColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.secondaryColor")}
+                  <input type="color" value={formData.secondaryColor} onChange={(e) => handleFieldChange("secondaryColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.accentColor")}
+                  <input type="color" value={formData.accentColor} onChange={(e) => handleFieldChange("accentColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.navbarBackground")}
+                  <input type="color" value={formData.navbarBackground} onChange={(e) => handleFieldChange("navbarBackground", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.footerBackground")}
+                  <input type="color" value={formData.footerBackground} onChange={(e) => handleFieldChange("footerBackground", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.bgPrimary")}
+                  <input type="color" value={formData.bgPrimary} onChange={(e) => handleFieldChange("bgPrimary", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.bgSecondary")}
+                  <input type="color" value={formData.bgSecondary} onChange={(e) => handleFieldChange("bgSecondary", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.surfaceColor")}
+                  <input type="color" value={formData.surfaceColor} onChange={(e) => handleFieldChange("surfaceColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.surfaceSoftColor")}
+                  <input type="color" value={formData.surfaceSoftColor} onChange={(e) => handleFieldChange("surfaceSoftColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.headingColor")}
+                  <input type="color" value={formData.headingColor} onChange={(e) => handleFieldChange("headingColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.bodyTextColor")}
+                  <input type="color" value={formData.bodyTextColor} onChange={(e) => handleFieldChange("bodyTextColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.mutedTextColor")}
+                  <input type="color" value={formData.mutedTextColor} onChange={(e) => handleFieldChange("mutedTextColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.textLightColor")}
+                  <input type="color" value={formData.textLightColor} onChange={(e) => handleFieldChange("textLightColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.borderColor")}
+                  <input type="color" value={formData.borderColor} onChange={(e) => handleFieldChange("borderColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.successColor")}
+                  <input type="color" value={formData.successColor} onChange={(e) => handleFieldChange("successColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.warningColor")}
+                  <input type="color" value={formData.warningColor} onChange={(e) => handleFieldChange("warningColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.dangerColor")}
+                  <input type="color" value={formData.dangerColor} onChange={(e) => handleFieldChange("dangerColor", e.target.value)} />
+                </label>
+                <label>
+                  {t("template.settings.infoColor")}
+                  <input type="color" value={formData.infoColor} onChange={(e) => handleFieldChange("infoColor", e.target.value)} />
+                </label>
+              </div>
+
+              <div className="admin-settings-preview">
+                <span style={{ background: formData.primaryColor }} />
+                <span style={{ background: formData.secondaryColor }} />
+                <span style={{ background: formData.accentColor }} />
+                <span style={{ background: formData.navbarBackground }} />
+                <span style={{ background: formData.surfaceColor }} />
+                <span style={{ background: formData.bgPrimary }} />
+              </div>
             </section>
 
             <section className="admin-settings-card">
@@ -297,7 +580,12 @@ function AdminSettings() {
               <div className="admin-settings-grid">
                 <label>
                   {t("template.settings.contactEmail")}
-                  <input value={formData.contactEmail} onChange={(e) => handleFieldChange("contactEmail", e.target.value)} />
+                  <input
+                    type="email"
+                    value={formData.contactEmail}
+                    onChange={(e) => handleFieldChange("contactEmail", e.target.value)}
+                  />
+                  {fieldErrors.contactEmail && <span className="admin-settings-error">{fieldErrors.contactEmail}</span>}
                 </label>
                 <label>
                   {t("template.settings.contactPhone")}
@@ -361,11 +649,27 @@ function AdminSettings() {
               <div className="admin-settings-grid">
                 <label>
                   {t("template.settings.freeShippingThreshold")}
-                  <input type="number" value={formData.freeShippingThreshold} onChange={(e) => handleFieldChange("freeShippingThreshold", Number(e.target.value) || 0)} />
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.freeShippingThreshold}
+                    onChange={(e) => handleFieldChange("freeShippingThreshold", Number(e.target.value) || 0)}
+                  />
+                  {fieldErrors.freeShippingThreshold && (
+                    <span className="admin-settings-error">{fieldErrors.freeShippingThreshold}</span>
+                  )}
                 </label>
                 <label>
                   {t("template.settings.defaultShippingRate")}
-                  <input type="number" value={formData.defaultShippingRate} onChange={(e) => handleFieldChange("defaultShippingRate", Number(e.target.value) || 0)} />
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.defaultShippingRate}
+                    onChange={(e) => handleFieldChange("defaultShippingRate", Number(e.target.value) || 0)}
+                  />
+                  {fieldErrors.defaultShippingRate && (
+                    <span className="admin-settings-error">{fieldErrors.defaultShippingRate}</span>
+                  )}
                 </label>
                 <label className="admin-settings-full">
                   {t("template.settings.manualPaymentInstructions")}

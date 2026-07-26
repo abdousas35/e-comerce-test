@@ -8,6 +8,7 @@ import PageTitle from "../components/PageTitle";
 import AdminSidebar from "../components/AdminSidebar";
 import { clearSettingsError, fetchSiteSettings, updateSiteSettings } from "../features/settings/siteSettingsSlice";
 import "../AdminStyles/BannerManager.css";
+import GoToDashboard from "../components/GoToDashboard";
 
 const toDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -88,6 +89,7 @@ function BannerManager() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("template.banners.pageTitle")} />
 
       <div className="banner-manager-shell">

@@ -33,6 +33,7 @@ function UserDashboard({ user }) {
     function trackOrder() { navigate("/track-order"); }
     function profile() { navigate("/profile"); }
     function myCart() { navigate("/cart"); }
+    function myWishlist() { navigate("/wishlist"); }
     function logoutUser() {
         dispatch(logout())
             .unwrap()
@@ -50,6 +51,7 @@ function UserDashboard({ user }) {
         { name: t("navbar.orders"), funcName: orders },
         { name: t("template.tracking.button"), funcName: trackOrder },
         { name: t("navbar.account"), funcName: profile },
+        { name: t("wishlist.title"), funcName: myWishlist },
         { name: t("user.dashboard.cartCompact", { count: cartItems.length }), funcName: myCart, isCart:true },
         { name: t("navbar.logout"), funcName: logoutUser },
     ];

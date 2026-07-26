@@ -9,6 +9,8 @@ const couponSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    applicableCategories: [{ type: String }],
+    applicableProducts: [{ type: mongoose.Schema.ObjectId, ref: "Product" }],
     type: {
       type: String,
       enum: ["fixed", "percent"],
