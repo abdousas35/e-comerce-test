@@ -370,36 +370,3 @@ export const deleteUser = HandleAsyncError(async (req, res, next) => {
     logAdminAction(req.user._id, "DELETE_USER", user._id, "User");
 });
 
-// toggle wishlist item
-export const toggleWishlist = HandleAsyncError(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
-    if (!user) return next(new HandelError("User not found", 404));
-
-    const productId = req.params.productId;
-    const index = user.wishlist.findIndex(id => id.toString() === productId);
-
-    if (index === -1) {
-        user.wishlist.push(productId);
-    } else {
-        user.wishlist.splice(index, 1);
-    }
-
-    await user.save({ validateBeforeSave: false });
-
-    res.status(200).json({
-        success: true,
-        inWishlist: index === -1,
-        wishlist: user.wishlist,
-    });
-});
-
-// get wishlist
-export const getWishlist = HandleAsyncError(async (req, res, next) => {
-    const user = await User.findById(req.user.id).populate({
-        path: 'wishlist',
-        select: 'name price image discount ratings numOfReviews stock slug'
-    });
-    if (!user) return next(new HandelError("User not found", 404));
-
-    res.status(200).json({ success: true, wishlist: user.wishlist });
-});

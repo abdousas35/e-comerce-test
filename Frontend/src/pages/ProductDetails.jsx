@@ -13,7 +13,6 @@ import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import MetaTags from "../components/MetaTags";
 import { addItemsToCart, setQuickBuyItem, removeMessage, removeErrors as removeCartErrors } from "../features/cart/cartSlice";
-import { toggleWishlist, fetchWishlist } from "../features/user/userSlice";
 import axios from "axios";
 
 function ProductDetails() {
@@ -31,10 +30,8 @@ function ProductDetails() {
 
   const { loading, error, product, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
   const { loading: cartLoading, message, error: cartError } = useSelector((state) => state.cart);
-  const { isAuthenticated, wishlist, wishlistLoading } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user);
   const { settings } = useSelector((state) => state.settings);
-
-  const isInWishlist = wishlist?.some(item => (item._id || item) === id);
 
   const selectedVariant = useMemo(
     () => product?.variants?.find((variant) => variant._id === selectedVariantId) || null,
@@ -77,12 +74,10 @@ function ProductDetails() {
       toast.error(t("productDetails.selectVariant"), { position: "top-center", autoClose: 3000 });
       return;
     }
-
     if (!product || effectiveStock === 0) {
       toast.error(t("productDetails.outOfStock"), { position: "top-center", autoClose: 3000 });
       return;
     }
-
     dispatch(addItemsToCart({ id, quantity, variantId: selectedVariantId, product }));
   };
 
@@ -98,10 +93,7 @@ function ProductDetails() {
       stock: effectiveStock,
       variantId: selected?._id || "",
       variantLabel: selected?.label || "",
-      selectedOptions: {
-        size: selected?.size || "",
-        color: selected?.color || "",
-      },
+      selectedOptions: { size: selected?.size || "", color: selected?.color || "" },
       sku: selected?.sku || "",
       quantity,
     };
@@ -112,12 +104,10 @@ function ProductDetails() {
       toast.error(t("productDetails.selectVariant"), { position: "top-center", autoClose: 3000 });
       return;
     }
-
     if (!product || effectiveStock === 0) {
       toast.error(t("productDetails.outOfStock"), { position: "top-center", autoClose: 3000 });
       return;
     }
-
     dispatch(setQuickBuyItem(buildQuickBuyItem()));
     navigate("/shipping");
   };
@@ -134,22 +124,6 @@ function ProductDetails() {
         .catch(() => {});
     }
   }, [id]);
-
-  useEffect(() => {
-    if (isAuthenticated) dispatch(fetchWishlist());
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    if (id) {
-      axios.get(`/api/v1/product/${id}/related`)
-        .then(res => setRelatedProducts(res.data.products || []))
-        .catch(() => {});
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (isAuthenticated) dispatch(fetchWishlist());
-  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -209,10 +183,7 @@ function ProductDetails() {
     <>
       <Helmet>
         <title>{`${product?.name || "Product"} - ${settings?.storeName || "Store"}`}</title>
-        <meta
-          name="description"
-          content={product?.description || "Explore this product in our store."}
-        />
+        <meta name="description" content={product?.description || "Explore this product in our store."} />
       </Helmet>
       <PageTitle title={`${product?.name} - ${t("productDetails.pageSuffix")}`} />
       <MetaTags
@@ -236,11 +207,7 @@ function ProductDetails() {
             availability: effectiveStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           },
           aggregateRating: product?.numOfReviews
-            ? {
-                "@type": "AggregateRating",
-                ratingValue: product?.ratings || 0,
-                reviewCount: product?.numOfReviews || 0,
-              }
+            ? { "@type": "AggregateRating", ratingValue: product?.ratings || 0, reviewCount: product?.numOfReviews || 0 }
             : undefined,
         }}
       />
@@ -250,7 +217,6 @@ function ProductDetails() {
         <div className="product-detail-container">
           <div className="product-image-container">
             <img src={selectedImage} alt={product?.name || t("productDetails.productAlt")} className="product-detail-image" />
-
             {product.image.length > 1 && (
               <div className="product-thumbnails">
                 {product.image.map((img, index) => (
@@ -267,9 +233,7 @@ function ProductDetails() {
               <span className="product-price">
                 {t("product.price")} : {discountAmount > 0 ? discountedPrice.toFixed(2) : effectivePrice.toFixed(2)}
               </span>
-              {discountAmount > 0 && (
-                <span className="old-price">{effectivePrice.toFixed(2)}</span>
-              )}
+              {discountAmount > 0 && <span className="old-price">{effectivePrice.toFixed(2)}</span>}
             </div>
             {discountAmount > 0 && <div className="discount-tag">-{discountAmount.toFixed(2)}</div>}
 
@@ -279,12 +243,7 @@ function ProductDetails() {
             </div>
 
             <div className="stock-status">
-              <span
-                className="in-stock"
-                style={{
-                  color: effectiveStock === 0 ? "var(--danger-color)" : "var(--success-color)",
-                }}
-              >
+              <span className="in-stock" style={{ color: effectiveStock === 0 ? "var(--danger-color)" : "var(--success-color)" }}>
                 {effectiveStock === 0 ? t("productDetails.outOfStockLabel") : t("productDetails.inStock", { count: effectiveStock })}
               </span>
             </div>
@@ -294,9 +253,7 @@ function ProductDetails() {
                 <span className="quantity-label">{t("productDetails.variant")}:</span>
                 <select value={selectedVariantId} onChange={(e) => { setSelectedVariantId(e.target.value); setQuantity(1); }}>
                   {product.variants.map((variant) => (
-                    <option key={variant._id} value={variant._id}>
-                      {variant.label} - {variant.price}
-                    </option>
+                    <option key={variant._id} value={variant._id}>{variant.label} - {variant.price}</option>
                   ))}
                 </select>
               </div>
@@ -314,25 +271,15 @@ function ProductDetails() {
             <div className="action-buttons">
               <button className="add-to-cart-btn" onClick={addToCart}>{t("product.addToCart")}</button>
               <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
-              {isAuthenticated && (
-                <button
-                  className={`wishlist-btn ${isInWishlist ? "in-wishlist" : ""}`}
-                  onClick={() => dispatch(toggleWishlist(id))}
-                  disabled={wishlistLoading}
-                  title={isInWishlist ? t("wishlist.remove") : t("wishlist.add")}
-                >
-                  {isInWishlist ? "❤️" : "🤍"}
-                </button>
-              )}
             </div>
 
             {isAuthenticated ? (
               <form className="review-form" onSubmit={handleReviewSubmit}>
-              <h3>{t("productDetails.writeReview")}</h3>
-              <Rating value={userRating || 0} onRatingChange={handleRatingChange} disabled={false} />
-              <textarea placeholder={t("productDetails.reviewPlaceholder")} required className="review-input" value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
-              <button className="submit-review-btn" disabled={reviewLoading}>{t("productDetails.submitReview")}</button>
-            </form>
+                <h3>{t("productDetails.writeReview")}</h3>
+                <Rating value={userRating || 0} onRatingChange={handleRatingChange} disabled={false} />
+                <textarea placeholder={t("productDetails.reviewPlaceholder")} required className="review-input" value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
+                <button className="submit-review-btn" disabled={reviewLoading}>{t("productDetails.submitReview")}</button>
+              </form>
             ) : (
               <div className="review-login-note">
                 {t("productDetails.reviewLoginPrompt")} <Link to="/login">{t("productDetails.login")}</Link>
@@ -364,16 +311,14 @@ function ProductDetails() {
 
       <div className="sticky-action-bar">
         <div className="sticky-price-info">
-            <span className="price-value">{discountAmount > 0 ? discountedPrice.toFixed(2) : effectivePrice.toFixed(2)} TND</span>
-            {discountAmount > 0 && (
-                <span className="old-price">{effectivePrice.toFixed(2)} TND</span>
-            )}
+          <span className="price-value">{discountAmount > 0 ? discountedPrice.toFixed(2) : effectivePrice.toFixed(2)} TND</span>
+          {discountAmount > 0 && <span className="old-price">{effectivePrice.toFixed(2)} TND</span>}
         </div>
         <div className="sticky-buttons">
-              <button className="add-to-cart-btn" onClick={addToCart}>{t("product.addToCart")}</button>
-              <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
+          <button className="add-to-cart-btn" onClick={addToCart}>{t("product.addToCart")}</button>
+          <button type="button" className="buy-now-btn" onClick={buyNow}>{t("product.buyNow")}</button>
         </div>
-    </div>
+      </div>
 
       {relatedProducts.length > 0 && (
         <div className="related-products-section">

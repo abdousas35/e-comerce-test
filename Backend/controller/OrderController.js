@@ -5,7 +5,6 @@ import SiteSettings from "../models/SiteSettingsModel.js";
 import HandelError from "../utils/handelError.js";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import { sendOrderNotifications } from "../utils/orderNotifications.js";
-import { sendLowStockAlertEmail } from "../utils/lowStockAlert.js";
 import { logAdminAction } from "../utils/adminLog.js";
 
 const ORDER_STATUSES = ["Pending", "Confirmed", "Processing", "Shipped", "Delivered", "Cancelled"];
@@ -122,10 +121,6 @@ const reserveStock = async (orderItems) => {
     }
 
     await product.save({ validateBeforeSave: false });
-
-    if (product.stock <= product.lowStock) {
-        sendLowStockAlertEmail(product);
-    }
   }
 };
 

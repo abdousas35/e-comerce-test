@@ -46,7 +46,6 @@ const Reviews = lazy(() => import("./Admin/ReviewsList.jsx"));
 const AdminSettings = lazy(() => import("./Admin/AdminSettings.jsx"));
 const BannerManager = lazy(() => import("./Admin/BannerManager.jsx"));
 const CouponsManager = lazy(() => import("./Admin/CouponsManager.jsx"));
-const Wishlist = lazy(() => import("./User/Wishlist.jsx"));
 
 function App() {
   const { settings } = useSelector((state) => state.settings);
@@ -107,7 +106,6 @@ function App() {
           <Route path="/password/change" element={<ProtectedRoute element={<UpdatePassword />} />} />
           <Route path="/password/forgot" element={<ForgotPassword />} />
           <Route path="/reset/:token" element={<ResetPassword />} />
-          <Route path="/wishlist" element={<ProtectedRoute element={<Wishlist />} />} />
 
           <Route path="/cart" element={<Cart />} />
           <Route path="/shipping" element={<Shipping />} />

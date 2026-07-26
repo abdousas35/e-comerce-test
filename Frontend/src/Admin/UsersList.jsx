@@ -1,3 +1,4 @@
+import GoToDashboard from "../components/GoToDashboard";
 import React, { useEffect } from "react";
 import "../AdminStyles/UsersList.css";
 import Navbar from "../components/Navbar";
@@ -9,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { fetchUsers, removeErrors, deleteUser } from "../features/admin/adminSlice";
+import GoToDashboard from "../components/GoToDashboard";
+
 
 function UsersList() {
   const { users, loading, error } = useSelector((state) => state.admin);

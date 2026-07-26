@@ -13,8 +13,6 @@ import {
   getSingleUser,
   updateUserRole,
   deleteUser,
-  toggleWishlist,
-  getWishlist,
 } from "../controller/UserController.js";
 import { roleBasedAccess, verifyUserAuth } from "../middleware/userAuth.js";
 import { authLimiter } from "../middleware/rateLimiter.js";
@@ -51,8 +49,5 @@ router
   .get(verifyUserAuth, roleBasedAccess("admin"), getSingleUser)
   .put(verifyUserAuth, roleBasedAccess("admin"), updateUserRole)
   .delete(verifyUserAuth, roleBasedAccess("admin"), deleteUser);
-
-router.route("/wishlist").get(verifyUserAuth, getWishlist);
-router.route("/wishlist/:productId").post(verifyUserAuth, toggleWishlist);
 
 export default router;

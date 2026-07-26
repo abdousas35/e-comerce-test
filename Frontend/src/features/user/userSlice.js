@@ -7,20 +7,14 @@ export const register = createAsyncThunk(
   "user/register",
   async (userData, { dispatch, getState, rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
-
+      const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
       const { data } = await axios.post("/api/v1/register", userData, config);
-      
       const { cart: { cartItems: localCart } } = getState();
       if (localCart && localCart.length > 0) {
         await dispatch(mergeLocalCart(localCart));
       } else {
         await dispatch(fetchUserCart());
       }
-
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.user.registerFailed") });
@@ -32,19 +26,14 @@ export const login = createAsyncThunk(
   "user/login",
   async ({ email, password }, { dispatch, getState, rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
+      const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
       const { data } = await axios.post("/api/v1/login", { email, password }, config);
-      
       const { cart: { cartItems: localCart } } = getState();
       if (localCart && localCart.length > 0) {
         await dispatch(mergeLocalCart(localCart));
       } else {
         await dispatch(fetchUserCart());
       }
-
       return data;
     } catch (error) {
       if (error.response?.status === 401) {
@@ -90,11 +79,7 @@ export const updateProfile = createAsyncThunk(
   "user/updateProfile",
   async (formData, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      };
-
+      const config = { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true };
       const { data } = await axios.put("/api/v1/profile/update", formData, config);
       return data;
     } catch (error) {
@@ -107,11 +92,7 @@ export const changePassword = createAsyncThunk(
   "user/updatePassword",
   async (formData, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
-
+      const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
       const { data } = await axios.put("/api/v1/password/change", formData, config);
       return data;
     } catch (error) {
@@ -124,11 +105,7 @@ export const forgotPassword = createAsyncThunk(
   "user/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
-
+      const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
       const { data } = await axios.post("/api/v1/password/forgot", email, config);
       return data;
     } catch (error) {
@@ -141,39 +118,11 @@ export const resetPassword = createAsyncThunk(
   "user/resetPassword",
   async ({ token, passwords }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      };
-
+      const config = { headers: { "Content-Type": "application/json" }, withCredentials: true };
       const { data } = await axios.post(`/api/v1/reset/${token}`, passwords, config);
       return data;
     } catch (error) {
       return rejectWithValue({ message: resolveApiMessage(error, "api.user.resetPasswordFailed") });
-    }
-  }
-);
-
-export const fetchWishlist = createAsyncThunk(
-  "user/fetchWishlist",
-  async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.get("/api/v1/wishlist", { withCredentials: true });
-      return data.wishlist;
-    } catch (error) {
-      return rejectWithValue({ message: resolveApiMessage(error, "api.user.wishlistFailed") });
-    }
-  }
-);
-
-export const toggleWishlist = createAsyncThunk(
-  "user/toggleWishlist",
-  async (productId, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.post(`/api/v1/wishlist/${productId}`, {}, { withCredentials: true });
-      return data;
-    } catch (error) {
-      return rejectWithValue({ message: resolveApiMessage(error, "api.user.wishlistFailed") });
     }
   }
 );
@@ -187,26 +136,15 @@ const userSlice = createSlice({
     success: false,
     isAuthenticated: false,
     message: null,
-    wishlist: [],
-    wishlistLoading: false,
   },
   reducers: {
-    removeErrors: (state) => {
-      state.error = null;
-    },
-    removeSuccess: (state) => {
-      state.success = null;
-    },
-    removeMessage: (state) => {
-      state.message = null;
-    },
+    removeErrors: (state) => { state.error = null; },
+    removeSuccess: (state) => { state.success = null; },
+    removeMessage: (state) => { state.message = null; },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(register.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.success = action.payload.success;
@@ -219,10 +157,7 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(login.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.success = action.payload.success;
@@ -235,10 +170,7 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(loadUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(loadUser.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(loadUser.fulfilled, (state, action) => {
         state.loading = false;
         state.success = action.payload.success;
@@ -251,10 +183,7 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(logout.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(logout.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(logout.fulfilled, (state) => {
         state.loading = false;
         state.success = false;
@@ -265,10 +194,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || tMessage("api.user.logoutFailed");
       })
-      .addCase(updateProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(updateProfile.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload?.user || state.user;
@@ -278,22 +204,13 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || tMessage("api.user.updateProfileFailed");
       })
-      .addCase(changePassword.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(changePassword.fulfilled, (state) => {
-        state.loading = false;
-        state.success = true;
-      })
+      .addCase(changePassword.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(changePassword.fulfilled, (state) => { state.loading = false; state.success = true; })
       .addCase(changePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || action.payload || tMessage("api.user.updatePasswordFailed");
       })
-      .addCase(forgotPassword.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      .addCase(forgotPassword.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
@@ -303,27 +220,12 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || action.payload || tMessage("api.user.forgotPasswordFailed");
       })
-      .addCase(resetPassword.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(resetPassword.fulfilled, (state) => {
-        state.loading = false;
-        state.success = true;
-      })
+      .addCase(resetPassword.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(resetPassword.fulfilled, (state) => { state.loading = false; state.success = true; })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || action.payload || tMessage("api.user.resetPasswordFailed");
-      })
-      .addCase(fetchWishlist.fulfilled, (state, action) => {
-        state.wishlist = action.payload || [];
-      })
-      .addCase(toggleWishlist.pending, (state) => { state.wishlistLoading = true; })
-      .addCase(toggleWishlist.fulfilled, (state, action) => {
-        state.wishlistLoading = false;
-        state.wishlist = action.payload.wishlist || [];
-      })
-      .addCase(toggleWishlist.rejected, (state) => { state.wishlistLoading = false; });
+      });
   },
 });
 

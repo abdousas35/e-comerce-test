@@ -68,7 +68,6 @@ const UserSchema = new mongoose.Schema({
         }
     ],
     cartUpdatedAt: { type: Date, default: Date.now },
-    wishlist: [{ type: mongoose.Schema.ObjectId, ref: 'Product' }],
     resetPasswordToken: String,
     resetPasswordExpire: Date
 
