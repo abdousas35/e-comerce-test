@@ -81,8 +81,8 @@
 
 .admin-settings-section-title h2 {
   margin: 0;
-  color: var(--heading-color);
   font-size: 1.2rem;
+  color: var(--heading-color);
 }
 
 .admin-settings-section-title p {
@@ -115,6 +115,7 @@
   padding: 0.9rem 1rem;
   font: inherit;
   background: var(--surface-color);
+  color: var(--body-text-color); /* Added for dark theme text color */
 }
 
 .admin-settings-grid input[type="color"] {
@@ -127,6 +128,7 @@
 }
 
 .admin-settings-colors {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -362,4 +364,18 @@
   background: var(--primary-dark);
   transform: translateY(-2px);
 }
-
+.admin-settings-grid select {
+  border: 1px solid var(--border-color);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  background: var(--surface-color);
+  -webkit-appearance: none; /* Remove default arrow for Chrome, Safari, Opera */
+  -moz-appearance: none; /* Remove default arrow for Firefox */
+  appearance: none; /* Remove default arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2C114.7L158.4%2C243.3c-2.3%2C2.3-5.3%2C3.5-8.4%2C3.5s-6.1-1.2-8.4-3.5L5.4%2C114.7c-4.6-4.6-4.6-12.1%2C0-16.8l17.4-17.4c4.6-4.6%2C12.1-4.6%2C16.8%2C0l118.4%2C118.4l118.4-118.4c4.6-4.6%2C12.1-4.6%2C16.8%2C0l17.4%2C17.4C291.5%2C102.6%2C291.5%2C110.1%2C287%2C114.7z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.8em;
+  padding-right: 2.5rem; /* Make space for the custom arrow */
+}
