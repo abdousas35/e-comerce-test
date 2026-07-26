@@ -423,17 +423,6 @@ export const importProductsFromCsv = HandleAsyncError(async (req, res, next) => 
   });
 });
 
-export const getLowStockProducts = HandleAsyncError(async (req, res, next) => {
-    const lowStockProducts = await Product.find({
-        $expr: { $lte: ["$stock", "$lowStock"] },
-    });
-
-    res.status(200).json({
-        success: true,
-        products: lowStockProducts,
-    });
-});
-
 export const getRelatedProducts = HandleAsyncError(async (req, res, next) => {
     const product = await Product.findById(req.params.id).select('category');
     if (!product) return next(new HandelError("Product not found", 404));

@@ -231,18 +231,6 @@ export const deleteReview = createAsyncThunk(
   }
 );
 
-export const getLowStockProducts = createAsyncThunk(
-  "admin/getLowStockProducts",
-  async (_, { rejectWithValue }) => {
-    try {
-      const { data } = await axios.get("/api/v1/admin/products/low-stock");
-      return data;
-    } catch (error) {
-      return rejectWithValue({ message: error.response?.data?.message || "Failed to fetch low stock products" });
-    }
-  }
-);
-
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -262,7 +250,6 @@ const adminSlice = createSlice({
     order: [],
     reviews: [],
     coupons: [],
-    lowStockProducts: [],
   },
   reducers: {
     removeErrors: (state) => {
@@ -510,18 +497,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || "Failed to delete coupon";
       })
-      .addCase(getLowStockProducts.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getLowStockProducts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.lowStockProducts = action.payload.products;
-      })
-      .addCase(getLowStockProducts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Failed to fetch low stock products";
-      });
+      ;
   },
 });
 

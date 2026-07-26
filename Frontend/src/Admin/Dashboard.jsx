@@ -18,7 +18,6 @@ import { useTranslation } from "react-i18next";
 import {
   fetchAdminProducts,
   fetchAllOrders,
-  getLowStockProducts,
 } from "../features/admin/adminSlice";
 import AdminSidebar from "../components/AdminSidebar";
 
@@ -28,7 +27,6 @@ function Dashboard() {
     products,
     orders,
     loading: loadingAdmin,
-    lowStockProducts,
   } = useSelector((state) => state.admin);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -38,7 +36,6 @@ function Dashboard() {
   useEffect(() => {
     dispatch(fetchAdminProducts());
     dispatch(fetchAllOrders());
-    dispatch(getLowStockProducts());
   }, [dispatch]);
 
   useEffect(() => {
@@ -152,7 +149,7 @@ function Dashboard() {
 
         {/* SIDEBAR */}
         <div className={`${isTinyScreen && !isSidebarOpen ? "sidebar closed" : ""}`}>
-          <AdminSidebar lowStockCount={lowStockProducts?.length || 0} />
+          <AdminSidebar />
         </div>
 
         {/* MAIN */}
@@ -306,41 +303,7 @@ function Dashboard() {
             )}
           </div>
 
-          <div className="products-section">
-            <h2>{t("template.dashboard.lowStockProducts")}</h2>
 
-            {loadingAdmin ? (
-              <p>Loading...</p>
-            ) : (
-              <table className="product-table">
-                <thead>
-                  <tr>
-                    <th>{t("template.dashboard.productName")}</th>
-                    <th>{t("template.dashboard.stock")}</th>
-                    <th>{t("template.dashboard.lowStockThreshold")}</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {lowStockProducts && lowStockProducts.length > 0 ? (
-                    lowStockProducts.map((p) => (
-                      <tr key={p._id}>
-                        <td>{p.name}</td>
-                        <td>{p.stock}</td>
-                        <td>{p.lowStock}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="3">
-                        {t("template.dashboard.noLowStockProducts")}
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
-          </div>
         </div>
       </div>
     </>
