@@ -163,6 +163,33 @@
   color: var(--heading-color);
 }
 
+.theme-group {
+  margin-top: 1.25rem;
+}
+
+.theme-group-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 0.75rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.theme-group-label--dark {
+  background: #1a1a2e;
+  color: #a78bfa;
+  border: 1px solid #2e2e4e;
+}
+
+.theme-group-label--light {
+  background: #f0f4ff;
+  color: #4f46e5;
+  border: 1px solid #dde3ff;
+}
+
 .theme-selector-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

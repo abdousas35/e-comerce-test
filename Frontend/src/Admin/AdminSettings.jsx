@@ -64,6 +64,7 @@ function AdminSettings() {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [activePreset, setActivePreset] = useState("");
 
   useEffect(() => {
     dispatch(fetchSiteSettings());
@@ -125,6 +126,7 @@ function AdminSettings() {
         },
       });
       setIsDirty(false);
+      setActivePreset(settings.themePreset || "");
     }
   }, [settings]);
 
@@ -228,6 +230,7 @@ function AdminSettings() {
       dangerColor: preset.dangerColor || prev.dangerColor,
       infoColor: preset.infoColor || prev.infoColor,
     }));
+    setActivePreset(presetKey);
     setIsDirty(true);
   };
 
@@ -464,28 +467,58 @@ function AdminSettings() {
                 </div>
               </div>
 
-              <div className="theme-selector-grid">
-                {Object.entries(demoPresets).map(([key, preset]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`theme-card ${formData.themePreset === key ? "active" : ""}`}
-                    onClick={() => applyThemePreset(key)}
-                  >
-                    <div className="theme-card-swatch-row">
-                      <span style={{ background: preset.primaryColor }} />
-                      <span style={{ background: preset.secondaryColor }} />
-                      <span style={{ background: preset.navbarBackground }} />
-                    </div>
-                    <div className="theme-card-body">
-                      <h3>{preset.storeName}</h3>
-                      <p>{preset.tagline}</p>
-                    </div>
-                    {formData.themePreset === key && (
-                      <span className="theme-card-active-badge">✓ Active</span>
-                    )}
-                  </button>
-                ))}
+              <div className="theme-group">
+                <h3 className="theme-group-label theme-group-label--dark">🌙 Dark Themes</h3>
+                <div className="theme-selector-grid">
+                  {Object.entries(demoPresets).filter(([, p]) => p.mode === "dark").map(([key, preset]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`theme-card theme-card--dark ${activePreset === key ? "active" : ""}`}
+                      onClick={() => applyThemePreset(key)}
+                    >
+                      <div className="theme-card-swatch-row">
+                        <span style={{ background: preset.primaryColor }} />
+                        <span style={{ background: preset.secondaryColor }} />
+                        <span style={{ background: preset.navbarBackground }} />
+                      </div>
+                      <div className="theme-card-body">
+                        <h3>{preset.storeName}</h3>
+                        <p>{preset.tagline}</p>
+                      </div>
+                      {activePreset === key && (
+                        <span className="theme-card-active-badge">✓ Active</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="theme-group">
+                <h3 className="theme-group-label theme-group-label--light">☀️ Light Themes</h3>
+                <div className="theme-selector-grid">
+                  {Object.entries(demoPresets).filter(([, p]) => p.mode === "light").map(([key, preset]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`theme-card ${activePreset === key ? "active" : ""}`}
+                      onClick={() => applyThemePreset(key)}
+                    >
+                      <div className="theme-card-swatch-row">
+                        <span style={{ background: preset.primaryColor }} />
+                        <span style={{ background: preset.secondaryColor }} />
+                        <span style={{ background: preset.navbarBackground }} />
+                      </div>
+                      <div className="theme-card-body">
+                        <h3>{preset.storeName}</h3>
+                        <p>{preset.tagline}</p>
+                      </div>
+                      {activePreset === key && (
+                        <span className="theme-card-active-badge">✓ Active</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </section>
 
