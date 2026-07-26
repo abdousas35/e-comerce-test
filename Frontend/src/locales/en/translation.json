@@ -190,12 +190,6 @@
     "add": "Add to wishlist",
     "remove": "Remove"
   },
-    "pageTitle": "My Wishlist",
-    "title": "My Wishlist",
-    "empty": "Your wishlist is empty",
-    "add": "Add to wishlist",
-    "remove": "Remove"
-  },
   "cart": {
     "pageTitle": "Your Cart",
     "mustLogin": "You must be logged in to access the cart",

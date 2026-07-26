@@ -329,4 +329,3 @@ const userSlice = createSlice({
 
 export const { removeErrors, removeSuccess, removeMessage } = userSlice.actions;
 export default userSlice.reducer;
-export { fetchWishlist, toggleWishlist };
