@@ -1,4 +1,3 @@
-import GoToDashboard from "../components/GoToDashboard";
 import React, { useEffect } from "react";
 import "../AdminStyles/UsersList.css";
 import Navbar from "../components/Navbar";
