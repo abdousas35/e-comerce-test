@@ -44,6 +44,7 @@ function UsersList() {
         <Loader />
       ) : (
         <>
+          <GoToDashboard />
           <Navbar />
           <PageTitle title={t("admin.users.allUsers")} />
           <div className="usersList-container">

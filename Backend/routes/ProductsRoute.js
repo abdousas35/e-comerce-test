@@ -11,8 +11,8 @@ router.route("/admin/product/create").post(verifyUserAuth, roleBasedAccess("admi
 router.route("/admin/product/:id")
   .put(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(updateProduct))
   .delete(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(deleteProduct));
-router.route("/admin/products").get(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(getAdminProducts));
 router.route("/admin/products/low-stock").get(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(getLowStockProducts));
+router.route("/admin/products").get(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(getAdminProducts));
 router.route("/admin/products/import-csv").post(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(importProductsFromCsv));
 router.route("/product/:id").get(accessingSingleProduct);
 router.route("/product/:id/related").get(catchAsyncErrors(getRelatedProducts));
