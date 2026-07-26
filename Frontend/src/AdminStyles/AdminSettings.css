@@ -319,3 +319,47 @@
     width: 100%;
   }
 }
+
+/* =========================
+   AVATAR / FILE INPUT
+========================= */
+.avatar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  width: 80%;
+}
+
+/* إخفاء input file تمامًا */
+.file-input-wrapper input[type="file"],
+.file-input {
+  display: none;
+}
+
+/* تصميم label بدل input file */
+.file-input-label {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  border-radius: 6px;
+  background: var(--primary-main);
+  color: var(--text-light);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.file-input-label:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+

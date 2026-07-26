@@ -448,11 +448,19 @@ function AdminSettings() {
                   />
                   {fieldErrors.logo && <span className="admin-settings-error">{fieldErrors.logo}</span>}
                 </label>
-                <label>
-                  {t("template.settings.uploadLogo")}
-                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "logo")} disabled={uploadingLogo} />
+                <div className="file-input-wrapper">
+                  <input
+                    type="file"
+                    id="logo-upload"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "logo")}
+                    disabled={uploadingLogo}
+                  />
+                  <label htmlFor="logo-upload" className="file-input-label">
+                    {t("template.settings.uploadLogo")}
+                  </label>
                   {uploadingLogo && <span className="admin-settings-hint">{t("template.settings.uploading")}</span>}
-                </label>
+                </div>
                 <label>
                   {t("template.settings.heroImageUrl")}
                   <input
@@ -462,11 +470,19 @@ function AdminSettings() {
                   />
                   {fieldErrors.heroImage && <span className="admin-settings-error">{fieldErrors.heroImage}</span>}
                 </label>
-                <label>
-                  {t("template.settings.uploadHeroImage")}
-                  <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, "heroImage")} disabled={uploadingHero} />
+                <div className="file-input-wrapper">
+                  <input
+                    type="file"
+                    id="hero-image-upload"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "heroImage")}
+                    disabled={uploadingHero}
+                  />
+                  <label htmlFor="hero-image-upload" className="file-input-label">
+                    {t("template.settings.uploadHeroImage")}
+                  </label>
                   {uploadingHero && <span className="admin-settings-hint">{t("template.settings.uploading")}</span>}
-                </label>
+                </div>
               </div>
             </section>
 
