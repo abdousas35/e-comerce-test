@@ -15,13 +15,13 @@ import { globalLimiter } from "./middleware/rateLimiter.js";
 const app = express();
 const allowedOrigins = [process.env.FRONTEND_URL, process.env.FRONTEND_PREVIEW_URL].filter(Boolean);
 
-// 1. تسجيل الطلبات للـ Debugging
+// 1. تسجيل جميع الطلبات القادمة للـ Debugging
 app.use((req, res, next) => {
-    console.log("REQUEST:", req.method, req.originalUrl);
+    console.log(`[${new Date().toISOString()}] ${req.method} -> ${req.originalUrl}`);
     next();
 });
 
-// 2. إصلاح الـ CORS بالكامل ليدعم PUT و OPTIONS والكوكيز
+// 2. إعداد الـ CORS بالكامل
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
@@ -35,21 +35,23 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// الرد الفوري المعتمد على جميع طلبات Preflight OPTIONS
 app.options("*", cors(corsOptions));
 
-// 3. قراءة الـ Cookies والـ JSON بحجم مناسب (50mb للصور)
+// 3. قراءة الـ Cookies
 app.use(cookieParser());
+
+// 4. رفع الملفات (مع مراعاة الترتيب لتسهيل قراءة الـ Body)
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    parseNested: true
+}));
+
+// 5. قراءة الـ JSON والـ URL-Encoded بحجم كبير لصور الـ Base64
 app.use(express.json({ limit: "50mb" })); 
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// 4. تهيئة fileUpload بحيث لا تتعارض مع json
-app.use(fileUpload({
-    useTempFiles: true,
-    tempFileDir: "/tmp/"
-}));
-
-// 5. الـ Routes
+// 6. تجميع وتحديد الـ Routes
 const apiV1Router = express.Router();
 apiV1Router.use(globalLimiter);
 
@@ -62,7 +64,7 @@ apiV1Router.use(cart);
 
 app.use("/api/v1", apiV1Router);
 
-// Handle 404
+// 7. معالجة الـ 404 Routes
 app.use((req, res, next) => {
     res.status(404).json({
         success: false,

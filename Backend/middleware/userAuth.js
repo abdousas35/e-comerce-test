@@ -3,16 +3,13 @@ import HandleAsyncError from "./HandleAsyncError.js";
 import jwt from "jsonwebtoken";
 import User from "../models/usersModel.js";
 
-
 export const verifyUserAuth = HandleAsyncError(async (req, res, next) => {
     let token;
 
-
+    // 1. استخراج الـ Token من Cookie أو Authorization Header
     if (req.cookies && req.cookies.token) {
         token = req.cookies.token;
-    } 
-
-    else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    } else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
 
@@ -25,7 +22,7 @@ export const verifyUserAuth = HandleAsyncError(async (req, res, next) => {
         req.user = await User.findById(decodedData.id);
 
         if (!req.user) {
-            return next(new HandelError("User not found with this id", 404));
+            return next(new HandelError("User not found", 404));
         }
 
         next();
@@ -35,7 +32,13 @@ export const verifyUserAuth = HandleAsyncError(async (req, res, next) => {
 });
 
 export const verifyUserAuthOptional = HandleAsyncError(async (req, _res, next) => {
-    const { token } = req.cookies;
+    let token;
+
+    if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+    }
 
     if (!token) {
         req.user = null;
@@ -43,7 +46,7 @@ export const verifyUserAuthOptional = HandleAsyncError(async (req, _res, next) =
     }
 
     try {
-        const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
         req.user = await User.findById(decodedData.id);
     } catch (_error) {
         req.user = null;
@@ -51,20 +54,17 @@ export const verifyUserAuthOptional = HandleAsyncError(async (req, _res, next) =
 
     next();
 });
+
 export const roleBasedAccess = (requiredRole) => {
-  return HandleAsyncError(async (req, res, next) => {
+    return HandleAsyncError(async (req, res, next) => {
+        if (!req.user) {
+            return res.status(401).json({ message: "User not authenticated" });
+        }
 
-    if (!req.user) {
-      return res.status(401).json({ message: "User not authenticated" });
-    }
+        if (req.user.role !== requiredRole) {
+            return res.status(403).json({ message: "Access denied: insufficient permissions" });
+        }
 
-    const userRole = req.user.role;
-
-    if (userRole !== requiredRole) {
-      return res.status(403).json({ message: "Access denied: insufficient permissions" });
-    }
-
-
-    next();
-  });
+        next();
+    });
 };
