@@ -46,8 +46,12 @@ router
   .get(verifyUserAuth, roleBasedAccess("admin"), getUserList);
 router
   .route("/admin/user/:id")
-  .get(verifyUserAuth, roleBasedAccess("admin"), getSingleUser)
-  .put(verifyUserAuth, roleBasedAccess("admin"), updateUserRole)
+  .get(verifyUserAuth, roleBasedAccess("admin"), getSingleUser);
+router
+  .route("/admin/userRole/:id")
+  .put(verifyUserAuth, roleBasedAccess("admin"), updateUserRole);
+router
+  .route("/admin/userDelete/:id")
   .delete(verifyUserAuth, roleBasedAccess("admin"), deleteUser);
 
 export default router;
