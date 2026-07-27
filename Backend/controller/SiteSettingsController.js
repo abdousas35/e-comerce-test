@@ -2,6 +2,15 @@ import { v2 as cloudinary } from "cloudinary";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import SiteSettings from "../models/SiteSettingsModel.js";
 
+export const updateSiteSettings = HandleAsyncError(async (req, res) => {
+  // --- أضف هذين السطرين للتأكد ---
+  console.log("=== RECEIVED BODY ===", Object.keys(req.body));
+  console.log("=== TERMS RECEIVED ===", req.body.termsAndConditions);
+  // -------------------------------
+
+  let settings = await SiteSettings.findOne();
+  // ... باقي الكود كما هو
+})
 const DEFAULT_IMAGE_FIELDS = ["logo", "favicon", "heroImage"];
 
 // رفع الصور عند الحاجة
