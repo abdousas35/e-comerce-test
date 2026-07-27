@@ -3,6 +3,42 @@ import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import SiteSettings from "../models/SiteSettingsModel.js";
 
 const DEFAULT_IMAGE_FIELDS = ["logo", "favicon", "heroImage"];
+const DEFAULT_TERMS_AND_CONDITIONS = "<h2>Orders and payments</h2><p>Customers are responsible for providing accurate billing and shipping details. Orders are processed after successful review and confirmation.</p><h2>Returns and refunds</h2><p>Refund and return terms should be updated to match the client policy, including timelines, exclusions, and item condition rules.</p><h2>Store usage</h2><p>Visitors agree to use the site lawfully and not misuse storefront features, customer accounts, or protected content.</p>";
+const DEFAULT_PRIVACY_POLICY = "<h2>Information we collect</h2><p>Orders, contact details, shipping information, and activity required to process purchases and improve service quality.</p><h2>How we use the information</h2><p>We use customer information to fulfill orders, provide support, send transactional updates, and improve the shopping experience.</p><h2>How we protect your data</h2><p>Administrative access is protected, customer sessions are authenticated, and business-critical actions are handled through controlled backend workflows.</p>";
+
+const normalizeSettingsDocument = async () => {
+  const settingsDocs = await SiteSettings.find({}).sort({ updatedAt: -1, createdAt: -1 });
+
+  if (!settingsDocs.length) {
+    return SiteSettings.create({});
+  }
+
+  if (settingsDocs.length > 1) {
+    const duplicateIds = settingsDocs.slice(1).map((doc) => doc._id);
+    await SiteSettings.deleteMany({ _id: { $in: duplicateIds } });
+  }
+
+  const [settings] = settingsDocs;
+  const missingDefaults = {};
+
+  if (typeof settings.termsAndConditions === "undefined") {
+    missingDefaults.termsAndConditions = DEFAULT_TERMS_AND_CONDITIONS;
+  }
+
+  if (typeof settings.privacyPolicy === "undefined") {
+    missingDefaults.privacyPolicy = DEFAULT_PRIVACY_POLICY;
+  }
+
+  if (Object.keys(missingDefaults).length) {
+    return SiteSettings.findOneAndUpdate(
+      { _id: settings._id },
+      { $set: missingDefaults },
+      { new: true, runValidators: true }
+    );
+  }
+
+  return settings;
+};
 
 const uploadAssetIfNeeded = async (value, folder) => {
   if (!value || typeof value !== "string") return value;
@@ -27,10 +63,17 @@ const normalizeSlides = async (slides = []) => {
 };
 
 export const getPublicSiteSettings = HandleAsyncError(async (req, res) => {
-  let settings = await SiteSettings.findOne();
-  if (!settings) {
-    settings = await SiteSettings.create({});
-  }
+  console.log("[siteSettings] GET /settings -> starting fetch");
+  const settings = await normalizeSettingsDocument();
+  console.log("[siteSettings] GET /settings -> fetched document", {
+    id: settings?._id?.toString(),
+    hasTerms: typeof settings?.termsAndConditions !== "undefined",
+    termsLength: settings?.termsAndConditions?.length || 0,
+    hasPrivacy: typeof settings?.privacyPolicy !== "undefined",
+    privacyLength: settings?.privacyPolicy?.length || 0,
+    termsPreview: settings?.termsAndConditions?.slice?.(0, 80),
+    privacyPreview: settings?.privacyPolicy?.slice?.(0, 80),
+  });
 
   res.status(200).json({
     success: true,
@@ -39,10 +82,17 @@ export const getPublicSiteSettings = HandleAsyncError(async (req, res) => {
 });
 
 export const updateSiteSettings = HandleAsyncError(async (req, res) => {
-  let settings = await SiteSettings.findOne();
-  if (!settings) {
-    settings = await SiteSettings.create({});
-  }
+  console.log("[siteSettings] PUT /admin/settings -> request received");
+  console.log("[siteSettings] PUT /admin/settings -> body keys", Object.keys(req.body || {}));
+  console.log("[siteSettings] PUT /admin/settings -> termsAndConditions received", req.body?.termsAndConditions);
+  console.log("[siteSettings] PUT /admin/settings -> privacyPolicy received", req.body?.privacyPolicy);
+
+  let settings = await normalizeSettingsDocument();
+  console.log("[siteSettings] PUT /admin/settings -> current doc", {
+    id: settings?._id?.toString(),
+    currentTerms: settings?.termsAndConditions?.slice?.(0, 80),
+    currentPrivacy: settings?.privacyPolicy?.slice?.(0, 80),
+  });
 
   const updateData = {};
 
@@ -70,6 +120,9 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
   simpleFields.forEach((field) => {
     if (typeof req.body[field] !== "undefined") {
       updateData[field] = req.body[field];
+      if (field === "termsAndConditions" || field === "privacyPolicy") {
+        console.log(`[siteSettings] PUT /admin/settings -> preparing ${field}`, req.body[field]);
+      }
     }
   });
 
@@ -99,11 +152,24 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
       .filter((zone) => zone.state);
   }
 
+  console.log("[siteSettings] PUT /admin/settings -> updateData", {
+    hasTerms: typeof updateData.termsAndConditions !== "undefined",
+    termsLength: updateData.termsAndConditions?.length || 0,
+    hasPrivacy: typeof updateData.privacyPolicy !== "undefined",
+    privacyLength: updateData.privacyPolicy?.length || 0,
+  });
+
   const updatedSettings = await SiteSettings.findOneAndUpdate(
     { _id: settings._id },
     { $set: updateData },
     { new: true, runValidators: true }
   );
+
+  console.log("[siteSettings] PUT /admin/settings -> updated document", {
+    id: updatedSettings?._id?.toString(),
+    savedTerms: updatedSettings?.termsAndConditions?.slice?.(0, 80),
+    savedPrivacy: updatedSettings?.privacyPolicy?.slice?.(0, 80),
+  });
 
   res.status(200).json({
     success: true,
