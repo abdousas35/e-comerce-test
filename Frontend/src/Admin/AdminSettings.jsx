@@ -10,6 +10,7 @@ import { clearSettingsError, fetchSiteSettings, updateSiteSettings } from "../fe
 import demoPresets from "../config/demoPresets";
 import "../AdminStyles/AdminSettings.css";
 import GoToDashboard from "../components/GoToDashboard";
+import RichTextEditor from "../components/RichTextEditor";
 
 const MAX_IMAGE_SIZE_MB = 5;
 const COMPRESS_MAX_WIDTH = 1600;
