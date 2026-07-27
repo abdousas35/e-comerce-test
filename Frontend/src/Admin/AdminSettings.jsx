@@ -734,24 +734,40 @@ function AdminSettings() {
 
               <div className="admin-settings-grid">
                 <div className="admin-settings-full">
-                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                  <label 
+                    htmlFor="termsAndConditions" 
+                    className="admin-settings-label-text" 
+                    style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}
+                  >
                     {t("template.settings.termsAndConditions", "Terms and Conditions")}
-                  </span>
-                  <RichTextEditor
+                  </label>
+                  <textarea
+                    id="termsAndConditions"
+                    className="admin-settings-input admin-settings-textarea"
+                    rows={6}
                     value={formData.termsAndConditions || ""}
-                    onChange={(html) => handleFieldChange("termsAndConditions", html)}
+                    onChange={(e) => handleFieldChange("termsAndConditions", e.target.value)}
                     placeholder="Write your terms and conditions..."
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
                   />
                 </div>
 
                 <div className="admin-settings-full">
-                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                  <label 
+                    htmlFor="privacyPolicy" 
+                    className="admin-settings-label-text" 
+                    style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}
+                  >
                     {t("template.settings.privacyPolicy", "Privacy Policy")}
-                  </span>
-                  <RichTextEditor
+                  </label>
+                  <textarea
+                    id="privacyPolicy"
+                    className="admin-settings-input admin-settings-textarea"
+                    rows={6}
                     value={formData.privacyPolicy || ""}
-                    onChange={(html) => handleFieldChange("privacyPolicy", html)}
+                    onChange={(e) => handleFieldChange("privacyPolicy", e.target.value)}
                     placeholder="Write your privacy policy..."
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
                   />
                 </div>
               </div>
