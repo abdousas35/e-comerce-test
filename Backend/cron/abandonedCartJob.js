@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import User from '../models/usersModel.js';
-import sendEmail from '../utils/sendEmail.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 const THRESHOLD_HOURS = 24;
 
