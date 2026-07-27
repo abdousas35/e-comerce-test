@@ -15,7 +15,9 @@ router.route("/orders/user").get(verifyUserAuth, allMyOrders);
 router.route("/admin/orders").get(verifyUserAuth, roleBasedAccess("admin"), getAllOrders);
 router.route("/admin/order/:id")
     .get(verifyUserAuth, roleBasedAccess("admin"), getSingleOrder)
-    .put(verifyUserAuth, roleBasedAccess("admin"), updateOrderStatus)
+    .put(verifyUserAuth, roleBasedAccess("admin"), updateOrderStatus);
+
+router.route("/admin/orderDelete/:id")
     .delete(verifyUserAuth, roleBasedAccess("admin"), deleteOrder);
 
 router.route("/admin/activity-log").get(

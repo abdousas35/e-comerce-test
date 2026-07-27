@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -8,12 +8,14 @@ import Navbar from "../components/Navbar";
 import PageTitle from "../components/PageTitle";
 import Loader from "../components/Loader";
 import "../AdminStyles/UpdateRole.css";
+import GoToDashboard from "../components/GoToDashboard";
 
 import { getSingleUser, updateUserRole } from "../features/admin/adminSlice";
 
 function UpdateRole() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { user, loading } = useSelector((state) => state.admin);
@@ -65,6 +67,7 @@ function UpdateRole() {
         position: "top-center",
         autoClose: 3000,
       });
+      navigate("/admin/dashboard");
     } catch (err) {
       toast.error(t("common.somethingWrong"), {
         position: "top-center",
@@ -78,6 +81,7 @@ function UpdateRole() {
   return (
     <>
       <Navbar />
+      <GoToDashboard />
       <PageTitle title={t("admin.users.updateRole")} />
       <div className="page-wrapper">
         <div className="update-user-role-container">

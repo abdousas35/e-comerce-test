@@ -252,12 +252,14 @@ export const createNewOrder = HandleAsyncError(async (req, res, next) => {
     const normalizedOrderItems = await normalizeOrderItems(sanitizedOrderItems);
 
     // ============ CALCULATE PRICES (Backend Only) ============
+    const serverCalculatedItemPrice = normalizedOrderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
     const computedShippingPrice = typeof shippingPrice === "number"
       ? shippingPrice
-      : await calculateShippingFromSettings(shippingInfo, itemPrice);
+      : await calculateShippingFromSettings(shippingInfo, serverCalculatedItemPrice);
 
     // ============ VALIDATE COUPON ============
-    const subtotalWithShipping = Number(itemPrice || 0) + Number(computedShippingPrice || 0);
+    const subtotalWithShipping = serverCalculatedItemPrice + computedShippingPrice;
     const { discountAmount, coupon } = await validateAndCalculateDiscount(
       couponCode,
       subtotalWithShipping,
@@ -265,14 +267,14 @@ export const createNewOrder = HandleAsyncError(async (req, res, next) => {
       normalizedOrderItems
     );
 
-    const computedTotalPrice = Number(itemPrice || 0) + Number(computedShippingPrice || 0) - Number(discountAmount || 0);
+    const computedTotalPrice = serverCalculatedItemPrice + computedShippingPrice - Number(discountAmount || 0);
 
     // ============ CREATE ORDER (Initial State) ============
     const order = await Order.create({
       idempotencyKey,
       shippingInfo,
       orderItems: normalizedOrderItems,
-      itemPrice: Number(itemPrice || 0),
+      itemPrice: serverCalculatedItemPrice,
       taxPrice: Number(taxPrice || 0),
       shippingPrice: computedShippingPrice,
       discountPrice: discountAmount,
