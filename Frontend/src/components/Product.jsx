@@ -51,8 +51,8 @@ function Product({product}) {
         </div>
       </Link>
 
-        <button className="More info" onClick={() => navigate(`/product/${product._id}`)}>
-          {t("product.addToCart")}
+        <button className="add-to-cart" onClick={() => navigate(`/product/${product._id}`)}>
+          {t("product.MoreInfo")}
         </button>
     </div>
   )
