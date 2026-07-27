@@ -48,8 +48,9 @@ function Product({product}) {
         </div>
       </Link>
 
-      <button className="add-to-cart">
-        {t("product.addToCart")}
+      <button className="More info">
+        <Link to={`/product/${product._id}`} className="product_id"></Link>
+        {t("product.moreInfo")}
       </button>
     </div>
   )
