@@ -152,7 +152,7 @@
     "reviews": "Avis",
     "addToCart": "Ajouter au panier",
     "buyNow": "Acheter maintenant",
-    "MoreInfo": "Plus d'infos"
+    "MoreInfo": "Plus d'informations"
   },
   "products": {
     "pageTitle": "Tous les produits",
@@ -449,7 +449,11 @@
       "contactPhone": "Telephone de contact",
       "address": "Adresse",
       "footerAbout": "Texte du footer",
-      "newsletterText": "Texte newsletter"
+      "newsletterText": "Texte newsletter",
+      "legalContentTitle": "Pages Légales",
+      "legalContentDesc": "Rédigez et formatez le contenu de vos Conditions Générales et de votre Politique de Confidentialité présenté aux clients.",
+      "termsAndConditions": "Conditions Générales",
+      "privacyPolicy": "Politique de Confidentialité"
     },
     "banners": {
       "pageTitle": "Gestion des bannieres",

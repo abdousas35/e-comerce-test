@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
+import DOMPurify from "dompurify";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageTitle from "../components/PageTitle";
@@ -9,6 +10,8 @@ import "../pageStyles/StaticPages.css";
 
 function PrivacyPolicy() {
   const { settings } = useSelector((state) => state.settings);
+  const content = settings?.privacyPolicy || "";
+  const sanitizedContent = DOMPurify.sanitize(content);
 
   return (
     <>
@@ -32,22 +35,14 @@ function PrivacyPolicy() {
         <section className="static-page-card static-page-hero">
           <p className="static-kicker">Legal</p>
           <h1>Privacy policy</h1>
-          <p>This page gives your clients a ready-to-edit privacy policy section they can customize before launch.</p>
+          <p>Learn how we handle your information.</p>
         </section>
 
         <section className="static-page-card static-legal-stack">
-          <article className="static-page-block">
-            <h2>Information we collect</h2>
-            <p>Orders, contact details, shipping information, and activity required to process purchases and improve service quality.</p>
-          </article>
-          <article className="static-page-block">
-            <h2>How we use the information</h2>
-            <p>We use customer information to fulfill orders, provide support, send transactional updates, and improve the shopping experience.</p>
-          </article>
-          <article className="static-page-block">
-            <h2>How we protect your data</h2>
-            <p>Administrative access is protected, customer sessions are authenticated, and business-critical actions are handled through controlled backend workflows.</p>
-          </article>
+          <div
+            className="static-page-block rich-text-content"
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
         </section>
       </main>
 

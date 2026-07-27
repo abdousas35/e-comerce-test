@@ -479,7 +479,11 @@
       "aboutBody": "محتوى صفحة من نحن",
       "contactHeading": "عنوان صفحة التواصل",
       "contactIntro": "مقدمة صفحة التواصل",
-      "contactSupport": "ساعات دعم التواصل"
+      "contactSupport": "ساعات دعم التواصل",
+      "legalContentTitle": "الصفحات القانونية",
+      "legalContentDesc": "اكتب ونسق محتوى الشروط والأحكام وسياسة الخصوصية التي تظهر للعملاء.",
+      "termsAndConditions": "الشروط والأحكام",
+      "privacyPolicy": "سياسة الخصوصية"
     },
     "banners": {
       "pageTitle": "إدارة البنرات",

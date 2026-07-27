@@ -152,7 +152,7 @@
     "reviews": "Reviews",
     "addToCart": "Add to cart",
     "buyNow": "Buy now",
-    "MoreInfo": "More Info"
+    "MoreInfo": "More info"
   },
   "products": {
     "pageTitle": "All Products",
@@ -483,7 +483,11 @@
       "aboutBody": "About page body",
       "contactHeading": "Contact page heading",
       "contactIntro": "Contact page intro",
-      "contactSupport": "Contact support hours"
+      "contactSupport": "Contact support hours",
+      "legalContentTitle": "Legal Pages",
+      "legalContentDesc": "Write and format your Terms & Conditions and Privacy Policy content shown to customers.",
+      "termsAndConditions": "Terms and Conditions",
+      "privacyPolicy": "Privacy Policy"
     },
     "banners": {
       "pageTitle": "Banner Management",

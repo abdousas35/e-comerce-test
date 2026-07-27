@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Palette, Storefront, ContactMail, Save, Description } from "@mui/icons-material";
+import { Palette, Storefront, ContactMail, Save, Description, Gavel } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import RichTextEditor from "../components/RichTextEditor";
 import { toast } from "react-toastify";
@@ -116,6 +116,8 @@ function AdminSettings() {
         contactTitle: settings.contactTitle || "",
         contactIntro: settings.contactIntro || "",
         contactSupportHours: settings.contactSupportHours || "",
+        termsAndConditions: settings.termsAndConditions || "",
+        privacyPolicy: settings.privacyPolicy || "",
         logo: settings.logo || "",
         heroImage: settings.heroImage || "",
         socialLinks: {
@@ -355,6 +357,8 @@ function AdminSettings() {
       contactTitle: settings.contactTitle || "",
       contactIntro: settings.contactIntro || "",
       contactSupportHours: settings.contactSupportHours || "",
+      termsAndConditions: settings.termsAndConditions || "",
+      privacyPolicy: settings.privacyPolicy || "",
       logo: settings.logo || "",
       heroImage: settings.heroImage || "",
       socialLinks: {
@@ -715,6 +719,35 @@ function AdminSettings() {
                 <label className="admin-settings-full">
                   {t("template.settings.contactSupport")}
                   <textarea rows="2" value={formData.contactSupportHours} onChange={(e) => handleFieldChange("contactSupportHours", e.target.value)} />
+                </label>
+              </div>
+            </section>
+
+            <section className="admin-settings-card">
+              <div className="admin-settings-section-title">
+                <Gavel />
+                <div>
+                  <h2>{t("template.settings.legalContentTitle", "Legal Pages")}</h2>
+                  <p>{t("template.settings.legalContentDesc", "Write and format your Terms & Conditions and Privacy Policy content shown to customers.")}</p>
+                </div>
+              </div>
+
+              <div className="admin-settings-grid">
+                <label className="admin-settings-full">
+                  {t("template.settings.termsAndConditions", "Terms and Conditions")}
+                  <RichTextEditor
+                    value={formData.termsAndConditions}
+                    onChange={(html) => handleFieldChange("termsAndConditions", html)}
+                    placeholder="Write your terms and conditions..."
+                  />
+                </label>
+                <label className="admin-settings-full">
+                  {t("template.settings.privacyPolicy", "Privacy Policy")}
+                  <RichTextEditor
+                    value={formData.privacyPolicy}
+                    onChange={(html) => handleFieldChange("privacyPolicy", html)}
+                    placeholder="Write your privacy policy..."
+                  />
                 </label>
               </div>
             </section>
