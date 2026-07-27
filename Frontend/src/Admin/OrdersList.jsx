@@ -29,11 +29,15 @@ function OrdersList() {
     }
   }, [dispatch, error, t]);
 
-  const handleDelete = (id, status) => {
-      console.log("=== [1] React Component ===");
-      console.log("The ID passed from button click is:", id);
-      console.log("Type of ID:", typeof id);
-    if (["Pending", "Confirmed", "Processing", "Shipped"].includes(status)) {
+const handleDelete = (id, status) => {
+  console.log("=== [1] React Component ===");
+  console.log("The ID passed from button click is:", id);
+  console.log("Type of ID:", typeof id);
+
+  // يمنع الحذف إذا كانت حالة الطلب ليست Delivered ولا Cancelled
+  const blockedStatuses = ["Pending", "Confirmed", "Processing", "Shipped"];
+  
+    if (blockedStatuses.includes(status)) {
       toast.error(t("admin.orders.cannotDeleteProcessing"), {
         position: "top-center",
         autoClose: 3000,
@@ -45,10 +49,18 @@ function OrdersList() {
       dispatch(deleteOrder(id))
         .unwrap()
         .then(() => {
-          toast.success(t("admin.orders.deleted"), { position: "top-center", autoClose: 2000 });
+          toast.success(t("admin.orders.deleted"), { 
+            position: "top-center", 
+            autoClose: 2000 
+          });
         })
-        .catch(() => {
-          toast.error(t("admin.orders.deleteFailed"), { position: "top-center", autoClose: 3000 });
+        .catch((err) => {
+          // يمكنك إظهار رسالة الخطأ القادمة من الباك إند إذا وجدت
+          const errorMessage = err?.message || t("admin.orders.deleteFailed");
+          toast.error(errorMessage, { 
+            position: "top-center", 
+            autoClose: 3000 
+          });
         });
     }
   };

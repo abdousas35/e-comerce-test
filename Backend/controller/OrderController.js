@@ -494,12 +494,16 @@ export const deleteOrder = HandleAsyncError(async (req, res, next) => {
     return next(new HandelError("Order not found", 404));
   }
 
-  // Only delete pending orders
-  if (order.orderStatus !== "Pending") {
-    return next(new HandelError("Can only delete pending orders", 400));
+  // التعديل هنا: السماح بالحذف فقط إذا كانت الحالة Delivered أو Cancelled
+  const allowedStatuses = ["Delivered", "Cancelled"];
+  
+  if (!allowedStatuses.includes(order.orderStatus)) {
+    return next(
+      new HandelError("Can only delete delivered or cancelled orders", 400)
+    );
   }
 
-  // Release reserved stock before deletion
+  // Release reserved stock before deletion (إذا كان المخزون لا يزال محجوزاً)
   if (order.stockReserved) {
     try {
       await releaseStock(order.orderItems);
@@ -513,9 +517,11 @@ export const deleteOrder = HandleAsyncError(async (req, res, next) => {
 
   await Order.findByIdAndDelete(req.params.id);
 
+  // تسجيل العملية واسترجاع الاستجابة
+  logAdminAction(req.user._id, "DELETE_ORDER", order._id, "Order");
+
   res.status(200).json({
     success: true,
     message: "Order deleted successfully"
   });
-  logAdminAction(req.user._id, "DELETE_ORDER", order._id, "Order");
 });
