@@ -2,18 +2,8 @@ import { v2 as cloudinary } from "cloudinary";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import SiteSettings from "../models/SiteSettingsModel.js";
 
-export const updateSiteSettings = HandleAsyncError(async (req, res) => {
-  // --- أضف هذين السطرين للتأكد ---
-  console.log("=== RECEIVED BODY ===", Object.keys(req.body));
-  console.log("=== TERMS RECEIVED ===", req.body.termsAndConditions);
-  // -------------------------------
-
-  let settings = await SiteSettings.findOne();
-  // ... باقي الكود كما هو
-})
 const DEFAULT_IMAGE_FIELDS = ["logo", "favicon", "heroImage"];
 
-// رفع الصور عند الحاجة
 const uploadAssetIfNeeded = async (value, folder) => {
   if (!value || typeof value !== "string") return value;
   if (!value.startsWith("data:image")) return value;
@@ -22,7 +12,6 @@ const uploadAssetIfNeeded = async (value, folder) => {
   return uploaded.secure_url;
 };
 
-// تجهيز السلايدات
 const normalizeSlides = async (slides = []) => {
   const normalizedSlides = await Promise.all(
     slides.map(async (slide) => ({
@@ -50,23 +39,19 @@ export const getPublicSiteSettings = HandleAsyncError(async (req, res) => {
 });
 
 export const updateSiteSettings = HandleAsyncError(async (req, res) => {
-  // 1. جلب الإعدادات الحالية أو إنشائها
   let settings = await SiteSettings.findOne();
   if (!settings) {
     settings = await SiteSettings.create({});
   }
 
-  // كائن لتجميع التحديثات فقط
   const updateData = {};
 
-  // 2. معالجة رفع الصور
   for (const field of DEFAULT_IMAGE_FIELDS) {
     if (typeof req.body[field] !== "undefined") {
       updateData[field] = await uploadAssetIfNeeded(req.body[field], "site-settings");
     }
   }
 
-  // 3. الحقول النصية والبسيطة
   const simpleFields = [
     "storeName", "tagline", "heroTitle", "heroSubtitle", "primaryColor",
     "secondaryColor", "accentColor", "themePreset", "bgPrimary", "bgSecondary",
@@ -88,7 +73,6 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
     }
   });
 
-  // 4. معالجة الكائنات المتداخلة (socialLinks)
   if (req.body.socialLinks) {
     updateData.socialLinks = {
       ...(settings.socialLinks?.toObject ? settings.socialLinks.toObject() : settings.socialLinks),
@@ -96,12 +80,10 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
     };
   }
 
-  // 5. معالجة heroSlides
   if (Array.isArray(req.body.heroSlides)) {
     updateData.heroSlides = await normalizeSlides(req.body.heroSlides);
   }
 
-  // 6. معالجة shippingZones
   if (Array.isArray(req.body.shippingZones)) {
     updateData.shippingZones = req.body.shippingZones
       .map((zone) => ({
@@ -117,7 +99,6 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
       .filter((zone) => zone.state);
   }
 
-  // 7. الحفظ المباشر في قاعدة البيانات عبر findOneAndUpdate
   const updatedSettings = await SiteSettings.findOneAndUpdate(
     { _id: settings._id },
     { $set: updateData },
