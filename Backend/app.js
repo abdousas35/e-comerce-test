@@ -13,7 +13,23 @@ import cors from "cors";
 import { globalLimiter } from "./middleware/rateLimiter.js";
 
 const app = express();
-const allowedOrigins = [process.env.FRONTEND_URL, process.env.FRONTEND_PREVIEW_URL].filter(Boolean);
+const allowedOrigins = [process.env.FRONTEND_URL, process.env.FRONTEND_PREVIEW_URL, process.env.CORS_ORIGIN]
+    .filter(Boolean)
+    .map((value) => value.trim());
+
+const isAllowedOrigin = (origin) => {
+    if (!origin) return true;
+
+    if (allowedOrigins.includes(origin)) return true;
+
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) return true;
+    if (/^https?:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) return true;
+    if (/\.onrender\.com$/i.test(origin)) return true;
+    if (/\.netlify\.app$/i.test(origin)) return true;
+    if (/\.vercel\.app$/i.test(origin)) return true;
+
+    return false;
+};
 
 // 1. تسجيل جميع الطلبات القادمة للـ Debugging
 app.use((req, res, next) => {
@@ -24,7 +40,9 @@ app.use((req, res, next) => {
 // 2. إعداد الـ CORS بالكامل
 const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        const allowed = isAllowedOrigin(origin);
+        console.log("[cors] decision", { origin, allowed, configuredOrigins: allowedOrigins });
+        if (allowed) {
             return callback(null, true);
         }
         return callback(new Error("Not allowed by CORS"));
@@ -35,7 +53,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.options(/(.*)/, cors(corsOptions));
 
 // 3. قراءة الـ Cookies
 app.use(cookieParser());
