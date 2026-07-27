@@ -5,19 +5,33 @@ import User from "../models/usersModel.js";
 
 
 export const verifyUserAuth = HandleAsyncError(async (req, res, next) => {
+    let token;
 
-    const { token } = req.cookies;
-    if(!token){
 
-        return next(new HandelError("Authentication is missing! Please login to access resource", 401 ));
+    if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    } 
 
+    else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
     }
-    
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY)
-    req.user = await User.findById(decodedData.id);
-    next();
-    
-    
+
+    if (!token) {
+        return next(new HandelError("Authentication is missing! Please login to access resource", 401));
+    }
+
+    try {
+        const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        req.user = await User.findById(decodedData.id);
+
+        if (!req.user) {
+            return next(new HandelError("User not found with this id", 404));
+        }
+
+        next();
+    } catch (error) {
+        return next(new HandelError("Invalid or expired token", 401));
+    }
 });
 
 export const verifyUserAuthOptional = HandleAsyncError(async (req, _res, next) => {
