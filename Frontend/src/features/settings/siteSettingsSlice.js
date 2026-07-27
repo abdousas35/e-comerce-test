@@ -76,6 +76,20 @@ const defaultSettings = {
   contactTitle: "We are here to help before and after every order.",
   contactIntro: "Customize this section with your support tone, response expectations, and the best way for customers to reach you.",
   contactSupportHours: "Support hours: Monday to Saturday, 9:00 AM to 6:00 PM.",
+  faqItems: [
+    {
+      question: "How long does delivery usually take?",
+      answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
+    },
+    {
+      question: "Can I return or exchange an item?",
+      answer: "Yes. Use this section to explain your return policy clearly, including the return window, item condition requirements, and exchange process.",
+    },
+    {
+      question: "How can I contact support?",
+      answer: "Customers can contact your store by email, phone, or the contact page details configured in the admin dashboard.",
+    },
+  ],
   socialLinks: {
     instagram: "",
     facebook: "",
@@ -157,6 +171,7 @@ const siteSettingsSlice = createSlice({
           },
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
           shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
+          faqItems: Array.isArray(action.payload?.faqItems) && action.payload.faqItems.length ? action.payload.faqItems : defaultSettings.faqItems,
         };
       })
       .addCase(fetchSiteSettings.rejected, (state, action) => {
@@ -178,6 +193,7 @@ const siteSettingsSlice = createSlice({
           },
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
           shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
+          faqItems: Array.isArray(action.payload?.faqItems) && action.payload.faqItems.length ? action.payload.faqItems : defaultSettings.faqItems,
         };
       })
       .addCase(updateSiteSettings.rejected, (state, action) => {

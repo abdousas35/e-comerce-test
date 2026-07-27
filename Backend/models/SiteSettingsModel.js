@@ -477,6 +477,28 @@ const siteSettingsSchema = new mongoose.Schema(
       type: String,
       default: "<h2>Information we collect</h2><p>Orders, contact details, shipping information, and activity required to process purchases and improve service quality.</p><h2>How we use the information</h2><p>We use customer information to fulfill orders, provide support, send transactional updates, and improve the shopping experience.</p><h2>How we protect your data</h2><p>Administrative access is protected, customer sessions are authenticated, and business-critical actions are handled through controlled backend workflows.</p>",
     },
+    faqItems: {
+      type: [
+        {
+          question: { type: String, default: "" },
+          answer: { type: String, default: "" },
+        }
+      ],
+      default: [
+        {
+          question: "How long does delivery usually take?",
+          answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
+        },
+        {
+          question: "Can I return or exchange an item?",
+          answer: "Yes. Use this section to explain your return policy clearly, including the return window, item condition requirements, and exchange process.",
+        },
+        {
+          question: "How can I contact support?",
+          answer: "Customers can contact your store by email, phone, or the contact page details configured in the admin dashboard.",
+        },
+      ],
+    },
     socialLinks: {
       type: socialLinksSchema,
       default: () => ({}),

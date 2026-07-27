@@ -118,6 +118,14 @@ function AdminSettings() {
         contactSupportHours: settings.contactSupportHours || "",
         termsAndConditions: settings.termsAndConditions || "",
         privacyPolicy: settings.privacyPolicy || "",
+        faqItems: Array.isArray(settings.faqItems) && settings.faqItems.length
+          ? settings.faqItems.map((item) => ({ question: item.question || "", answer: item.answer || "" }))
+          : [
+              {
+                question: "How long does delivery usually take?",
+                answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
+              },
+            ],
         logo: settings.logo || "",
         heroImage: settings.heroImage || "",
         socialLinks: {
@@ -176,6 +184,35 @@ function AdminSettings() {
         ...prev.socialLinks,
         [field]: value,
       },
+    }));
+    setIsDirty(true);
+  };
+
+  const handleFaqChange = (index, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      faqItems: prev.faqItems.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item
+      ),
+    }));
+    setIsDirty(true);
+  };
+
+  const addFaqItem = () => {
+    setFormData((prev) => ({
+      ...prev,
+      faqItems: [
+        ...prev.faqItems,
+        { question: "", answer: "" },
+      ],
+    }));
+    setIsDirty(true);
+  };
+
+  const removeFaqItem = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      faqItems: prev.faqItems.filter((_, itemIndex) => itemIndex !== index),
     }));
     setIsDirty(true);
   };
@@ -359,6 +396,14 @@ function AdminSettings() {
       contactSupportHours: settings.contactSupportHours || "",
       termsAndConditions: settings.termsAndConditions || "",
       privacyPolicy: settings.privacyPolicy || "",
+      faqItems: Array.isArray(settings.faqItems) && settings.faqItems.length
+        ? settings.faqItems.map((item) => ({ question: item.question || "", answer: item.answer || "" }))
+        : [
+            {
+              question: "How long does delivery usually take?",
+              answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
+            },
+          ],
       logo: settings.logo || "",
       heroImage: settings.heroImage || "",
       socialLinks: {
@@ -739,8 +784,6 @@ function AdminSettings() {
 
               </div>
 
-
-
               <div className="admin-settings-grid">
 
                 <div className="admin-settings-full">
@@ -787,6 +830,60 @@ function AdminSettings() {
 
               </div>
 
+            </section>
+
+            <section className="admin-settings-card">
+              <div className="admin-settings-section-title">
+                <Description />
+                <div>
+                  <h2>FAQ</h2>
+                  <p>Add, edit, and manage your frequently asked questions shown on the public FAQ page.</p>
+                </div>
+              </div>
+
+              <div className="admin-settings-grid">
+                <div className="admin-settings-full">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <span className="admin-settings-label-text" style={{ display: "block", fontWeight: "600" }}>
+                      FAQ Items
+                    </span>
+                    <button type="button" className="admin-settings-save-btn" onClick={addFaqItem} style={{ padding: "8px 12px", minWidth: "auto" }}>
+                      + Add FAQ
+                    </button>
+                  </div>
+
+                  {(formData.faqItems || []).map((item, index) => (
+                    <div key={index} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "12px", marginBottom: "12px", background: "#fafafa" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <strong>FAQ #{index + 1}</strong>
+                        <button type="button" onClick={() => removeFaqItem(index)} style={{ color: "#dc2626", background: "transparent", border: "none", cursor: "pointer" }}>
+                          Remove
+                        </button>
+                      </div>
+
+                      <label className="admin-settings-full" style={{ marginBottom: "8px" }}>
+                        Question
+                        <textarea
+                          rows="2"
+                          value={item.question || ""}
+                          onChange={(e) => handleFaqChange(index, "question", e.target.value)}
+                          placeholder="Write your question here..."
+                        />
+                      </label>
+
+                      <label className="admin-settings-full">
+                        Answer
+                        <textarea
+                          rows="4"
+                          value={item.answer || ""}
+                          onChange={(e) => handleFaqChange(index, "answer", e.target.value)}
+                          placeholder="Write your answer here..."
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </section>
 
           </form>

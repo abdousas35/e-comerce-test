@@ -7,23 +7,24 @@ import PageTitle from "../components/PageTitle";
 import MetaTags from "../components/MetaTags";
 import "../pageStyles/StaticPages.css";
 
-const faqItems = [
-  {
-    question: "How long does delivery usually take?",
-    answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
-  },
-  {
-    question: "Can I return or exchange an item?",
-    answer: "Yes. Use this section to explain your return policy clearly, including the return window, item condition requirements, and exchange process.",
-  },
-  {
-    question: "How can I contact support?",
-    answer: "Customers can contact your store by email, phone, or the contact page details configured in the admin dashboard.",
-  },
-];
-
 function FAQ() {
   const { settings } = useSelector((state) => state.settings);
+  const faqItems = Array.isArray(settings?.faqItems) && settings.faqItems.length
+    ? settings.faqItems
+    : [
+        {
+          question: "How long does delivery usually take?",
+          answer: "Delivery timelines depend on the shipping destination, but most orders are processed quickly and customers receive updates during fulfillment.",
+        },
+        {
+          question: "Can I return or exchange an item?",
+          answer: "Yes. Use this section to explain your return policy clearly, including the return window, item condition requirements, and exchange process.",
+        },
+        {
+          question: "How can I contact support?",
+          answer: "Customers can contact your store by email, phone, or the contact page details configured in the admin dashboard.",
+        },
+      ];
 
   return (
     <>
