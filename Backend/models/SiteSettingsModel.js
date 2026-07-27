@@ -472,12 +472,10 @@ const siteSettingsSchema = new mongoose.Schema(
     termsAndConditions: {
       type: String,
       default: "<h2>Orders and payments</h2><p>Customers are responsible for providing accurate billing and shipping details. Orders are processed after successful review and confirmation.</p><h2>Returns and refunds</h2><p>Refund and return terms should be updated to match the client policy, including timelines, exclusions, and item condition rules.</p><h2>Store usage</h2><p>Visitors agree to use the site lawfully and not misuse storefront features, customer accounts, or protected content.</p>",
-      trim: true,
     },
     privacyPolicy: {
       type: String,
       default: "<h2>Information we collect</h2><p>Orders, contact details, shipping information, and activity required to process purchases and improve service quality.</p><h2>How we use the information</h2><p>We use customer information to fulfill orders, provide support, send transactional updates, and improve the shopping experience.</p><h2>How we protect your data</h2><p>Administrative access is protected, customer sessions are authenticated, and business-critical actions are handled through controlled backend workflows.</p>",
-      trim: true,
     },
     socialLinks: {
       type: socialLinksSchema,

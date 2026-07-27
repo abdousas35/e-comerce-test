@@ -733,22 +733,27 @@ function AdminSettings() {
               </div>
 
               <div className="admin-settings-grid">
-                <label className="admin-settings-full">
-                  {t("template.settings.termsAndConditions", "Terms and Conditions")}
+                <div className="admin-settings-full">
+                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                    {t("template.settings.termsAndConditions", "Terms and Conditions")}
+                  </span>
                   <RichTextEditor
-                    value={formData.termsAndConditions}
+                    value={formData.termsAndConditions || ""}
                     onChange={(html) => handleFieldChange("termsAndConditions", html)}
                     placeholder="Write your terms and conditions..."
                   />
-                </label>
-                <label className="admin-settings-full">
-                  {t("template.settings.privacyPolicy", "Privacy Policy")}
+                </div>
+
+                <div className="admin-settings-full">
+                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                    {t("template.settings.privacyPolicy", "Privacy Policy")}
+                  </span>
                   <RichTextEditor
-                    value={formData.privacyPolicy}
+                    value={formData.privacyPolicy || ""}
                     onChange={(html) => handleFieldChange("privacyPolicy", html)}
                     placeholder="Write your privacy policy..."
                   />
-                </label>
+                </div>
               </div>
             </section>
           </form>
