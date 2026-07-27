@@ -152,10 +152,17 @@ export const importProductsCsv = createAsyncThunk(
 export const deleteOrder = createAsyncThunk(
   "admin/deleteOrder",
   async (id, { rejectWithValue }) => {
+    // 🔍 التفتيش الثاني: لمعرفة القيمة عند دخولها إلى الـ Redux Thunk
+    console.log("=== [2] Redux Thunk ===");
+    console.log("The ID received in Thunk is:", id);
+    console.log("The URL being sent to Axios is:", `/api/v1/admin/orderDelete/${id}`);
+
     try {
       const { data } = await axios.delete(`/api/v1/admin/orderDelete/${id}`);
       return { ...data, id };
     } catch (error) {
+      // 🔍 تفتيش إضافي في حال حدوث خطأ
+      console.error("Axios execution error details:", error.response || error);
       return rejectWithValue({ message: resolveApiMessage(error, "api.admin.deleteOrderFailed") });
     }
   }

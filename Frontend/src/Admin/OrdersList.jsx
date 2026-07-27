@@ -30,6 +30,9 @@ function OrdersList() {
   }, [dispatch, error, t]);
 
   const handleDelete = (id, status) => {
+      console.log("=== [1] React Component ===");
+      console.log("The ID passed from button click is:", id);
+      console.log("Type of ID:", typeof id);
     if (["Pending", "Confirmed", "Processing", "Shipped"].includes(status)) {
       toast.error(t("admin.orders.cannotDeleteProcessing"), {
         position: "top-center",
