@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Palette, Storefront, ContactMail, Save, Description, Gavel } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import RichTextEditor from "../components/RichTextEditor";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
