@@ -46,12 +46,11 @@ function Product({product}) {
               : t("product.reviews")}
           </span>
         </div>
-      </Link>
 
-      <button className="More info">
-        <Link to={`/product/${product._id}`} className="product_id"></Link>
-        {t("product.moreInfo")}
-      </button>
+        <button className="More info">
+          {t("product.addToCart")}
+        </button>
+      </Link>
     </div>
   )
 }
