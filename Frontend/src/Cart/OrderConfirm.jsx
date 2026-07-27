@@ -127,7 +127,7 @@ function OrderConfirm() {
           quantity: item.quantity,
           image: item.image,
           product: item.product,
-          variantId: item.variantId || "",
+          variantId: item.variantId || null,
           variantLabel: item.variantLabel || "",
           selectedOptions: item.selectedOptions || {},
           sku: item.sku || "",

@@ -147,6 +147,22 @@ const releaseStock = async (orderItems) => {
   }
 };
 
+const sanitizeVariantId = (value) => {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : null;
+  }
+  return value;
+};
+
+const normalizeIncomingOrderItems = (orderItems = []) => {
+  return (orderItems || []).map((item) => ({
+    ...item,
+    variantId: sanitizeVariantId(item.variantId),
+  }));
+};
+
 const normalizeOrderItems = async (orderItems = []) => {
   const normalizedOrderItems = [];
 
@@ -232,7 +248,8 @@ export const createNewOrder = HandleAsyncError(async (req, res, next) => {
 
   try {
     // ============ NORMALIZE ITEMS ============
-    const normalizedOrderItems = await normalizeOrderItems(orderItems || []);
+    const sanitizedOrderItems = normalizeIncomingOrderItems(orderItems || []);
+    const normalizedOrderItems = await normalizeOrderItems(sanitizedOrderItems);
 
     // ============ CALCULATE PRICES (Backend Only) ============
     const computedShippingPrice = typeof shippingPrice === "number"
@@ -269,7 +286,7 @@ export const createNewOrder = HandleAsyncError(async (req, res, next) => {
         status: "Pending", 
         note: "Order created",
         changedBy: req.user?._id || null,
-        changedByRole: req.user ? "user" : "guest"
+        changedByRole: "user"
       }],
       user: req.user?._id || null,
     });
