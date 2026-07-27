@@ -722,60 +722,84 @@ function AdminSettings() {
               </div>
             </section>
 
-            <section className="admin-settings-card">
+                        <section className="admin-settings-card">
+
               <div className="admin-settings-section-title">
+
                 <Gavel />
+
                 <div>
+
                   <h2>{t("template.settings.legalContentTitle", "Legal Pages")}</h2>
+
                   <p>{t("template.settings.legalContentDesc", "Write and format your Terms & Conditions and Privacy Policy content shown to customers.")}</p>
+
                 </div>
+
               </div>
+
+
 
               <div className="admin-settings-grid">
-                <div className="admin-settings-full">
-                  <label 
-                    htmlFor="termsAndConditions" 
-                    className="admin-settings-label-text" 
-                    style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}
-                  >
-                    {t("template.settings.termsAndConditions", "Terms and Conditions")}
-                  </label>
-                  <textarea
-                    id="termsAndConditions"
-                    className="admin-settings-input admin-settings-textarea"
-                    rows={6}
-                    value={formData.termsAndConditions || ""}
-                    onChange={(e) => handleFieldChange("termsAndConditions", e.target.value)}
-                    placeholder="Write your terms and conditions..."
-                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
-                  />
-                </div>
 
                 <div className="admin-settings-full">
-                  <label 
-                    htmlFor="privacyPolicy" 
-                    className="admin-settings-label-text" 
-                    style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}
-                  >
-                    {t("template.settings.privacyPolicy", "Privacy Policy")}
-                  </label>
-                  <textarea
-                    id="privacyPolicy"
-                    className="admin-settings-input admin-settings-textarea"
-                    rows={6}
-                    value={formData.privacyPolicy || ""}
-                    onChange={(e) => handleFieldChange("privacyPolicy", e.target.value)}
-                    placeholder="Write your privacy policy..."
-                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
+
+                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+
+                    {t("template.settings.termsAndConditions", "Terms and Conditions")}
+
+                  </span>
+
+                  <RichTextEditor
+
+                    value={formData.termsAndConditions || ""}
+
+                    onChange={(html) => handleFieldChange("termsAndConditions", html)}
+
+                    placeholder="Write your terms and conditions..."
+
                   />
+
                 </div>
+
+
+
+                <div className="admin-settings-full">
+
+                  <span className="admin-settings-label-text" style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+
+                    {t("template.settings.privacyPolicy", "Privacy Policy")}
+
+                  </span>
+
+                  <RichTextEditor
+
+                    value={formData.privacyPolicy || ""}
+
+                    onChange={(html) => handleFieldChange("privacyPolicy", html)}
+
+                    placeholder="Write your privacy policy..."
+
+                  />
+
+                </div>
+
               </div>
+
             </section>
+
           </form>
+
         </main>
+
       </div>
+
     </>
+
   );
+
 }
 
-export default AdminSettings;
+
+
+export default AdminSettings; 
