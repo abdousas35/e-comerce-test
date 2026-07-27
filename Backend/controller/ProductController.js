@@ -183,6 +183,30 @@ export const getAllProducts = HandleAsyncError(async (req, res, next) => {
   });
 });
 
+/**
+ * @route GET /api/v1/products/suggestions?keyword=...
+ * @desc Lightweight live-search preview for the navbar dropdown (name, price, image only)
+ * @access Public
+ */
+export const searchSuggestions = HandleAsyncError(async (req, res, next) => {
+  const keyword = (req.query.keyword || "").trim();
+
+  if (!keyword) {
+    return res.status(200).json({ success: true, products: [] });
+  }
+
+  const products = await Product.find({
+    $or: [
+      { name: { $regex: keyword, $options: "i" } },
+      { keywords: { $regex: keyword, $options: "i" } },
+    ],
+  })
+    .select("name price image discount slug")
+    .limit(6);
+
+  res.status(200).json({ success: true, products });
+});
+
 export const updateProduct = HandleAsyncError(async (req, res, next) => {
   const { id } = req.params;
   if (req.body.name) {

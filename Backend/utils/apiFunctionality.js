@@ -33,7 +33,12 @@ class APIFunctionality {
 
         console.log("Query after removing fields:", queryCopy);
 
-        this.query = this.query.find(queryCopy);
+        // Convert price[gte]=100&price[lte]=500 style params into MongoDB operators
+        let queryString = JSON.stringify(queryCopy);
+        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        const parsedQuery = JSON.parse(queryString);
+
+        this.query = this.query.find(parsedQuery);
         console.log("Mongo query after filter:", this.query.getQuery());
 
         return this;

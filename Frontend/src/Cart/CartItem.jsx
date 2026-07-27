@@ -1,42 +1,63 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { addItemsToCart, removeItemFromCart, removeMessage, removeErrors } from "../features/cart/cartSlice";
+import {
+  removeItemFromCart,
+  removeMessage,
+  removeErrors,
+  setItemQuantity,
+  syncCartToServer,
+} from "../features/cart/cartSlice";
+
+const SYNC_DEBOUNCE_MS = 600;
 
 function CartItem({ item }) {
-  const { success, loading, error, message } = useSelector((state) => state.cart);
-  const [quantity, setQuantity] = useState(item.quantity);
+  const { success, error, message } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const syncTimeoutRef = useRef(null);
+
+  // Debounced server sync — fires SYNC_DEBOUNCE_MS after the user stops clicking
+  const scheduleSync = () => {
+    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    syncTimeoutRef.current = setTimeout(() => {
+      dispatch(syncCartToServer());
+    }, SYNC_DEBOUNCE_MS);
+  };
+
+  useEffect(() => {
+    return () => {
+      // Flush pending change on unmount so it isn't lost
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+        dispatch(syncCartToServer());
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const increase = () => {
-    if (quantity >= item.stock) {
+    if (item.quantity >= item.stock) {
       toast.error(t("cart.quantityStock"), { position: "top-center", autoClose: 3000 });
       return;
     }
-    setQuantity((prev) => prev + 1);
+    dispatch(setItemQuantity({ cartKey: item.cartKey, quantity: item.quantity + 1 }));
+    scheduleSync();
   };
 
   const decrease = () => {
-    if (quantity <= 1) {
+    if (item.quantity <= 1) {
       toast.error(t("cart.quantityMin"), { position: "top-center", autoClose: 3000 });
       return;
     }
-    setQuantity((prev) => prev - 1);
-  };
-
-  const handleUpdate = () => {
-    if (loading) return;
-    if (quantity !== item.quantity) {
-      dispatch(addItemsToCart({ id: item.product, quantity, variantId: item.variantId }));
-    }
+    dispatch(setItemQuantity({ cartKey: item.cartKey, quantity: item.quantity - 1 }));
+    scheduleSync();
   };
 
   const handleRemove = () => {
-    if (loading) return;
     dispatch(removeItemFromCart(item.cartKey));
-    toast.success(t("cart.itemRemoved"), { position: "top-center", autoClose: 3000 });
+    toast.success(t("cart.itemRemoved"), { position: "top-center", autoClose: 3000, toastId: `remove-${item.cartKey}` });
     dispatch(removeMessage());
   };
 
@@ -67,7 +88,7 @@ function CartItem({ item }) {
 
       <div className="quantity-controls">
         <button className="quantity-button decrease-btn" onClick={decrease}>-</button>
-        <input className="quantity-input" readOnly min="1" value={quantity} />
+        <input className="quantity-input" readOnly min="1" value={item.quantity} />
         <button className="quantity-button increase-btn" onClick={increase}>+</button>
       </div>
 
@@ -76,7 +97,6 @@ function CartItem({ item }) {
       </div>
 
       <div className="item-actions">
-        <button className="update-item-btn" disabled={quantity === item.quantity} onClick={handleUpdate}>{t("common.update")}</button>
         <button className="remove-item-btn" onClick={handleRemove}>{t("common.remove")}</button>
       </div>
     </div>

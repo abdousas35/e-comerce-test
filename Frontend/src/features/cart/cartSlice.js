@@ -77,6 +77,25 @@ export const mergeLocalCart = createAsyncThunk(
   }
 );
 
+// Sync quantity changes to the server (called after debounce, no loading spinner)
+export const syncCartToServer = createAsyncThunk(
+  "cart/syncCartToServer",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { cartItems } = getState().cart;
+      const payload = cartItems.map((item) => ({
+        product: item.product,
+        variantId: item.variantId || undefined,
+        quantity: item.quantity,
+      }));
+      const { data } = await axios.put("/api/v1/cart", { cartItems: payload });
+      return data.cart;
+    } catch (error) {
+      return rejectWithValue({ message: resolveApiMessage(error, "api.cart.updateFailed") });
+    }
+  }
+);
+
 
 const safeJSONParse = (key, defaultValue) => {
   try {
@@ -152,6 +171,11 @@ const cartSlice = createSlice({
       state.success = false;
       state.message = null;
       state.error = null;
+    },
+    setItemQuantity: (state, action) => {
+      const { cartKey, quantity } = action.payload;
+      const item = state.cartItems.find((i) => i.cartKey === cartKey);
+      if (item) item.quantity = quantity;
     }
 
   },
@@ -211,11 +235,19 @@ const cartSlice = createSlice({
       state.error = action.payload?.message;
     });
 
+    // Sync cart to server (silent, background — no loading flag toggled)
+    builder.addCase(syncCartToServer.fulfilled, (state, action) => {
+      state.cartItems = action.payload;
+    });
+    builder.addCase(syncCartToServer.rejected, (state, action) => {
+      state.error = action.payload?.message || tMessage("common.somethingWrong");
+    });
+
   }
 
 })
 
 
 
-export const { removeErrors, removeMessage, removeItemFromCart, saveShippingInfo, setQuickBuyItem, clearQuickBuyItem, clearCart } = cartSlice.actions;
+export const { removeErrors, removeMessage, removeItemFromCart, saveShippingInfo, setQuickBuyItem, clearQuickBuyItem, clearCart, setItemQuantity } = cartSlice.actions;
 export default cartSlice.reducer;

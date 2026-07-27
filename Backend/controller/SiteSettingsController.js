@@ -97,6 +97,8 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
     "contactTitle",
     "contactIntro",
     "contactSupportHours",
+    "termsAndConditions",
+    "privacyPolicy",
   ];
 
   simpleFields.forEach((field) => {
