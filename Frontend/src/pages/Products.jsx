@@ -19,16 +19,27 @@ function Products() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const keyword = searchParams.get("keyword") || "";
-  const pageFromURL = parseInt(searchParams.get("page"), 10) || 1;
-  const [currentPage, setCurrentPage] = useState(pageFromURL);
   const navigate = useNavigate();
 
+  // 1. قراءة المتغيرات من الـ URL (شاملة الـ category)
+  const searchParams = new URLSearchParams(location.search);
+  const keyword = searchParams.get("keyword") || "";
+  const category = searchParams.get("category") || ""; // <-- تم إضافة استخراج التصنيف
+  const pageFromURL = parseInt(searchParams.get("page"), 10) || 1;
+
+  const [currentPage, setCurrentPage] = useState(pageFromURL);
+
+  // 2. مزامنة الـ State مع الـ URL في حال تغير الصفحة من رابط خارجي أو زر الرجوع
+  useEffect(() => {
+    setCurrentPage(pageFromURL);
+  }, [pageFromURL]);
+
+  // 3. جلب المنتجات عند تغير (keyword, category, أو currentPage)
   useEffect(() => {
     dispatch({ type: "product/clearProducts" });
-    dispatch(getProduct({ keyword, page: currentPage, limit: 8 }));
-  }, [dispatch, keyword, currentPage]);
+    // إرسال الـ category ضمن الـ payload لـ Redux action
+    dispatch(getProduct({ keyword, category, page: currentPage, limit: 8 }));
+  }, [dispatch, keyword, category, currentPage]);
 
   useEffect(() => {
     if (error) {
@@ -63,15 +74,31 @@ function Products() {
       <PageTitle title={t("products.pageTitle")} />
       <MetaTags
         title={`${t("products.pageTitle")} | ${settings?.storeName || "Store"}`}
-        description={keyword ? `Browse products matching ${keyword}` : "Browse the full product catalog."}
-        keywords={keyword ? `${keyword}, products, catalog` : "products, catalog, ecommerce"}
+        description={
+          category
+            ? `Browse products in ${category}`
+            : keyword
+            ? `Browse products matching ${keyword}`
+            : "Browse the full product catalog."
+        }
+        keywords={
+          category
+            ? `${category}, products, catalog`
+            : keyword
+            ? `${keyword}, products, catalog`
+            : "products, catalog, ecommerce"
+        }
         image={settings?.heroImage || settings?.logo}
         path={`/products${location.search}`}
         schema={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           name: `${settings?.storeName || "Store"} product catalog`,
-          description: keyword ? `Browse products matching ${keyword}` : "Browse the full product catalog.",
+          description: category
+            ? `Browse products in ${category}`
+            : keyword
+            ? `Browse products matching ${keyword}`
+            : "Browse the full product catalog.",
         }}
       />
       <Navbar />
@@ -87,7 +114,9 @@ function Products() {
                 <p className="no-products">
                   <span className="no-products-big">!</span>{" "}
                   <span className="no-products-bold">{t("products.noProducts")}</span>{" "}
-                  <span className="no-products-small">{t("products.noProductsDesc", { keyword })}</span>
+                  <span className="no-products-small">
+                    {t("products.noProductsDesc", { keyword: category || keyword })}
+                  </span>
                 </p>
               )}
             </div>
