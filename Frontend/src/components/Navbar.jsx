@@ -256,6 +256,21 @@ function Navbar() {
               <li><Link to="/products" className="Navbar-button" onClick={closeMenus}>{t("navbar.products")}</Link></li>
               <li><Link to="/about-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.aboutUs")}</Link></li>
               <li><Link to="/contact-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.contactUs")}</Link></li>
+              {categories.length > 0 && (
+                <li>
+                  <select
+                    className="navbar-category-select"
+                    onChange={handleCategoryChange}
+                    defaultValue=""
+                    aria-label={t("navbar.categories")}
+                  >
+                    <option value="" disabled>{t("navbar.allCategories")}</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -317,20 +332,6 @@ function Navbar() {
 
         {!isAdminRoute && (
           <div className="navbar-search-row" ref={searchWrapperRef}>
-            {categories.length > 0 && (
-              <select
-                className="navbar-category-select"
-                onChange={handleCategoryChange}
-                defaultValue=""
-                aria-label={t("navbar.categories")}
-              >
-                <option value="" disabled>{t("navbar.allCategories")}</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            )}
-
             <form className="search-form navbar-search-form" onSubmit={handleSearchSubmit} autoComplete="off">
               <input
                 type="text"
@@ -392,6 +393,21 @@ function Navbar() {
               <li><Link to="/products" className="Navbar-button" onClick={closeMenus}>{t("navbar.products")}</Link></li>
               <li><Link to="/about-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.aboutUs")}</Link></li>
               <li><Link to="/contact-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.contactUs")}</Link></li>
+              {categories.length > 0 && (
+                <li>
+                  <select
+                    className="navbar-category-select"
+                    onChange={handleCategoryChange}
+                    defaultValue=""
+                    aria-label={t("navbar.categories")}
+                  >
+                    <option value="" disabled>{t("navbar.allCategories")}</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </li>
+              )}
             </ul>
           </div>
         </div>
