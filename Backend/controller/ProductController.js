@@ -215,10 +215,14 @@ export const searchSuggestions = HandleAsyncError(async (req, res, next) => {
     return res.status(200).json({ success: true, products: [] });
   }
 
+  // هروب الرموز الخاصة لتفادي كسر الـ Regex
+  const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   const products = await Product.find({
     $or: [
-      { name: { $regex: keyword, $options: "i" } },
-      { keywords: { $regex: keyword, $options: "i" } },
+      { name: { $regex: safeKeyword, $options: "i" } },
+      { keywords: { $regex: safeKeyword, $options: "i" } },
+      { description: { $regex: safeKeyword, $options: "i" } },
     ],
   })
     .select("name price image discount slug")

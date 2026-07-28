@@ -1,5 +1,19 @@
 import express from "express";
-import { createProducts, getAllProducts, updateProduct, deleteProduct, accessingSingleProduct, getAdminProducts, createRiviewForProduct, getProductReviews, deleteProductReview, importProductsFromCsv, getRelatedProducts, getProductCategories } from "../controller/ProductController.js";
+import { 
+  createProducts, 
+  getAllProducts, 
+  updateProduct, 
+  deleteProduct, 
+  accessingSingleProduct, 
+  getAdminProducts, 
+  createRiviewForProduct, 
+  getProductReviews, 
+  deleteProductReview, 
+  importProductsFromCsv, 
+  getRelatedProducts, 
+  getProductCategories,
+  searchSuggestions 
+} from "../controller/ProductController.js";
 import catchAsyncErrors from "../middleware/HandleAsyncError.js"
 import { verifyUserAuth, roleBasedAccess} from "../middleware/userAuth.js";
 import { reviewLimiter } from "../middleware/rateLimiter.js";
@@ -7,6 +21,10 @@ import { reviewLimiter } from "../middleware/rateLimiter.js";
 const router = express.Router();
 
 router.route("/products/categories").get(catchAsyncErrors(getProductCategories));
+
+
+router.route("/products/suggestions").get(catchAsyncErrors(searchSuggestions));
+
 router.route("/products").get(catchAsyncErrors(getAllProducts));
 router.route("/admin/product/create").post(verifyUserAuth, roleBasedAccess("admin"), catchAsyncErrors(createProducts));
 router.route("/admin/product/:id")
