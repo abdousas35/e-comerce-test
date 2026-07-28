@@ -21,7 +21,8 @@
     "trackOrder": "Suivre la commande",
     "toggleMenu": "Ouvrir ou fermer le menu",
     "search": "Rechercher",
-    "storeAnnouncement": "Annonce de la boutique"
+    "storeAnnouncement": "Annonce de la boutique",
+    "allCategories": "Toutes les categories"
   },
   "home": {
     "pageTitle": "Accueil",
