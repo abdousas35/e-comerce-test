@@ -38,6 +38,11 @@ function Navbar() {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { cartItems } = useSelector((state) => state.cart);
   const { settings } = useSelector((state) => state.settings);
+
+  // قراءة التصنيف المحدد حالياً من الـ URL
+  const searchParams = new URLSearchParams(location.search);
+  const currentCategory = searchParams.get("category") || "";
+
   const languageCycle = ["en", "ar", "fr"];
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en";
   const normalizedLanguage = currentLanguage.split("-")[0];
@@ -88,7 +93,6 @@ function Navbar() {
     window.addEventListener("resize", closeOnDesktop);
     return () => window.removeEventListener("resize", closeOnDesktop);
   }, []);
-
 
   useEffect(() => {
     const setNavHeight = () => {
@@ -223,12 +227,15 @@ function Navbar() {
     setIsSuggestionsOpen(false);
   };
 
+  // معالجة تغيير التصنيف بسلاسة
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     if (value) {
       navigate(`/products?category=${encodeURIComponent(value)}`);
-      setIsMenuOpen(false);
+    } else {
+      navigate("/products"); // إذا اختار "كل التصنيفات" يعود لصفحة المنتجات بدون فلتر
     }
+    setIsMenuOpen(false);
   };
 
   const announcementRepeats = Array.from({ length: ANNOUNCEMENT_REPEAT_COUNT });
@@ -261,10 +268,10 @@ function Navbar() {
                   <select
                     className="navbar-category-select"
                     onChange={handleCategoryChange}
-                    defaultValue=""
+                    value={currentCategory}
                     aria-label={t("navbar.categories")}
                   >
-                    <option value="" disabled>{t("navbar.allCategories")}</option>
+                    <option value="">{t("navbar.allCategories")}</option>
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -398,10 +405,10 @@ function Navbar() {
                   <select
                     className="navbar-category-select"
                     onChange={handleCategoryChange}
-                    defaultValue=""
+                    value={currentCategory}
                     aria-label={t("navbar.categories")}
                   >
-                    <option value="" disabled>{t("navbar.allCategories")}</option>
+                    <option value="">{t("navbar.allCategories")}</option>
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
