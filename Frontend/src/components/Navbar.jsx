@@ -39,7 +39,6 @@ function Navbar() {
   const { cartItems } = useSelector((state) => state.cart);
   const { settings } = useSelector((state) => state.settings);
 
-  // قراءة التصنيف المحدد حالياً من الـ URL
   const searchParams = new URLSearchParams(location.search);
   const currentCategory = searchParams.get("category") || "";
 
@@ -115,7 +114,6 @@ function Navbar() {
     };
   }, [isAdminRoute, isMenuOpen, isHomeRoute, settings?.announcementEnabled, settings?.announcementText]);
 
-  // Fetch categories once on mount to populate the navbar category select
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -128,7 +126,6 @@ function Navbar() {
     fetchCategories();
   }, []);
 
-  // Debounced fetch for the live dropdown preview
   const fetchSuggestions = useMemo(
     () =>
       debounce(async (query) => {
@@ -151,7 +148,6 @@ function Navbar() {
     []
   );
 
-  // Cancel any pending debounced call when the component unmounts
   useEffect(() => {
     return () => fetchSuggestions.cancel();
   }, [fetchSuggestions]);
@@ -216,11 +212,15 @@ function Navbar() {
     }
   };
 
+  // 🛠️ الإصلاح هنا: استخدام product._id مباشرة لضمان عدم حدوث خطأ 404
   const handleSuggestionClick = (product) => {
-    navigate(`/product/${product.slug || product._id}`);
-    setSearchQuery("");
-    setSuggestions([]);
-    setIsSuggestionsOpen(false);
+    const targetId = product._id || product.id;
+    if (targetId) {
+      navigate(`/product/${targetId}`);
+      setSearchQuery("");
+      setSuggestions([]);
+      setIsSuggestionsOpen(false);
+    }
   };
 
   const handleViewAllResults = () => {
@@ -229,7 +229,6 @@ function Navbar() {
     setIsSuggestionsOpen(false);
   };
 
-  // معالجة تغيير التصنيف بسلاسة
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     if (value) {
@@ -380,7 +379,8 @@ function Navbar() {
                           <div className="search-suggestion-details">
                             <span className="search-suggestion-name">{product.name}</span>
                             <span className="search-suggestion-price">
-                              {finalPrice} {t("common.currency", "DZD")}
+                              {/* 🛠️ الإصلاح هنا: تغيير رمز العملة إلى TND */}
+                              {finalPrice} {t("common.currency", "TND")}
                             </span>
                           </div>
                         </button>
