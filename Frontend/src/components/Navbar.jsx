@@ -42,11 +42,8 @@ function Navbar() {
   const searchParams = new URLSearchParams(location.search);
   const currentCategory = searchParams.get("category") || "";
 
-  const languageCycle = ["en", "ar", "fr"];
   const currentLanguage = i18n.resolvedLanguage || i18n.language || "en";
   const normalizedLanguage = currentLanguage.split("-")[0];
-  const currentLanguageIndex = languageCycle.indexOf(normalizedLanguage);
-  const nextLanguage = languageCycle[(currentLanguageIndex + 1 + languageCycle.length) % languageCycle.length];
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isHomeRoute = location.pathname === "/";
 
@@ -178,10 +175,6 @@ function Navbar() {
     setIsProfileMenuOpen(false);
   };
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(nextLanguage);
-  };
-
   const logoutUser = () => {
     dispatch(logout())
       .unwrap()
@@ -212,7 +205,6 @@ function Navbar() {
     }
   };
 
-  // 🛠️ الإصلاح هنا: استخدام product._id مباشرة لضمان عدم حدوث خطأ 404
   const handleSuggestionClick = (product) => {
     const targetId = product._id || product.id;
     if (targetId) {
@@ -283,15 +275,18 @@ function Navbar() {
           </div>
 
           <div className="navbar-icons">
-            <button
-              type="button"
-              className="lang-switch-btn"
-              onClick={toggleLanguage}
+            {/* قائمة اختيار اللغة المنسدلة الجديدة */}
+            <select
+              className="lang-select-dropdown"
+              value={normalizedLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
               aria-label={t("navbar.language")}
               title={t("navbar.language")}
             >
-              {nextLanguage.toUpperCase()}
-            </button>
+              <option value="ar">العربية (AR)</option>
+              <option value="fr">Français (FR)</option>
+              <option value="en">English (EN)</option>
+            </select>
 
             <div className="cart-container">
               <Link to="/cart" onClick={closeMenus}>
@@ -379,7 +374,6 @@ function Navbar() {
                           <div className="search-suggestion-details">
                             <span className="search-suggestion-name">{product.name}</span>
                             <span className="search-suggestion-price">
-                              {/* 🛠️ الإصلاح هنا: تغيير رمز العملة إلى TND */}
                               {finalPrice} {t("common.currency", "TND")}
                             </span>
                           </div>

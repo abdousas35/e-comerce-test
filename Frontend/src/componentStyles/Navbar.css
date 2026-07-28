@@ -22,7 +22,7 @@
 }
 
 .navbar-search-row {
-  position: relative; /* ضروري لضبط تموضع القائمة المنسدلة */
+  position: relative;
   margin-top: 0.85rem;
 }
 
@@ -120,6 +120,44 @@
   gap: 0.8rem;
 }
 
+/* ===== تنسيق قائمة اختيار اللغة المنسدلة ===== */
+.lang-select-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.45rem 1.8rem 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1L5 5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+}
+
+[dir="rtl"] .lang-select-dropdown {
+  padding: 0.45rem 0.85rem 0.45rem 1.8rem;
+  background-position: left 0.65rem center;
+}
+
+.lang-select-dropdown:hover {
+  background-color: color-mix(in srgb, var(--text-light) 10%, transparent);
+  border-color: color-mix(in srgb, var(--text-light) 40%, transparent);
+}
+
+.lang-select-dropdown option {
+  color: var(--body-text-color, #1e293b);
+  background-color: var(--surface-soft-color, #ffffff);
+  font-weight: 600;
+  padding: 0.5rem;
+}
+
 .search-form.navbar-search-form {
   display: flex;
   align-items: center;
@@ -150,7 +188,6 @@
 }
 
 .search-button2,
-.lang-switch-btn,
 .navbar-hamburger,
 .navbar-avatar-btn {
   border: none;
@@ -169,24 +206,10 @@
   background: var(--primary-main);
 }
 
-.lang-switch-btn,
 .register-link,
 .cart-container a,
 .navbar-avatar-btn {
   color: var(--text-light);
-}
-
-.lang-switch-btn {
-  border: 1px solid var(--border-color);
-  border-radius: 999px;
-  width: 38px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .cart-container {
@@ -658,7 +681,11 @@
     gap: 0.3rem;
   }
 
-  .lang-switch-btn,
+  .lang-select-dropdown {
+    padding: 0.35rem 1.4rem 0.35rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
   .navbar-hamburger,
   .search-button2 {
     width: 34px;
