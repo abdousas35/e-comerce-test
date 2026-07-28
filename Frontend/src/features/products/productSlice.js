@@ -2,17 +2,26 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
 
+export const getProduct = createAsyncThunk(
+  "product/getProduct",
+  async ({ keyword = "", category = "", page = 1, limit = 8 } = {}, { rejectWithValue }) => {
+    try {
+      // بناء الـ Query Params بشكل منظم وسليم
+      const params = new URLSearchParams();
 
-export const getProduct = createAsyncThunk("product/getProduct", async ({ keyword, page = 1 }, { rejectWithValue }) => {
-  try {
-    const link = keyword ? `/api/v1/products?keyword=${encodeURIComponent(keyword)}&page=${page}` : `/api/v1/products?page=${page}`;
-    const { data } = await axios.get(link);
-    return data;
-  } catch (error) {
-    return rejectWithValue({ message: resolveApiMessage(error, "api.products.loadFailed") });
+      if (keyword) params.append("keyword", keyword);
+      if (category) params.append("category", category);
+      if (page) params.append("page", page);
+      if (limit) params.append("limit", limit);
+
+      const link = `/api/v1/products?${params.toString()}`;
+      const { data } = await axios.get(link);
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: resolveApiMessage(error, "api.products.loadFailed") });
+    }
   }
-});
-
+);
 
 export const getProductDetails = createAsyncThunk("product/getProductDetails", async (id, { rejectWithValue }) => {
   try {
@@ -22,7 +31,6 @@ export const getProductDetails = createAsyncThunk("product/getProductDetails", a
     return rejectWithValue({ message: resolveApiMessage(error, "api.products.detailsFailed") });
   }
 });
-
 
 export const createReview = createAsyncThunk("product/createReview", async ({ rating, comment, productId }, { rejectWithValue }) => {
   try {
