@@ -275,7 +275,6 @@ function Navbar() {
           </div>
 
           <div className="navbar-icons">
-            {/* قائمة اختيار اللغة المنسدلة الجديدة */}
             <select
               className="lang-select-dropdown"
               value={normalizedLanguage}

@@ -107,10 +107,12 @@
   transform: translateY(-1px);
 }
 
+/* 🎨 توحيد خلفية خيارات التصنيفات مع النافبار */
 .navbar-category-select option {
-  color: var(--body-text-color);
-  background-color: var(--surface-soft-color, #fff);
+  color: var(--text-light, #ffffff);
+  background-color: var(--navbar-bg, #1e293b);
   font-weight: 600;
+  padding: 0.6rem;
 }
 
 .navbar-icons {
@@ -120,7 +122,6 @@
   gap: 0.8rem;
 }
 
-/* ===== تنسيق قائمة اختيار اللغة المنسدلة ===== */
 .lang-select-dropdown {
   appearance: none;
   -webkit-appearance: none;
@@ -151,11 +152,12 @@
   border-color: color-mix(in srgb, var(--text-light) 40%, transparent);
 }
 
+/* 🎨 توحيد خلفية خيارات اللغة المنسدلة مع النافبار */
 .lang-select-dropdown option {
-  color: var(--body-text-color, #1e293b);
-  background-color: var(--surface-soft-color, #ffffff);
+  color: var(--text-light, #ffffff);
+  background-color: var(--navbar-bg, #1e293b);
   font-weight: 600;
-  padding: 0.5rem;
+  padding: 0.6rem;
 }
 
 .search-form.navbar-search-form {
@@ -349,7 +351,7 @@
 }
 
 /* ==========================================
-   Search Suggestions Dropdown (UI/UX العصري)
+   Search Suggestions Dropdown
    ========================================== */
 
 .search-suggestions-dropdown {
@@ -626,6 +628,11 @@
     width: 100%;
     color: var(--body-text-color);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1L5 5L9 1' stroke='%23334155' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+
+  .mobile-links .navbar-category-select option {
+    background-color: var(--navbar-bg, #1e293b);
+    color: var(--text-light, #ffffff);
   }
 
   .mobile-links .navbar-category-select:hover {
