@@ -26,6 +26,7 @@ function Navbar() {
   const [suggestions, setSuggestions] = useState([]);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const profileMenuRef = useRef(null);
   const menuRef = useRef(null);
   const navbarRef = useRef(null);
@@ -109,6 +110,19 @@ function Navbar() {
       window.removeEventListener("resize", setNavHeight);
     };
   }, [isAdminRoute, isMenuOpen, isHomeRoute, settings?.announcementEnabled, settings?.announcementText]);
+
+  // Fetch categories once on mount to populate the navbar category select
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get("/api/v1/products/categories");
+        setCategories(data.categories || []);
+      } catch (err) {
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Debounced fetch for the live dropdown preview
   const fetchSuggestions = useMemo(
@@ -209,6 +223,14 @@ function Navbar() {
     setIsSuggestionsOpen(false);
   };
 
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    if (value) {
+      navigate(`/products?category=${encodeURIComponent(value)}`);
+      setIsMenuOpen(false);
+    }
+  };
+
   const announcementRepeats = Array.from({ length: ANNOUNCEMENT_REPEAT_COUNT });
 
   return (
@@ -295,6 +317,20 @@ function Navbar() {
 
         {!isAdminRoute && (
           <div className="navbar-search-row" ref={searchWrapperRef}>
+            {categories.length > 0 && (
+              <select
+                className="navbar-category-select"
+                onChange={handleCategoryChange}
+                defaultValue=""
+                aria-label={t("navbar.categories")}
+              >
+                <option value="" disabled>{t("navbar.allCategories")}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            )}
+
             <form className="search-form navbar-search-form" onSubmit={handleSearchSubmit} autoComplete="off">
               <input
                 type="text"

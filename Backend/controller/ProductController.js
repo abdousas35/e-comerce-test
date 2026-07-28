@@ -154,6 +154,26 @@ export const createProducts = async (req, res, next) => {
   }
 };
 
+/**
+ * @route GET /api/v1/products/categories
+ * @desc Returns the distinct list of categories currently in use across all products.
+ *       Powers the Navbar category select — no separate Category collection needed,
+ *       a category simply "exists" as long as at least one product uses it.
+ * @access Public
+ */
+export const getProductCategories = HandleAsyncError(async (req, res, next) => {
+  const categories = await Product.distinct("category");
+
+  const cleaned = categories
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+
+  res.status(200).json({
+    success: true,
+    categories: cleaned,
+  });
+});
+
 export const getAllProducts = HandleAsyncError(async (req, res, next) => {
   const resultPerPage = Number(req.query.limit) || 8;
 
