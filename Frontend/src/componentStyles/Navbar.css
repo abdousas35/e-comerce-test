@@ -22,6 +22,7 @@
 }
 
 .navbar-search-row {
+  position: relative; /* ضروري لضبط تموضع القائمة المنسدلة */
   margin-top: 0.85rem;
 }
 
@@ -324,6 +325,126 @@
   display: none;
 }
 
+/* ==========================================
+   Search Suggestions Dropdown (UI/UX العصري)
+   ========================================== */
+
+.search-suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  background: var(--surface-soft-color, #ffffff);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20px);
+  max-height: 420px;
+  overflow-y: auto;
+  z-index: 1050;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.search-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.85rem;
+  cursor: pointer;
+  text-align: initial;
+  transition: all 0.2s ease;
+}
+
+.search-suggestion-item:hover {
+  background: color-mix(in srgb, var(--primary-main, #3b82f6) 8%, transparent);
+  transform: translateX(4px);
+}
+
+[dir="rtl"] .search-suggestion-item:hover {
+  transform: translateX(-4px);
+}
+
+.search-suggestion-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.65rem;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--text-light, #000) 5%, transparent);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+  flex-shrink: 0;
+}
+
+.search-suggestion-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.search-suggestion-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--body-text-color, #1e293b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-suggestion-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-main, #2563eb);
+}
+
+.search-suggestions-viewall {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  border: none;
+  border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  background: transparent;
+  color: var(--primary-main, #2563eb);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 0 0 0.85rem 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.search-suggestions-viewall:hover {
+  background: color-mix(in srgb, var(--primary-main, #3b82f6) 12%, transparent);
+}
+
+.search-suggestions-loading,
+.search-suggestions-empty {
+  padding: 1.25rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted-text-color, #64748b);
+}
+
 /* ===== Announcement Bar ===== */
 
 .navbar-announcement-bar {
@@ -427,7 +548,7 @@
   }
 }
 
-/* ===== End Announcement Bar ===== */
+/* ===== Responsive Design ===== */
 
 @media (max-width: 900px) {
   .desktop-links {

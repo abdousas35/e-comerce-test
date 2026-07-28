@@ -163,8 +163,10 @@ function Navbar() {
 
       const trimmed = value.trim();
       if (trimmed.length === 0) {
+        fetchSuggestions.cancel();
         setSuggestions([]);
         setIsSuggestionsOpen(false);
+        setIsSuggestionsLoading(false);
         return;
       }
 
@@ -233,7 +235,7 @@ function Navbar() {
     if (value) {
       navigate(`/products?category=${encodeURIComponent(value)}`);
     } else {
-      navigate("/products"); // إذا اختار "كل التصنيفات" يعود لصفحة المنتجات بدون فلتر
+      navigate("/products");
     }
     setIsMenuOpen(false);
   };
@@ -361,26 +363,29 @@ function Navbar() {
                   <div className="search-suggestions-loading">{t("navbar.searching")}</div>
                 ) : suggestions.length > 0 ? (
                   <>
-                    {suggestions.map((product) => (
-                      <button
-                        type="button"
-                        key={product._id}
-                        className="search-suggestion-item"
-                        onClick={() => handleSuggestionClick(product)}
-                      >
-                        <img
-                          src={product.image?.[0]?.url || "/placeholder.png"}
-                          alt={product.name}
-                          className="search-suggestion-image"
-                        />
-                        <div className="search-suggestion-details">
-                          <span className="search-suggestion-name">{product.name}</span>
-                          <span className="search-suggestion-price">
-                            {Math.max(0, product.price - (product.discount || 0))}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
+                    {suggestions.map((product) => {
+                      const finalPrice = Math.max(0, product.price - (product.discount || 0));
+                      return (
+                        <button
+                          type="button"
+                          key={product._id}
+                          className="search-suggestion-item"
+                          onClick={() => handleSuggestionClick(product)}
+                        >
+                          <img
+                            src={product.image?.[0]?.url || product.images?.[0]?.url || "/placeholder.png"}
+                            alt={product.name}
+                            className="search-suggestion-image"
+                          />
+                          <div className="search-suggestion-details">
+                            <span className="search-suggestion-name">{product.name}</span>
+                            <span className="search-suggestion-price">
+                              {finalPrice} {t("common.currency", "DZD")}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
                     <button type="button" className="search-suggestions-viewall" onClick={handleViewAllResults}>
                       {t("navbar.viewAllResults", { query: searchQuery })}
                     </button>
