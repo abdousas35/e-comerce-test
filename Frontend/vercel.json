@@ -1,19 +1,17 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/:path*",
+      "src": "/(.*)",
       "has": [
         {
           "type": "header",
           "key": "user-agent",
-          "value": "/.*(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp).*/i"
+          "value": "(?i).*(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest|slackbot|vkshare|w3c_validator|whatsapp).*"
         }
       ],
-      "destination": "https://service.prerender.io/Cii6eKdjW06EyAXgPxmI/https://www.easy-shopping-official.com/:path*"
+      "dest": "https://service.prerender.io/YOUR_TOKEN/https://www.easy-shopping-official.com/$1"
     },
-    {
-      "source": "/:path*",
-      "destination": "/index.html"
-    }
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
