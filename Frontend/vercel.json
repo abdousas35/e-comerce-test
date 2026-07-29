@@ -1,12 +1,30 @@
 {
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "https://e-comerce-test-h86a.onrender.com/sitemap.xml"
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest\/0\.|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp).*"
+        }
+      ],
+      "destination": "https://service.prerender.io/https://www.easy-shopping-official.com/:path*"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "headers": [
+        {
+          "key": "X-Prerender-Token",
+          "value": "Cii6eKdjW06EyAXgPxmI"
+        }
+      ]
     }
   ]
 }
