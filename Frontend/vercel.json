@@ -6,7 +6,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest|slackbot|vkShare|W3C_Validator|whatsapp)"
+          "value": ".*(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest|slackbot|vkShare|W3C_Validator|whatsapp).*"
         }
       ],
       "destination": "https://service.prerender.io/https://www.easy-shopping-official.com/$1"
@@ -14,6 +14,17 @@
     {
       "source": "/:path*",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-prerender-token",
+          "value": "Cii6eKdjW06EyAXgPxmI"
+        }
+      ]
     }
   ]
 }
