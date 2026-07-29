@@ -9,22 +9,11 @@
           "value": ".*(googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyouhaveit|outbrain|pinterest|slackbot|vkShare|W3C_Validator|whatsapp).*"
         }
       ],
-      "destination": "https://service.prerender.io/https://www.easy-shopping-official.com/$1"
+      "destination": "https://service.prerender.io/Cii6eKdjW06EyAXgPxmI/https://www.easy-shopping-official.com/$1"
     },
     {
       "source": "/:path*",
       "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "x-prerender-token",
-          "value": "Cii6eKdjW06EyAXgPxmI"
-        }
-      ]
     }
   ]
 }
