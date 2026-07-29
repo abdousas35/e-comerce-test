@@ -16,6 +16,7 @@
     "@mui/material": "^7.3.6",
     "@mui/styled-engine": "^7.3.6",
     "@reduxjs/toolkit": "^2.11.2",
+    "@vercel/config": "^0.5.5",
     "axios": "^1.13.2",
     "browser-image-compression": "^2.0.2",
     "dompurify": "^3.4.12",

@@ -1,4 +1,4 @@
-import { routes } from '@vercel/config/v1';
+import { routes } from '@vercel/config';
 
 export const config = {
   rewrites: [
