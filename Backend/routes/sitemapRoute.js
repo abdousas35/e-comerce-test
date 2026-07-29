@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { SitemapStream, streamToPromise } = require('sitemap');
-const { Readable } = require('stream');
-const Product = require('../models/ProductModel'); 
+import { SitemapStream, streamToPromise } from 'sitemap';
+import { Readable } from 'stream';
+import Product from '../models/ProductModel.js'; 
 
 router.get('/sitemap.xml', async (req, res) => {
   try {
@@ -41,4 +41,4 @@ router.get('/sitemap.xml', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
