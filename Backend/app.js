@@ -7,6 +7,7 @@ import order from "./routes/OrderRoutes.js";
 import siteSettings from "./routes/SiteSettingsRoutes.js";
 import coupon from "./routes/CouponRoutes.js";
 import cart from "./routes/CartRoutes.js";
+import sitemapRoute from './routes/sitemapRoute.js';
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import cors from "cors";
@@ -81,6 +82,7 @@ apiV1Router.use(siteSettings);
 apiV1Router.use(coupon);
 apiV1Router.use(cart);
 
+app.use(sitemapRoute);
 app.use("/api/v1", apiV1Router);
 
 // 7. 🚀 [SEO & Dynamic Meta Injection for Bots & Social Media Sharing]
