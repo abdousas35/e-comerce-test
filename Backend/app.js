@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import cors from "cors";
 import { globalLimiter } from "./middleware/rateLimiter.js";
+import Product from "./models/ProductModel.js";
 
 const app = express();
 const allowedOrigins = [process.env.FRONTEND_URL, process.env.FRONTEND_PREVIEW_URL, process.env.CORS_ORIGIN]
@@ -82,7 +83,75 @@ apiV1Router.use(cart);
 
 app.use("/api/v1", apiV1Router);
 
-// 7. معالجة الـ 404 Routes
+// 7. 🚀 [SEO & Dynamic Meta Injection for Bots & Social Media Sharing]
+app.get('/product/:id', async (req, res, next) => {
+    const userAgent = req.headers['user-agent'] || '';
+    const isBot = /googlebot|facebookexternalhit|twitterbot|whatsapp|telegrambot|bingbot|linkedinbot/i.test(userAgent);
+
+    if (isBot) {
+        try {
+            const foundProduct = await Product.findById(req.params.id);
+
+            if (!foundProduct) {
+                return res.status(404).send('Product Not Found');
+            }
+
+            const title = `${foundProduct.name} | Shop Easy Tunisie`;
+            const description = foundProduct.description ? foundProduct.description.substring(0, 160) : 'شراء أونلاين في تونس - الدفع عند الاستلام';
+            const image = foundProduct.images && foundProduct.images[0] ? (foundProduct.images[0].url || foundProduct.images[0]) : '';
+            const price = foundProduct.price || 0;
+
+            return res.send(`
+                <!DOCTYPE html>
+                <html lang="ar">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${title}</title>
+                    <meta name="description" content="${description}">
+
+                    <!-- Open Graph / Facebook / WhatsApp -->
+                    <meta property="og:type" content="product" />
+                    <meta property="og:title" content="${title}" />
+                    <meta property="og:description" content="${description}" />
+                    <meta property="og:image" content="${image}" />
+                    <meta property="og:price:amount" content="${price}" />
+                    <meta property="og:price:currency" content="TND" />
+
+                    <!-- Schema.org for Google -->
+                    <script type="application/ld+json">
+                    {
+                        "@context": "https://schema.org/",
+                        "@type": "Product",
+                        "name": "${foundProduct.name}",
+                        "image": "${image}",
+                        "description": "${description}",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "TND",
+                            "price": "${price}",
+                            "availability": "${foundProduct.Stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'}"
+                        }
+                    }
+                    </script>
+                </head>
+                <body>
+                    <h1>${foundProduct.name}</h1>
+                    <p>${description}</p>
+                    ${image ? `<img src="${image}" alt="${foundProduct.name}" />` : ''}
+                </body>
+                </html>
+            `);
+        } catch (error) {
+            console.error("Bot SEO Error:", error);
+            return next();
+        }
+    }
+
+    // إذا كان زبون عادي يمر لـ 404 أو يستقبله تطبيق الفرونت إند
+    next();
+});
+
+// 8. معالجة الـ 404 Routes
 app.use((req, res, next) => {
     res.status(404).json({
         success: false,
