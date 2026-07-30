@@ -14,42 +14,64 @@ const createSlug = (value = "") =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-const parseVariants = (rawVariants = []) => {
-  let parsedVariants = rawVariants;
+// Parses the raw optionGroups payload (JSON string or array) coming from the
+// admin form. Shape: [{ name: "Couleur", options: [{ value, price, stock, images }] }]
+// Images are left untouched here (can be base64 strings or already-uploaded
+// {publicId, url} objects) — uploading happens separately in uploadOptionGroupImages.
+const parseOptionGroups = (rawGroups = []) => {
+  let parsedGroups = rawGroups;
 
-  if (typeof rawVariants === "string") {
+  if (typeof rawGroups === "string") {
     try {
-      parsedVariants = JSON.parse(rawVariants);
+      parsedGroups = JSON.parse(rawGroups);
     } catch {
-      parsedVariants = [];
+      parsedGroups = [];
     }
   }
 
-  if (!Array.isArray(parsedVariants)) {
+  if (!Array.isArray(parsedGroups)) {
     return [];
   }
 
-  return parsedVariants
-    .map((variant, index) => ({
-      label: variant.label || [variant.size, variant.color].filter(Boolean).join(" / ") || `Variant ${index + 1}`,
-      sku: variant.sku || "",
-      size: variant.size || "",
-      color: variant.color || "",
-      price: Number(variant.price) || 0,
-      stock: Number(variant.stock) || 0,
-    }))
-    .filter((variant) => variant.price > 0 || variant.stock > 0 || variant.size || variant.color);
+  return parsedGroups
+    .map((group) => {
+      const options = Array.isArray(group.options) ? group.options : [];
+
+      const cleanedOptions = options
+        .map((option) => ({
+          value: option.value || "",
+          price: Number(option.price) || 0,
+          stock: Number(option.stock) || 0,
+          images: Array.isArray(option.images) ? option.images : option.images ? [option.images] : [],
+        }))
+        .filter((option) => option.value);
+
+      return {
+        name: (group.name || "").trim(),
+        options: cleanedOptions,
+      };
+    })
+    .filter((group) => group.name && group.options.length > 0);
 };
 
-const getEffectiveStock = (variants = [], fallbackStock = 0) =>
-  variants.length > 0
-    ? variants.reduce((acc, variant) => acc + (Number(variant.stock) || 0), 0)
-    : Number(fallbackStock) || 0;
+// Flattens every option across every group into one list — used to derive
+// the overall product price/stock from whatever options the admin filled in.
+const getAllOptions = (optionGroups = []) =>
+  optionGroups.reduce((acc, group) => acc.concat(Array.isArray(group.options) ? group.options : []), []);
 
-const getEffectivePrice = (variants = [], fallbackPrice = 0) =>
-  variants.length > 0
-    ? Math.min(...variants.map((variant) => Number(variant.price) || 0))
+const getEffectiveStock = (optionGroups = [], fallbackStock = 0) => {
+  const allOptions = getAllOptions(optionGroups);
+  return allOptions.length > 0
+    ? allOptions.reduce((acc, option) => acc + (Number(option.stock) || 0), 0)
+    : Number(fallbackStock) || 0;
+};
+
+const getEffectivePrice = (optionGroups = [], fallbackPrice = 0) => {
+  const allOptions = getAllOptions(optionGroups);
+  return allOptions.length > 0
+    ? Math.min(...allOptions.map((option) => Number(option.price) || 0))
     : Number(fallbackPrice) || 0;
+};
 
 const parseCsvLine = (line = "") => {
   const cells = [];
@@ -103,13 +125,13 @@ const parseCsvRows = (csvText = "") => {
   });
 };
 
-const uploadImages = async (images = []) => {
+const uploadImages = async (images = [], folder = "products") => {
   const imageList = Array.isArray(images) ? images : [images];
   const imagesLinks = [];
 
   for (let i = 0; i < imageList.length; i += 1) {
     const result = await cloudinary.uploader.upload(imageList[i], {
-      folder: "products",
+      folder,
     });
 
     imagesLinks.push({
@@ -121,10 +143,37 @@ const uploadImages = async (images = []) => {
   return imagesLinks;
 };
 
+// Walks every option in every group and uploads any images that are still
+// raw base64 strings (new uploads), leaving already-uploaded {publicId, url}
+// objects untouched (relevant when editing an existing product).
+const uploadOptionGroupImages = async (optionGroups = []) => {
+  const uploadedGroups = [];
+
+  for (const group of optionGroups) {
+    const uploadedOptions = [];
+
+    for (const option of group.options) {
+      const alreadyUploaded = option.images.filter((img) => img && typeof img === "object" && img.url);
+      const rawImages = option.images.filter((img) => typeof img === "string");
+      const newlyUploaded = rawImages.length > 0 ? await uploadImages(rawImages, "products/options") : [];
+
+      uploadedOptions.push({
+        ...option,
+        images: [...alreadyUploaded, ...newlyUploaded],
+      });
+    }
+
+    uploadedGroups.push({ ...group, options: uploadedOptions });
+  }
+
+  return uploadedGroups;
+};
+
 export const createProducts = async (req, res, next) => {
   try {
-    const { name, price, description, keywords, stock, image, category, variants, discount } = req.body;
-    const normalizedVariants = parseVariants(variants);
+    const { name, price, description, keywords, stock, image, category, optionGroups, discount } = req.body;
+    const parsedOptionGroups = parseOptionGroups(optionGroups);
+    const normalizedOptionGroups = await uploadOptionGroupImages(parsedOptionGroups);
 
     if (!image || image.length === 0) {
       return res.status(400).json({ message: "Images are required" });
@@ -135,14 +184,14 @@ export const createProducts = async (req, res, next) => {
     const product = await Product.create({
       name,
       slug: createSlug(name),
-      price: getEffectivePrice(normalizedVariants, price),
+      price: getEffectivePrice(normalizedOptionGroups, price),
       discount: Number(discount) || 0,
       description,
       keywords: keywords || "",
-      stock: getEffectiveStock(normalizedVariants, stock),
+      stock: getEffectiveStock(normalizedOptionGroups, stock),
       category: category || "Default",
       image: imagesLinks,
-      variants: normalizedVariants,
+      optionGroups: normalizedOptionGroups,
     });
 
     res.status(201).json({
@@ -242,11 +291,25 @@ export const updateProduct = HandleAsyncError(async (req, res, next) => {
     return next(new HandelError("Product not found", 404));
   }
 
-  if (typeof req.body.variants !== "undefined") {
-    const parsedVariants = parseVariants(req.body.variants);
-    req.body.variants = parsedVariants;
-    req.body.stock = getEffectiveStock(parsedVariants, req.body.stock);
-    req.body.price = getEffectivePrice(parsedVariants, req.body.price ?? product.price);
+  if (typeof req.body.optionGroups !== "undefined") {
+    const parsedOptionGroups = parseOptionGroups(req.body.optionGroups);
+    const normalizedOptionGroups = await uploadOptionGroupImages(parsedOptionGroups);
+
+    // Clean up cloudinary images that belonged to options which no longer exist / no longer reference them
+    const previousPublicIds = new Set(
+      getAllOptions(product.optionGroups).flatMap((option) => option.images.map((img) => img.publicId))
+    );
+    const nextPublicIds = new Set(
+      getAllOptions(normalizedOptionGroups).flatMap((option) => option.images.map((img) => img.publicId))
+    );
+    const removedPublicIds = [...previousPublicIds].filter((publicId) => !nextPublicIds.has(publicId));
+    for (const publicId of removedPublicIds) {
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    req.body.optionGroups = normalizedOptionGroups;
+    req.body.stock = getEffectiveStock(normalizedOptionGroups, req.body.stock);
+    req.body.price = getEffectivePrice(normalizedOptionGroups, req.body.price ?? product.price);
   }
 
   if (req.body.image) {
@@ -424,15 +487,14 @@ export const importProductsFromCsv = HandleAsyncError(async (req, res, next) => 
     const description = row.description || "";
     const category = row.category || "Default";
     const keywords = row.keywords || "";
-    const parsedVariants = parseVariants(row.variants || "[]");
-    const price = getEffectivePrice(parsedVariants, row.price);
-    const stock = getEffectiveStock(parsedVariants, row.stock);
+    const price = Number(row.price) || 0;
+    const stock = Number(row.stock) || 0;
     const imageUrls = (row.images || row.image || "")
       .split("|")
       .map((value) => value.trim())
       .filter(Boolean);
 
-    if (!name || !description || (!price && parsedVariants.length === 0)) {
+    if (!name || !description || !price) {
       skippedRows.push({ row: index + 2, reason: "Missing required product fields" });
       continue;
     }
@@ -445,7 +507,7 @@ export const importProductsFromCsv = HandleAsyncError(async (req, res, next) => 
       keywords,
       price,
       stock,
-      variants: parsedVariants,
+      optionGroups: [],
       image:
         imageUrls.length > 0
           ? imageUrls.map((url, imageIndex) => ({

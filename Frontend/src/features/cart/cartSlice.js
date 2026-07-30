@@ -3,23 +3,35 @@ import axios from "axios";
 import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
 
 
+// Finds a single option (e.g. the "Rouge" option inside the "Couleur" group)
+// across every group on a product, by its _id.
+const findOptionById = (product, optionId) => {
+  if (!optionId) return null;
+  for (const group of product?.optionGroups || []) {
+    const match = (group.options || []).find((option) => option._id === optionId);
+    if (match) return { ...match, groupName: group.name };
+  }
+  return null;
+};
+
 // Add items to cart
 export const addItemsToCart = createAsyncThunk(
   "cart/AddItemsToCart",
-  async ({ id, quantity, variantId = "", product }, { dispatch, rejectWithValue }) => {
-    
-    const selectedVariant = variantId ? product?.variants?.find(v => v._id === variantId) : null;
-    const itemPrice = selectedVariant?.price ?? product.price;
-    const cartKey = `${product._id}-${selectedVariant?._id || "default"}`;
+  async ({ id, quantity, optionId = "", product }, { dispatch, rejectWithValue }) => {
+
+    const selectedOption = optionId ? findOptionById(product, optionId) : null;
+    const itemPrice = selectedOption?.price ?? product.price;
+    const cartKey = `${product._id}-${selectedOption?._id || "default"}`;
     const optimisticItem = {
         cartKey,
         product: product._id,
         name: product.name,
+        // Keep the product's main image unless the chosen option has its own images
+        image: selectedOption?.images?.[0]?.url || product.image[0].url,
         price: itemPrice,
-        image: product.image[0].url,
-        stock: selectedVariant?.stock ?? product.stock,
-        variantId: selectedVariant?._id || "",
-        variantLabel: selectedVariant?.label || "",
+        stock: selectedOption?.stock ?? product.stock,
+        optionId: selectedOption?._id || "",
+        optionLabel: selectedOption ? `${selectedOption.groupName}: ${selectedOption.value}` : "",
         quantity,
         optimistic: true 
     };
@@ -29,21 +41,21 @@ export const addItemsToCart = createAsyncThunk(
     try {
       const {data} = await axios.get(`/api/v1/product/${id}`);
       const serverProduct = data.product;
-      const serverSelectedVariant = variantId ? serverProduct?.variants?.find((variant) => variant._id === variantId) : null;
+      const serverSelectedOption = optionId ? findOptionById(serverProduct, optionId) : null;
       const productDiscount = Number(serverProduct.discount || 0);
-      const serverItemPrice = Math.max(0, (serverSelectedVariant?.price ?? serverProduct.price) - productDiscount);
-      const serverItemStock = serverSelectedVariant?.stock ?? serverProduct.stock;
-      const serverCartKey = `${serverProduct._id}-${serverSelectedVariant?._id || "default"}`;
+      const serverItemPrice = Math.max(0, (serverSelectedOption?.price ?? serverProduct.price) - productDiscount);
+      const serverItemStock = serverSelectedOption?.stock ?? serverProduct.stock;
+      const serverCartKey = `${serverProduct._id}-${serverSelectedOption?._id || "default"}`;
 
       return {
         cartKey: serverCartKey,
         product: serverProduct._id,
         name: serverProduct.name,
         price: serverItemPrice,
-        image: serverProduct.image[0].url,
+        image: serverSelectedOption?.images?.[0]?.url || serverProduct.image[0].url,
         stock: serverItemStock,
-        variantId: serverSelectedVariant?._id || "",
-        variantLabel: serverSelectedVariant?.label || "",
+        optionId: serverSelectedOption?._id || "",
+        optionLabel: serverSelectedOption ? `${serverSelectedOption.groupName}: ${serverSelectedOption.value}` : "",
         quantity
       } ;
     } catch (error) {

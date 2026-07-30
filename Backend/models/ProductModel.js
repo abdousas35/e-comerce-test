@@ -45,6 +45,61 @@ const variantSchema = new mongoose.Schema(
     { _id: true }
 );
 
+const optionImageSchema = new mongoose.Schema(
+    {
+        publicId: {
+            type: String,
+            required: true
+        },
+        url: {
+            type: String,
+            required: true
+        }
+    },
+    { _id: false }
+);
+
+const productOptionSchema = new mongoose.Schema(
+    {
+        value: {
+            type: String,
+            trim: true,
+            required: [true, "Please enter an option value"]
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: [0, "Option price cannot be negative"]
+        },
+        stock: {
+            type: Number,
+            required: true,
+            min: [0, "Option stock cannot be negative"],
+            default: 0
+        },
+        images: {
+            type: [optionImageSchema],
+            default: []
+        }
+    },
+    { _id: true }
+);
+
+const optionGroupSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            trim: true,
+            required: [true, "Please enter an option group name"]
+        },
+        options: {
+            type: [productOptionSchema],
+            default: []
+        }
+    },
+    { _id: true }
+);
+
 const productSchema = new mongoose.Schema({
 
     name: {
@@ -111,6 +166,10 @@ const productSchema = new mongoose.Schema({
     },
     variants: {
         type: [variantSchema],
+        default: []
+    },
+    optionGroups: {
+        type: [optionGroupSchema],
         default: []
     },
     stock: {

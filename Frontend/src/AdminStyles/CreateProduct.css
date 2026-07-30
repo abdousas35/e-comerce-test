@@ -117,6 +117,67 @@
   margin-bottom: 0.75rem;
 }
 
+.option-group-card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--surface-soft-color);
+}
+
+.option-group-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.option-group-header .form-input {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.option-group-header .submit-btn,
+.option-row .submit-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+.option-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 1.4fr auto;
+  align-items: start;
+  padding: 0.75rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-color);
+}
+
+.option-row .form-input {
+  margin-bottom: 0;
+}
+
+.option-image-input {
+  gap: 0.5rem;
+}
+
+.option-image-input .file-input-label {
+  margin-bottom: 0;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.option-image-input .image-preview-container {
+  margin-top: 6px;
+}
+
+.option-image-input .image-preview {
+  width: 50px;
+  height: 50px;
+}
+
 .submit-btn {
   width: 100%;
   background: var(--primary-main);
@@ -192,5 +253,14 @@
 
   .variant-row {
     grid-template-columns: 1fr;
+  }
+
+  .option-group-header {
+    grid-template-columns: 1fr;
+  }
+
+  .option-group-header .submit-btn,
+  .option-row .submit-btn {
+    width: 100%;
   }
 }

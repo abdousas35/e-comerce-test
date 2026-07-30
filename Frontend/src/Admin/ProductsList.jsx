@@ -91,7 +91,7 @@ function ProductsList() {
                 <th>{t("product.price")}</th>
                 <th>{t("admin.products.ratings")}</th>
                 <th>{t("admin.common.stock")}</th>
-                <th>Variants</th>
+                <th>{t("admin.products.optionGroups")}</th>
                 <th>{t("admin.common.createdAt")}</th>
                 <th>{t("cart.actions")}</th>
               </tr>
@@ -106,7 +106,7 @@ function ProductsList() {
                   <td>${product.price}</td>
                   <td>{product.ratings}</td>
                   <td>{product.stock}</td>
-                  <td>{product.variants?.length || 0}</td>
+                  <td>{product.optionGroups?.length || 0}</td>
                   <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                   <td>
                     <Link to={`/admin/product/${product._id}`} className="action-icon edit-icon"><Edit /></Link>
