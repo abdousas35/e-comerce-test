@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../AdminStyles/UpdateProduct.css";
+import "../AdminStyles/CreateProduct.css";
 import Navbar from "../components/Navbar";
 import PageTitle from "../components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import Loader from "../components/Loader";
 import { removeSuccess, updateProduct } from "../features/admin/adminSlice";
 import { toast } from "react-toastify";
+import GoToDashboard from "../components/GoToDashboard";
 import imageCompression from "browser-image-compression";
 
 const generateId = () => `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -148,7 +149,7 @@ function UpdateProduct() {
     }
   };
 
-  const handleImageChange = async (e) => {
+  const updateProductImage = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
@@ -165,7 +166,7 @@ function UpdateProduct() {
     }
   };
 
-  const handleProductSubmit = async (e) => {
+  const updateProductSubmit = async (e) => {
     e.preventDefault();
 
     const cleanedOptionGroups = optionGroups
@@ -215,146 +216,124 @@ function UpdateProduct() {
       <Navbar />
       <PageTitle title={t("admin.products.updateProduct")} />
 
-      <div className="update-product-wrapper">
-        <h1 className="update-product-title">{t("admin.products.updateProduct")}</h1>
-        <form className="update-product-form" onSubmit={handleProductSubmit}>
-          <div className="update-product-fields">
-            <label htmlFor="name">{t("admin.products.productName")}</label>
-            <input type="text" className="update-product-input" required id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} />
+      <div className="create-product-container">
+        <h1 className="form-title">{t("admin.products.updateProduct")}</h1>
+        <form className="product-form" onSubmit={updateProductSubmit}>
+          <input type="text" className="form-input" required id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("admin.products.enterName")} />
+          <input type="number" className="form-input" required id="price" name="price" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t("admin.products.enterPrice")} />
+          <input type="number" className="form-input" id="discount" name="discount" min="0" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder={t("admin.products.discountAmount")} />
+          <input type="text" className="form-input" required id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("admin.products.enterDescription")} />
+          <input type="text" className="form-input" id="keywords" name="keywords" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder={t("admin.products.productKeywords")} />
+          <input type="text" className="form-input" id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder={t("admin.products.category")} />
+          <input type="number" className="form-input" required id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} placeholder={t("admin.products.enterStock")} />
+          <input type="number" className="form-input" required id="lowStock" name="lowStock" value={lowStock} onChange={(e) => setLowStock(e.target.value)} placeholder={t("admin.products.lowStockThreshold")} />
 
-            <label htmlFor="price">{t("admin.products.productPrice")}</label>
-            <input type="number" className="update-product-input" required id="price" name="price" value={price} onChange={(e) => setPrice(e.target.value)} />
+          <div className="variant-editor">
+            <h3>{t("admin.products.optionGroups")}</h3>
 
-            <label htmlFor="discount">Discount amount</label>
-            <input type="number" className="update-product-input" id="discount" name="discount" min="0" value={discount} onChange={(e) => setDiscount(e.target.value)} />
-
-            <label htmlFor="description">{t("admin.products.productDescription")}</label>
-            <textarea className="update-product-textarea" required id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-
-            <label htmlFor="keywords">{t("admin.products.productKeywords")}</label>
-            <input type="text" className="update-product-input" id="keywords" name="keywords" value={keywords} onChange={(e) => setKeywords(e.target.value)} />
-
-            <label htmlFor="category">Category</label>
-            <input type="text" className="update-product-input" id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)} />
-
-            <label htmlFor="stock">{t("admin.products.productStock")}</label>
-            <input type="number" className="update-product-input" required id="stock" name="stock" value={stock} onChange={(e) => setStock(e.target.value)} />
-
-            <label htmlFor="lowStock">{t("admin.products.lowStockThreshold")}</label>
-            <input type="number" className="update-product-input" required id="lowStock" name="lowStock" value={lowStock} onChange={(e) => setLowStock(e.target.value)} />
-
-            <div className="variant-editor">
-              <h3>{t("admin.products.optionGroups")}</h3>
-
-              {optionGroups.map((group) => (
-                <div key={group.id} className="option-group-card">
-                  <div className="option-group-header">
-                    <input
-                      type="text"
-                      className="update-product-input"
-                      placeholder={t("admin.products.groupNamePlaceholder")}
-                      value={group.name}
-                      onChange={(e) => updateGroupName(group.id, e.target.value)}
-                    />
-                    <button type="button" className="update-product-submit-btn" onClick={() => removeGroup(group.id)}>
-                      {t("admin.products.removeGroup")}
-                    </button>
-                  </div>
-
-                  {group.options.map((option) => (
-                    <div key={option.id} className="variant-row option-row">
-                      <input
-                        type="text"
-                        className="update-product-input"
-                        placeholder={group.name ? group.name : t("admin.products.optionValuePlaceholder")}
-                        value={option.value}
-                        onChange={(e) => updateOptionField(group.id, option.id, "value", e.target.value)}
-                      />
-                      <input
-                        type="number"
-                        className="update-product-input"
-                        placeholder={t("admin.products.variantPrice")}
-                        value={option.price}
-                        onChange={(e) => updateOptionField(group.id, option.id, "price", e.target.value)}
-                      />
-                      <input
-                        type="number"
-                        className="update-product-input"
-                        placeholder={t("admin.products.variantStock")}
-                        value={option.stock}
-                        onChange={(e) => updateOptionField(group.id, option.id, "stock", e.target.value)}
-                      />
-
-                      <div className="file-input-container option-image-input">
-                        <div className="file-input-wrapper">
-                          <input
-                            type="file"
-                            id={`update-option-images-${option.id}`}
-                            accept="image/*"
-                            className="form-input-file"
-                            multiple
-                            onChange={(e) => handleOptionImages(group.id, option.id, e.target.files)}
-                          />
-                          <label htmlFor={`update-option-images-${option.id}`} className="file-input-label">
-                            {t("admin.products.chooseImages")}
-                          </label>
-                        </div>
-                        {option.images.length > 0 && (
-                          <div className="update-product-old-images-wrapper">
-                            {option.images.map((img, index) => (
-                              <img
-                                src={typeof img === "string" ? img : img.url}
-                                alt={t("admin.products.preview")}
-                                className="update-product-old-image"
-                                key={index}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {group.options.length > 1 ? (
-                        <button type="button" className="update-product-submit-btn" onClick={() => removeOption(group.id, option.id)}>
-                          {t("admin.products.removeVariant")}
-                        </button>
-                      ) : null}
-                    </div>
-                  ))}
-
-                  <button type="button" className="update-product-submit-btn" onClick={() => addOption(group.id)}>
-                    {t("admin.products.addOption")}
+            {optionGroups.map((group) => (
+              <div key={group.id} className="option-group-card">
+                <div className="option-group-header">
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder={t("admin.products.groupNamePlaceholder")}
+                    value={group.name}
+                    onChange={(e) => updateGroupName(group.id, e.target.value)}
+                  />
+                  <button type="button" className="submit-btn" onClick={() => removeGroup(group.id)}>
+                    {t("admin.products.removeGroup")}
                   </button>
                 </div>
-              ))}
 
-              <button type="button" className="update-product-submit-btn" onClick={addGroup}>
-                {t("admin.products.addGroup")}
-              </button>
-            </div>
+                {group.options.map((option) => (
+                  <div key={option.id} className="variant-row option-row">
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder={group.name ? group.name : t("admin.products.optionValuePlaceholder")}
+                      value={option.value}
+                      onChange={(e) => updateOptionField(group.id, option.id, "value", e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      className="form-input"
+                      placeholder={t("admin.products.variantPrice")}
+                      value={option.price}
+                      onChange={(e) => updateOptionField(group.id, option.id, "price", e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      className="form-input"
+                      placeholder={t("admin.products.variantStock")}
+                      value={option.stock}
+                      onChange={(e) => updateOptionField(group.id, option.id, "stock", e.target.value)}
+                    />
 
+                    <div className="file-input-container option-image-input">
+                      <div className="file-input-wrapper">
+                        <input
+                          type="file"
+                          id={`update-option-images-${option.id}`}
+                          accept="image/*"
+                          className="form-input-file"
+                          multiple
+                          onChange={(e) => handleOptionImages(group.id, option.id, e.target.files)}
+                        />
+                        <label htmlFor={`update-option-images-${option.id}`} className="file-input-label">
+                          {t("admin.products.chooseImages")}
+                        </label>
+                      </div>
+                      {option.images.length > 0 && (
+                        <div className="image-preview-container">
+                          {option.images.map((img, index) => (
+                            <img
+                              src={typeof img === "string" ? img : img.url}
+                              alt={t("admin.products.preview")}
+                              className="image-preview"
+                              key={index}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {group.options.length > 1 ? (
+                      <button type="button" className="submit-btn" onClick={() => removeOption(group.id, option.id)}>
+                        {t("admin.products.removeVariant")}
+                      </button>
+                    ) : null}
+                  </div>
+                ))}
+
+                <button type="button" className="submit-btn" onClick={() => addOption(group.id)}>
+                  {t("admin.products.addOption")}
+                </button>
+              </div>
+            ))}
+
+            <button type="button" className="submit-btn" onClick={addGroup}>
+              {t("admin.products.addGroup")}
+            </button>
+          </div>
+
+          <div className="file-input-container">
             <div className="file-input-wrapper">
-              <input type="file" id="update-product-images" accept="image/*" multiple onChange={handleImageChange} />
+              <input type="file" id="update-product-images" accept="image/*" multiple onChange={updateProductImage} className="form-input-file" />
               <label htmlFor="update-product-images" className="file-input-label">{t("admin.products.chooseImages")}</label>
             </div>
-
-            {imagePreview.length > 0 && (
-              <div className="update-product-preview-wrapper">
-                {imagePreview.map((img, index) => (
-                  <img src={img} key={index} alt={t("admin.products.newPreview")} className="update-product-preview-image" />
-                ))}
-              </div>
-            )}
-
-            {oldImages.length > 0 && (
-              <div className="update-product-old-images-wrapper">
-                {oldImages.map((img, index) => (
-                  <img src={img.url} key={index} alt={t("admin.products.oldImage")} className="update-product-old-image" />
-                ))}
-              </div>
-            )}
-
-            <button className="update-product-submit-btn">{t("common.update")}</button>
           </div>
+
+          <div className="image-preview-container">
+            {imagePreview.map((img, index) => (
+              <img src={img} key={index} alt={t("admin.products.newPreview")} className="image-preview" />
+            ))}
+            {oldImages.map((img, index) => (
+              <img src={img.url} key={index} alt={t("admin.products.oldImage")} className="image-preview" />
+            ))}
+          </div>
+
+          <button type="submit" className="submit-btn">{t("common.update")}</button>
         </form>
       </div>
     </>

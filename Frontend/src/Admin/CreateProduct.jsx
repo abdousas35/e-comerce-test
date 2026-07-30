@@ -196,7 +196,7 @@ function CreateProduct() {
       <PageTitle title={t("admin.products.createProduct")} />
       <div className="create-product-container">
         <h1 className="form-title">{t("admin.products.createProduct")}</h1>
-        <form className="procuct-form" encType="multipart/form-data" onSubmit={createProductSubmit}>
+        <form className="product-form" encType="multipart/form-data" onSubmit={createProductSubmit}>
           <input type="text" className="form-input" name="name" placeholder={t("admin.products.enterName")} required value={name} onChange={(e) => setName(e.target.value)} />
           <input type="number" className="form-input" name="price" placeholder={t("admin.products.enterPrice")} required value={price} onChange={(e) => setPrice(e.target.value)} />
           <input type="text" className="form-input" name="description" placeholder={t("admin.products.enterDescription")} required value={description} onChange={(e) => setDescription(e.target.value)} />
