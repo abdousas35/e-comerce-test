@@ -33,6 +33,9 @@
     "categoryShowcase": {
       "eyebrow": "Acheter par categorie",
       "title": "Explorer nos univers"
+    },
+    "productSections": {
+      "viewAll": "Voir tout"
     }
   },
   "footer": {
@@ -162,7 +165,8 @@
   "products": {
     "pageTitle": "Tous les produits",
     "noProducts": "Aucun produit trouve",
-    "noProductsDesc": "Aucun produit ne correspond a \"{{keyword}}\". Essayez d'autres mots-cles."
+    "noProductsDesc": "Aucun produit ne correspond a \"{{keyword}}\". Essayez d'autres mots-cles.",
+    "allSections": "Tout"
   },
   "productDetails": {
     "pageTitle": "Details du produit",
@@ -417,6 +421,7 @@
       "settings": "Parametres",
       "banners": "Bannieres",
       "categoryShowcase": "Vitrine des categories",
+      "sections": "Sections",
       "coupons": "Coupons"
     },
     "dashboard": {
@@ -528,6 +533,25 @@
       "discount": "Remise",
       "applying": "Application...",
       "apply": "Appliquer le coupon"
+    },
+    "sections": {
+      "pageTitle": "Sections de la page d'accueil",
+      "headerDesc": "Creez des regroupements de produits comme Meilleures ventes ou Nouveautes, et gerez leur ordre et leur visibilite.",
+      "createSection": "Creer une section",
+      "createDesc": "Donnez un nom a la section — vous pourrez y assigner des produits depuis la fiche produit.",
+      "namePlaceholder": "ex: Meilleures ventes",
+      "addSection": "Ajouter la section",
+      "created": "Section creee",
+      "deleted": "Section supprimee",
+      "deletedWithProducts": "Section supprimee et retiree de {{count}} produit(s)",
+      "deleteConfirm": "Supprimer la section \"{{name}}\" ? Elle sera retiree des produits qui l'utilisent.",
+      "allSections": "Toutes les sections",
+      "noSections": "Aucune section pour le moment. Creez-en une ci-dessus.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "productSections": "Sections",
+      "selectSections": "Selectionnez les sections dans lesquelles ce produit doit apparaitre",
+      "noSectionsAvailable": "Aucune section pour le moment — creez-en une depuis le gestionnaire de sections."
     },
     "tracking": {
       "pageTitle": "Suivi de commande",

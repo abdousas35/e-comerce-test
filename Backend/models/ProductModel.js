@@ -172,6 +172,10 @@ const productSchema = new mongoose.Schema({
         type: [optionGroupSchema],
         default: []
     },
+    sections: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Section" }],
+        default: []
+    },
     stock: {
 
         type: Number,

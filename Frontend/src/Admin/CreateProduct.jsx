@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
 import imageCompression from "browser-image-compression";
 import GoToDashboard from "../components/GoToDashboard";
+import axios from "axios";
 
 const generateId = () => `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -42,8 +43,16 @@ function CreateProduct() {
   const [lowStock, setLowStock] = useState(3);
   const [category, setCategory] = useState("");
   const [optionGroups, setOptionGroups] = useState([]);
+  const [availableSections, setAvailableSections] = useState([]);
+  const [selectedSections, setSelectedSections] = useState([]);
   const [image, setImage] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
+
+  useEffect(() => {
+    axios.get("/api/v1/sections")
+      .then((res) => setAvailableSections(res.data.sections || []))
+      .catch(() => setAvailableSections([]));
+  }, []);
 
   const resetForm = () => {
     setName("");
@@ -55,8 +64,17 @@ function CreateProduct() {
     setCategory("");
     setDiscount(0);
     setOptionGroups([]);
+    setSelectedSections([]);
     setImage([]);
     setImagePreview([]);
+  };
+
+  const toggleSection = (sectionId) => {
+    setSelectedSections((current) => (
+      current.includes(sectionId)
+        ? current.filter((id) => id !== sectionId)
+        : [...current, sectionId]
+    ));
   };
 
   const compressFilesToBase64 = async (files) => {
@@ -97,7 +115,7 @@ function CreateProduct() {
       .filter((group) => group.options.length > 0);
 
     try {
-      await dispatch(createProduct({ name, price, description, keywords, stock, lowStock, category, discount, image, optionGroups: cleanedOptionGroups })).unwrap();
+      await dispatch(createProduct({ name, price, description, keywords, stock, lowStock, category, discount, image, optionGroups: cleanedOptionGroups, sections: selectedSections })).unwrap();
       toast.success(t("admin.products.created"), { position: "top-center", autoClose: 3000 });
       resetForm();
       navigate("/admin/products");
@@ -288,6 +306,28 @@ function CreateProduct() {
             <button type="button" className="submit-btn" onClick={addGroup}>
               {t("admin.products.addGroup")}
             </button>
+          </div>
+
+          <div className="variant-editor">
+            <h3>{t("admin.products.productSections")}</h3>
+            <p className="sections-hint">{t("admin.products.selectSections")}</p>
+
+            {availableSections.length === 0 ? (
+              <p className="sections-hint">{t("admin.products.noSectionsAvailable")}</p>
+            ) : (
+              <div className="section-checkbox-list">
+                {availableSections.map((section) => (
+                  <label key={section._id} className="section-checkbox-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedSections.includes(section._id)}
+                      onChange={() => toggleSection(section._id)}
+                    />
+                    {section.name}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="file-input-container">

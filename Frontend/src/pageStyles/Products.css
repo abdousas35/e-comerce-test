@@ -1,3 +1,31 @@
+.section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 20px 1rem;
+}
+
+.section-tab {
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface-color);
+  color: var(--body-text-color);
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.section-tab:hover {
+  border-color: var(--primary-main);
+}
+
+.section-tab.active {
+  background: var(--primary-main);
+  border-color: var(--primary-main);
+  color: var(--text-light);
+}
+
 .products-layout {
   display: flex;
   align-items: flex-start;
@@ -78,9 +106,17 @@
   .filter-section {
     width: 100%;
   }
+
+  .section-tabs {
+    margin: 0 10px 1rem;
+  }
 }
 
 @media (max-width: 450px) {
+  .section-tabs {
+    margin: 0 8px 0.85rem;
+  }
+
   .products-layout {
     padding: 10px 8px;
     margin-top: 78px;

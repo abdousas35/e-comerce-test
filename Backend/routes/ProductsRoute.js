@@ -12,7 +12,8 @@ import {
   importProductsFromCsv, 
   getRelatedProducts, 
   getProductCategories,
-  searchSuggestions 
+  searchSuggestions,
+  getHomepageSections
 } from "../controller/ProductController.js";
 import catchAsyncErrors from "../middleware/HandleAsyncError.js"
 import { verifyUserAuth, roleBasedAccess} from "../middleware/userAuth.js";
@@ -21,6 +22,7 @@ import { reviewLimiter } from "../middleware/rateLimiter.js";
 const router = express.Router();
 
 router.route("/products/categories").get(catchAsyncErrors(getProductCategories));
+router.route("/homepage-sections").get(catchAsyncErrors(getHomepageSections));
 
 
 router.route("/products/suggestions").get(catchAsyncErrors(searchSuggestions));

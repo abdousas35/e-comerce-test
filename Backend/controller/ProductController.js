@@ -1,10 +1,20 @@
 import Product from "../models/ProductModel.js";
 import Order from "../models/OrderModel.js";
+import Section from "../models/SectionModel.js";
 import HandelError from "../utils/handelError.js";
 import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import APIFunctionality from "../utils/apiFunctionality.js";
 import { v2 as cloudinary } from "cloudinary";
 import { logAdminAction } from "../utils/adminLog.js";
+
+const MONGO_ID_REGEX = /^[a-f\d]{24}$/i;
+
+// Keeps only well-formed Mongo ObjectId strings coming from the admin form's
+// section multi-select, dropping anything malformed/empty.
+const sanitizeSectionIds = (rawSections) => {
+  if (!Array.isArray(rawSections)) return [];
+  return rawSections.filter((id) => typeof id === "string" && MONGO_ID_REGEX.test(id));
+};
 
 const createSlug = (value = "") =>
   value
@@ -171,7 +181,7 @@ const uploadOptionGroupImages = async (optionGroups = []) => {
 
 export const createProducts = async (req, res, next) => {
   try {
-    const { name, price, description, keywords, stock, image, category, optionGroups, discount } = req.body;
+    const { name, price, description, keywords, stock, image, category, optionGroups, discount, sections } = req.body;
     const parsedOptionGroups = parseOptionGroups(optionGroups);
     const normalizedOptionGroups = await uploadOptionGroupImages(parsedOptionGroups);
 
@@ -192,6 +202,7 @@ export const createProducts = async (req, res, next) => {
       category: category || "Default",
       image: imagesLinks,
       optionGroups: normalizedOptionGroups,
+      sections: sanitizeSectionIds(sections),
     });
 
     res.status(201).json({
@@ -310,6 +321,10 @@ export const updateProduct = HandleAsyncError(async (req, res, next) => {
     req.body.optionGroups = normalizedOptionGroups;
     req.body.stock = getEffectiveStock(normalizedOptionGroups, req.body.stock);
     req.body.price = getEffectivePrice(normalizedOptionGroups, req.body.price ?? product.price);
+  }
+
+  if (typeof req.body.sections !== "undefined") {
+    req.body.sections = sanitizeSectionIds(req.body.sections);
   }
 
   if (req.body.image) {
@@ -543,4 +558,38 @@ export const getRelatedProducts = HandleAsyncError(async (req, res, next) => {
     }).limit(6).select('name price image discount ratings numOfReviews stock slug');
 
     res.status(200).json({ success: true, products: related });
+});
+
+/**
+ * @route GET /api/v1/homepage-sections
+ * @desc Returns every active section together with a handful of its
+ *       products in a single request, powering the homepage product rows.
+ *       Sections with zero matching products are omitted so the homepage
+ *       never renders an empty row.
+ * @access Public
+ */
+export const getHomepageSections = HandleAsyncError(async (req, res) => {
+    const sections = await Section.find({ isActive: true }).sort({ order: 1, createdAt: 1 });
+
+    const results = await Promise.all(
+        sections.map(async (section) => {
+            const products = await Product.find({ sections: section._id })
+                .sort({ createdAt: -1 })
+                .limit(10)
+                .select('name price image discount stock ratings numOfReviews slug');
+
+            return {
+                _id: section._id,
+                name: section.name,
+                slug: section.slug,
+                order: section.order,
+                products,
+            };
+        })
+    );
+
+    res.status(200).json({
+        success: true,
+        sections: results.filter((section) => section.products.length > 0),
+    });
 });

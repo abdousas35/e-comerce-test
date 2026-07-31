@@ -10,6 +10,7 @@ import { removeSuccess, updateProduct } from "../features/admin/adminSlice";
 import { toast } from "react-toastify";
 import GoToDashboard from "../components/GoToDashboard";
 import imageCompression from "browser-image-compression";
+import axios from "axios";
 
 const generateId = () => `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -80,9 +81,27 @@ function UpdateProductForm({ product }) {
   const [category, setCategory] = useState(product.category || "");
   const [discount, setDiscount] = useState(product.discount || 0);
   const [optionGroups, setOptionGroups] = useState(() => mapProductOptionGroups(product.optionGroups));
+  const [availableSections, setAvailableSections] = useState([]);
+  const [selectedSections, setSelectedSections] = useState(() => (
+    (product.sections || []).map((section) => (typeof section === "string" ? section : section._id))
+  ));
   const [image, setImage] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
   const [oldImages, setOldImages] = useState(product.image || []);
+
+  useEffect(() => {
+    axios.get("/api/v1/sections")
+      .then((res) => setAvailableSections(res.data.sections || []))
+      .catch(() => setAvailableSections([]));
+  }, []);
+
+  const toggleSection = (sectionId) => {
+    setSelectedSections((current) => (
+      current.includes(sectionId)
+        ? current.filter((id) => id !== sectionId)
+        : [...current, sectionId]
+    ));
+  };
 
   const compressFilesToBase64 = async (files) => {
     const options = {
@@ -198,6 +217,7 @@ function UpdateProductForm({ product }) {
       category,
       discount,
       optionGroups: cleanedOptionGroups,
+      sections: selectedSections,
     };
 
     if (image.length > 0) {
@@ -313,6 +333,28 @@ function UpdateProductForm({ product }) {
           <button type="button" className="submit-btn" onClick={addGroup}>
             {t("admin.products.addGroup")}
           </button>
+        </div>
+
+        <div className="variant-editor">
+          <h3>{t("admin.products.productSections")}</h3>
+          <p className="sections-hint">{t("admin.products.selectSections")}</p>
+
+          {availableSections.length === 0 ? (
+            <p className="sections-hint">{t("admin.products.noSectionsAvailable")}</p>
+          ) : (
+            <div className="section-checkbox-list">
+              {availableSections.map((section) => (
+                <label key={section._id} className="section-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedSections.includes(section._id)}
+                    onChange={() => toggleSection(section._id)}
+                  />
+                  {section.name}
+                </label>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="file-input-container">

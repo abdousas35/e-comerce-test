@@ -33,6 +33,9 @@
     "categoryShowcase": {
       "eyebrow": "Shop by category",
       "title": "Explore our universe"
+    },
+    "productSections": {
+      "viewAll": "View all"
     }
   },
   "footer": {
@@ -162,7 +165,8 @@
   "products": {
     "pageTitle": "All Products",
     "noProducts": "No products found",
-    "noProductsDesc": "We could not find any products matching \"{{keyword}}\". Please try other keywords."
+    "noProductsDesc": "We could not find any products matching \"{{keyword}}\". Please try other keywords.",
+    "allSections": "All"
   },
   "productDetails": {
     "pageTitle": "Product Details",
@@ -418,6 +422,7 @@
       "settings": "Settings",
       "banners": "Banners",
       "categoryShowcase": "Category Showcase",
+      "sections": "Sections",
       "coupons": "Coupons"
     },
     "dashboard": {
@@ -562,6 +567,25 @@
       "discount": "Discount",
       "applying": "Applying...",
       "apply": "Apply coupon"
+    },
+    "sections": {
+      "pageTitle": "Homepage Sections",
+      "headerDesc": "Create product groupings like Bestsellers or New Arrivals, and control their order and visibility.",
+      "createSection": "Create section",
+      "createDesc": "Give the section a name — you can assign products to it from the product form.",
+      "namePlaceholder": "e.g. Bestsellers",
+      "addSection": "Add section",
+      "created": "Section created",
+      "deleted": "Section deleted",
+      "deletedWithProducts": "Section deleted and removed from {{count}} product(s)",
+      "deleteConfirm": "Delete the \"{{name}}\" section? It will be removed from any products that use it.",
+      "allSections": "All sections",
+      "noSections": "No sections yet. Create your first one above.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "productSections": "Sections",
+      "selectSections": "Select the sections this product should appear in",
+      "noSectionsAvailable": "No sections yet — create one from the Sections manager."
     },
     "tracking": {
       "pageTitle": "Track Order",

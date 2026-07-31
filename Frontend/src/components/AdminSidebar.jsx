@@ -8,6 +8,7 @@ import {
   Settings,
   ViewCarousel,
   GridView,
+  Category,
   Discount,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -64,6 +65,9 @@ function AdminSidebar() {
           </Link>
           <Link to="/admin/category-showcase">
             <GridView /> {t("template.sidebar.categoryShowcase")}
+          </Link>
+          <Link to="/admin/sections">
+            <Category /> {t("template.sidebar.sections")}
           </Link>
           <Link to="/admin/coupons">
             <Discount /> {t("template.sidebar.coupons")}

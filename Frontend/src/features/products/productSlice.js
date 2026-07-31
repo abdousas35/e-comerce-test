@@ -4,13 +4,16 @@ import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
 
 export const getProduct = createAsyncThunk(
   "product/getProduct",
-  async ({ keyword = "", category = "", page = 1, limit = 8 } = {}, { rejectWithValue }) => {
+  async ({ keyword = "", category = "", section = "", page = 1, limit = 8 } = {}, { rejectWithValue }) => {
     try {
       // بناء الـ Query Params بشكل منظم وسليم
       const params = new URLSearchParams();
 
       if (keyword) params.append("keyword", keyword);
       if (category) params.append("category", category);
+      // Matches the `sections` schema field on Product directly so the
+      // generic backend filter can match it against the array as-is.
+      if (section) params.append("sections", section);
       if (page) params.append("page", page);
       if (limit) params.append("limit", limit);
 

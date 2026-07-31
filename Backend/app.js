@@ -8,6 +8,7 @@ import order from "./routes/OrderRoutes.js";
 import siteSettings from "./routes/SiteSettingsRoutes.js";
 import coupon from "./routes/CouponRoutes.js";
 import cart from "./routes/CartRoutes.js";
+import section from "./routes/SectionRoutes.js";
 import sitemapRoute from './routes/sitemapRoute.js';
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -87,6 +88,7 @@ apiV1Router.use(order);
 apiV1Router.use(siteSettings);
 apiV1Router.use(coupon);
 apiV1Router.use(cart);
+apiV1Router.use(section);
 
 app.use(sitemapRoute);
 app.use("/api/v1", apiV1Router);

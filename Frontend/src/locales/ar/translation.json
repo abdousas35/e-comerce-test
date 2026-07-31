@@ -33,6 +33,9 @@
     "categoryShowcase": {
       "eyebrow": "تسوق حسب التصنيف",
       "title": "اكتشف عالمنا"
+    },
+    "productSections": {
+      "viewAll": "مشاهدة الكل"
     }
   },
   "footer": {
@@ -162,7 +165,8 @@
   "products": {
     "pageTitle": "كل المنتجات",
     "noProducts": "لم يتم العثور على منتجات",
-    "noProductsDesc": "لم نعثر على منتجات تطابق \"{{keyword}}\". جرب كلمات أخرى."
+    "noProductsDesc": "لم نعثر على منتجات تطابق \"{{keyword}}\". جرب كلمات أخرى.",
+    "allSections": "الكل"
   },
   "productDetails": {
     "pageTitle": "تفاصيل المنتج",
@@ -419,6 +423,7 @@
       "settings": "الإعدادات",
       "banners": "البنرات",
       "categoryShowcase": "واجهة التصنيفات",
+      "sections": "الأقسام",
       "coupons": "الكوبونات"
     },
     "dashboard": {
@@ -558,6 +563,25 @@
       "discount": "الخصم",
       "applying": "جارٍ التطبيق...",
       "apply": "تطبيق الكوبون"
+    },
+    "sections": {
+      "pageTitle": "أقسام الصفحة الرئيسية",
+      "headerDesc": "أنشئ مجموعات منتجات مثل الأكثر مبيعًا أو الوصول الحديثة، وتحكم في ترتيبها وظهورها.",
+      "createSection": "إنشاء قسم",
+      "createDesc": "أعط القسم اسمًا — ويمكنك إضافة المنتجات إليه من نموذج المنتج.",
+      "namePlaceholder": "مثال: الأكثر مبيعًا",
+      "addSection": "إضافة القسم",
+      "created": "تم إنشاء القسم",
+      "deleted": "تم حذف القسم",
+      "deletedWithProducts": "تم حذف القسم وإزالته من {{count}} منتج",
+      "deleteConfirm": "حذف قسم \"{{name}}\"؟ سيتم إزالته من المنتجات التي تستعمله.",
+      "allSections": "كل الأقسام",
+      "noSections": "لا توجد أقسام بعد. أنشئ أول قسم أعلاه.",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "productSections": "الأقسام",
+      "selectSections": "اختر الأقسام التي يجب أن يظهر فيها هذا المنتج",
+      "noSectionsAvailable": "لا توجد أقسام بعد — أنشئ واحدًا من مدير الأقسام."
     },
     "tracking": {
       "pageTitle": "تتبع الطلب",

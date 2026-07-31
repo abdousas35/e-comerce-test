@@ -178,6 +178,36 @@
   height: 50px;
 }
 
+.sections-hint {
+  margin: 0 0 0.75rem;
+  color: var(--muted-text-color);
+  font-size: 0.9rem;
+}
+
+.section-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.section-checkbox-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface-color);
+  color: var(--body-text-color);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.section-checkbox-item input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--primary-main);
+}
+
 .submit-btn {
   width: 100%;
   background: var(--primary-main);

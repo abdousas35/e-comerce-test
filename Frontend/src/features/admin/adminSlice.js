@@ -221,6 +221,72 @@ export const deleteCoupon = createAsyncThunk(
   }
 );
 
+export const fetchSections = createAsyncThunk(
+  "admin/fetchSections",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get("/api/v1/admin/sections");
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to fetch sections" });
+    }
+  }
+);
+
+export const createSection = createAsyncThunk(
+  "admin/createSection",
+  async (sectionData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post("/api/v1/admin/sections", sectionData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to create section" });
+    }
+  }
+);
+
+export const updateSection = createAsyncThunk(
+  "admin/updateSection",
+  async ({ id, ...sectionData }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(`/api/v1/admin/sections/${id}`, sectionData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to update section" });
+    }
+  }
+);
+
+export const deleteSection = createAsyncThunk(
+  "admin/deleteSection",
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`/api/v1/admin/sections/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to delete section" });
+    }
+  }
+);
+
+export const reorderSections = createAsyncThunk(
+  "admin/reorderSections",
+  async (orderedIds, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.patch("/api/v1/admin/sections/reorder", { orderedIds }, {
+        headers: { "Content-Type": "application/json" },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue({ message: error.response?.data?.message || "Failed to reorder sections" });
+    }
+  }
+);
+
 export const deleteReview = createAsyncThunk(
   "admin/deleteReview",
   async ({ productId, reviewId }, { rejectWithValue }) => {
@@ -257,6 +323,7 @@ const adminSlice = createSlice({
     order: [],
     reviews: [],
     coupons: [],
+    sections: [],
   },
   reducers: {
     removeErrors: (state) => {
@@ -503,6 +570,66 @@ const adminSlice = createSlice({
       .addCase(deleteCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to delete coupon";
+      })
+      .addCase(fetchSections.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSections.fulfilled, (state, action) => {
+        state.loading = false;
+        state.sections = action.payload.sections || [];
+      })
+      .addCase(fetchSections.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch sections";
+      })
+      .addCase(createSection.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createSection.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        if (action.payload.section) {
+          state.sections = [...state.sections, action.payload.section];
+        }
+      })
+      .addCase(createSection.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to create section";
+      })
+      .addCase(updateSection.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateSection.fulfilled, (state, action) => {
+        state.success = true;
+        if (action.payload.section) {
+          state.sections = state.sections.map((section) => (
+            section._id === action.payload.section._id ? action.payload.section : section
+          ));
+        }
+      })
+      .addCase(updateSection.rejected, (state, action) => {
+        state.error = action.payload?.message || "Failed to update section";
+      })
+      .addCase(deleteSection.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(deleteSection.fulfilled, (state, action) => {
+        state.success = true;
+        state.sections = state.sections.filter((section) => section._id !== action.payload);
+      })
+      .addCase(deleteSection.rejected, (state, action) => {
+        state.error = action.payload?.message || "Failed to delete section";
+      })
+      .addCase(reorderSections.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(reorderSections.fulfilled, (state, action) => {
+        state.sections = action.payload.sections || state.sections;
+      })
+      .addCase(reorderSections.rejected, (state, action) => {
+        state.error = action.payload?.message || "Failed to reorder sections";
       })
       ;
   },

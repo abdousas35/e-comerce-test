@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import axios from "axios";
 import "../pageStyles/Products.css";
 import PageTitle from "../components/PageTitle";
 import Navbar from "../components/Navbar";
@@ -25,21 +26,40 @@ function Products() {
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get("keyword") || "";
   const category = searchParams.get("category") || ""; // <-- تم إضافة استخراج التصنيف
+  const section = searchParams.get("section") || "";
   const pageFromURL = parseInt(searchParams.get("page"), 10) || 1;
 
   const [currentPage, setCurrentPage] = useState(pageFromURL);
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    axios.get("/api/v1/sections")
+      .then((res) => setSections(res.data.sections || []))
+      .catch(() => setSections([]));
+  }, []);
 
   // 2. مزامنة الـ State مع الـ URL في حال تغير الصفحة من رابط خارجي أو زر الرجوع
   useEffect(() => {
     setCurrentPage(pageFromURL);
   }, [pageFromURL]);
 
-  // 3. جلب المنتجات عند تغير (keyword, category, أو currentPage)
+  // 3. جلب المنتجات عند تغير (keyword, category, section, أو currentPage)
   useEffect(() => {
     dispatch({ type: "product/clearProducts" });
-    // إرسال الـ category ضمن الـ payload لـ Redux action
-    dispatch(getProduct({ keyword, category, page: currentPage, limit: 8 }));
-  }, [dispatch, keyword, category, currentPage]);
+    // إرسال الـ category والـ section ضمن الـ payload لـ Redux action
+    dispatch(getProduct({ keyword, category, section, page: currentPage, limit: 8 }));
+  }, [dispatch, keyword, category, section, currentPage]);
+
+  const handleSectionSelect = (sectionId) => {
+    const newSearchParams = new URLSearchParams(location.search);
+    if (sectionId) {
+      newSearchParams.set("section", sectionId);
+    } else {
+      newSearchParams.delete("section");
+    }
+    newSearchParams.delete("page");
+    navigate(`?${newSearchParams.toString()}`);
+  };
 
   useEffect(() => {
     if (error) {
@@ -102,6 +122,27 @@ function Products() {
         }}
       />
       <Navbar />
+      {sections.length > 0 && (
+        <div className="section-tabs">
+          <button
+            type="button"
+            className={!section ? "section-tab active" : "section-tab"}
+            onClick={() => handleSectionSelect("")}
+          >
+            {t("products.allSections")}
+          </button>
+          {sections.map((s) => (
+            <button
+              type="button"
+              key={s._id}
+              className={section === s._id ? "section-tab active" : "section-tab"}
+              onClick={() => handleSectionSelect(s._id)}
+            >
+              {s.name}
+            </button>
+          ))}
+        </div>
+      )}
       {loading ? (
         <Loader />
       ) : (

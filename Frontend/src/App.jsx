@@ -46,6 +46,7 @@ const Reviews = lazy(() => import("./Admin/ReviewsList.jsx"));
 const AdminSettings = lazy(() => import("./Admin/AdminSettings.jsx"));
 const BannerManager = lazy(() => import("./Admin/BannerManager.jsx"));
 const CategoryShowcaseManager = lazy(() => import("./Admin/CategoryShowcaseManager.jsx"));
+const SectionManager = lazy(() => import("./Admin/SectionManager.jsx"));
 const CouponsManager = lazy(() => import("./Admin/CouponsManager.jsx"));
 
 function App() {
@@ -127,6 +128,7 @@ function App() {
           <Route path="/admin/settings" element={<ProtectedRoute element={<AdminSettings />} adminOnly />} />
           <Route path="/admin/banners" element={<ProtectedRoute element={<BannerManager />} adminOnly />} />
           <Route path="/admin/category-showcase" element={<ProtectedRoute element={<CategoryShowcaseManager />} adminOnly />} />
+          <Route path="/admin/sections" element={<ProtectedRoute element={<SectionManager />} adminOnly />} />
           <Route path="/admin/coupons" element={<ProtectedRoute element={<CouponsManager />} adminOnly />} />
 
           <Route path="*" element={<NotFound />} />

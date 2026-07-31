@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Product from "../components/Product";
 import ImageSlider from "../components/ImageSlider";
 import CategoryShowcase from "../components/CategoryShowcase";
+import ProductSections from "../components/ProductSections";
 import PageTitle from "../components/PageTitle";
 import MetaTags from "../components/MetaTags";
 import { useDispatch, useSelector } from "react-redux";
@@ -53,6 +54,7 @@ function Home() {
       />
       <ImageSlider />
       <CategoryShowcase />
+      <ProductSections />
 
       <div className="home-container fade-in">
         <section className="home-intro-card">
