@@ -29,7 +29,11 @@
     "trendingNow": "الأكثر رواجًا",
     "loadingProducts": "جارٍ تحميل المنتجات...",
     "failedLoadProducts": "فشل تحميل المنتجات. حاول مرة أخرى.",
-    "noProductsFound": "لم يتم العثور على منتجات"
+    "noProductsFound": "لم يتم العثور على منتجات",
+    "categoryShowcase": {
+      "eyebrow": "تسوق حسب التصنيف",
+      "title": "اكتشف عالمنا"
+    }
   },
   "footer": {
     "contactUs": "اتصل بنا",
@@ -414,6 +418,7 @@
       "store": "المتجر",
       "settings": "الإعدادات",
       "banners": "البنرات",
+      "categoryShowcase": "واجهة التصنيفات",
       "coupons": "الكوبونات"
     },
     "dashboard": {
@@ -507,6 +512,27 @@
       "subtitle": "الوصف",
       "ctaLabel": "نص الزر",
       "ctaLink": "رابط الزر"
+    },
+    "categoryShowcase": {
+      "pageTitle": "واجهة التصنيفات",
+      "updated": "تم تحديث بطاقات التصنيفات في الصفحة الرئيسية",
+      "headerDesc": "أبرز التصنيفات في الصفحة الرئيسية بصورة وعنوان وحجم مخصص.",
+      "addTile": "إضافة بطاقة",
+      "saveTiles": "حفظ البطاقات",
+      "tile": "بطاقة",
+      "tileDesc": "صورة التصنيف والنص وحجم العرض.",
+      "category": "التصنيف",
+      "selectCategory": "اختر تصنيفًا",
+      "uploadImage": "رفع صورة",
+      "title": "العنوان",
+      "titlePlaceholder": "مثال: رجال",
+      "subtitle": "الوصف",
+      "subtitlePlaceholder": "مثال: أحذية رياضية",
+      "size": "حجم البطاقة",
+      "sizeSmall": "بطاقة صغيرة",
+      "sizeLarge": "بطاقة كبيرة",
+      "order": "ترتيب العرض",
+      "showOnHomepage": "إظهار في الصفحة الرئيسية"
     },
     "coupons": {
       "pageTitle": "إدارة الكوبونات",

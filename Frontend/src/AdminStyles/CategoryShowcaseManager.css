@@ -1,0 +1,20 @@
+.banner-slide-card select {
+  border: 1px solid var(--border-color);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  background-color: var(--surface-color);
+  color: var(--body-text-color);
+}
+
+.category-showcase-featured {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  cursor: pointer;
+}
+
+.category-showcase-featured input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--primary-main);
+}

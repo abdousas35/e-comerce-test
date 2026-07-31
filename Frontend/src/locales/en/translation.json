@@ -29,7 +29,11 @@
     "trendingNow": "Trending Now",
     "loadingProducts": "Loading products...",
     "failedLoadProducts": "Failed to load products. Please try again.",
-    "noProductsFound": "No products found"
+    "noProductsFound": "No products found",
+    "categoryShowcase": {
+      "eyebrow": "Shop by category",
+      "title": "Explore our universe"
+    }
   },
   "footer": {
     "contactUs": "Contact Us",
@@ -413,6 +417,7 @@
       "store": "Store",
       "settings": "Settings",
       "banners": "Banners",
+      "categoryShowcase": "Category Showcase",
       "coupons": "Coupons"
     },
     "dashboard": {
@@ -511,6 +516,27 @@
       "subtitle": "Subtitle",
       "ctaLabel": "CTA Label",
       "ctaLink": "CTA Link"
+    },
+    "categoryShowcase": {
+      "pageTitle": "Category Showcase",
+      "updated": "Homepage category tiles updated",
+      "headerDesc": "Highlight categories on the homepage with a custom image, title, and size.",
+      "addTile": "Add tile",
+      "saveTiles": "Save tiles",
+      "tile": "Tile",
+      "tileDesc": "Category image, copy, and layout size.",
+      "category": "Category",
+      "selectCategory": "Select a category",
+      "uploadImage": "Upload image",
+      "title": "Title",
+      "titlePlaceholder": "e.g. Men",
+      "subtitle": "Subtitle",
+      "subtitlePlaceholder": "e.g. Sneakers & Running",
+      "size": "Card size",
+      "sizeSmall": "Small card",
+      "sizeLarge": "Large card",
+      "order": "Display order",
+      "showOnHomepage": "Show on homepage"
     },
     "coupons": {
       "pageTitle": "Coupons Manager",

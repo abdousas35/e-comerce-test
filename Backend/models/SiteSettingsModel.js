@@ -31,6 +31,25 @@ const shippingZoneSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Homepage "shop by category" tiles. `categoryName` is matched against the
+// free-text `Product.category` field (there is no separate Category
+// collection in this project), so no product schema/migration is required.
+const categoryShowcaseItemSchema = new mongoose.Schema(
+  {
+    categoryName: { type: String, required: true, trim: true },
+    image: {
+      url: { type: String, default: null },
+      publicId: { type: String, default: null },
+    },
+    title: { type: String, trim: true, default: "" },
+    subtitle: { type: String, trim: true, default: "" },
+    size: { type: String, enum: ["large", "small"], default: "small" },
+    order: { type: Number, default: 0 },
+    isFeatured: { type: Boolean, default: true },
+  },
+  { _id: true }
+);
+
 const siteSettingsSchema = new mongoose.Schema(
   {
     storeName: {
@@ -521,6 +540,10 @@ const siteSettingsSchema = new mongoose.Schema(
           ctaLink: "/products",
         },
       ],
+    },
+    categoryShowcase: {
+      type: [categoryShowcaseItemSchema],
+      default: [],
     },
   },
   { timestamps: true }

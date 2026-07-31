@@ -29,7 +29,11 @@
     "trendingNow": "Tendance actuelle",
     "loadingProducts": "Chargement des produits...",
     "failedLoadProducts": "Echec du chargement des produits. Veuillez reessayer.",
-    "noProductsFound": "Aucun produit trouve"
+    "noProductsFound": "Aucun produit trouve",
+    "categoryShowcase": {
+      "eyebrow": "Acheter par categorie",
+      "title": "Explorer nos univers"
+    }
   },
   "footer": {
     "contactUs": "Contactez-nous",
@@ -412,6 +416,7 @@
       "store": "Boutique",
       "settings": "Parametres",
       "banners": "Bannieres",
+      "categoryShowcase": "Vitrine des categories",
       "coupons": "Coupons"
     },
     "dashboard": {
@@ -477,6 +482,27 @@
       "subtitle": "Sous-titre",
       "ctaLabel": "Texte du bouton",
       "ctaLink": "Lien du bouton"
+    },
+    "categoryShowcase": {
+      "pageTitle": "Vitrine des categories",
+      "updated": "Vignettes de categories mises a jour",
+      "headerDesc": "Mettez en avant des categories sur la page d'accueil avec une image, un titre et une taille personnalises.",
+      "addTile": "Ajouter une vignette",
+      "saveTiles": "Enregistrer les vignettes",
+      "tile": "Vignette",
+      "tileDesc": "Image de la categorie, texte et taille d'affichage.",
+      "category": "Categorie",
+      "selectCategory": "Choisir une categorie",
+      "uploadImage": "Televerser l'image",
+      "title": "Titre",
+      "titlePlaceholder": "ex: Homme",
+      "subtitle": "Sous-titre",
+      "subtitlePlaceholder": "ex: Sneakers & Running",
+      "size": "Taille de la carte",
+      "sizeSmall": "Petite carte",
+      "sizeLarge": "Grande carte",
+      "order": "Ordre d'affichage",
+      "showOnHomepage": "Afficher sur la page d'accueil"
     },
     "coupons": {
       "pageTitle": "Gestion des coupons",

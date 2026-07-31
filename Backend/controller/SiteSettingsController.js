@@ -62,6 +62,49 @@ const normalizeSlides = async (slides = []) => {
   return normalizedSlides.filter((slide) => slide.image || slide.title || slide.subtitle);
 };
 
+// Uploads any new (base64) category showcase images to Cloudinary, keeps
+// already-uploaded {url, publicId} images untouched, and removes the old
+// Cloudinary asset for any image that got replaced or removed.
+const normalizeCategoryShowcase = async (items = [], previousItems = []) => {
+  const normalizedItems = await Promise.all(
+    items.map(async (item) => {
+      let image = { url: null, publicId: null };
+
+      if (typeof item.image === "string" && item.image.startsWith("data:image")) {
+        const uploaded = await cloudinary.uploader.upload(item.image, {
+          folder: "site-settings/category-showcase",
+        });
+        image = { url: uploaded.secure_url, publicId: uploaded.public_id };
+      } else if (item.image && typeof item.image === "object") {
+        image = { url: item.image.url || null, publicId: item.image.publicId || null };
+      }
+
+      return {
+        categoryName: (item.categoryName || "").trim(),
+        image,
+        title: item.title || "",
+        subtitle: item.subtitle || "",
+        size: item.size === "large" ? "large" : "small",
+        order: Number(item.order) || 0,
+        isFeatured: item.isFeatured !== false,
+      };
+    })
+  );
+
+  const cleanedItems = normalizedItems.filter((item) => item.categoryName);
+
+  const nextPublicIds = new Set(cleanedItems.map((item) => item.image?.publicId).filter(Boolean));
+  const removedPublicIds = previousItems
+    .map((item) => item.image?.publicId)
+    .filter((publicId) => publicId && !nextPublicIds.has(publicId));
+
+  for (const publicId of removedPublicIds) {
+    await cloudinary.uploader.destroy(publicId).catch(() => {});
+  }
+
+  return cleanedItems;
+};
+
 export const getPublicSiteSettings = HandleAsyncError(async (req, res) => {
   console.log("[siteSettings] GET /settings -> starting fetch");
   const settings = await normalizeSettingsDocument();
@@ -135,6 +178,10 @@ export const updateSiteSettings = HandleAsyncError(async (req, res) => {
 
   if (Array.isArray(req.body.heroSlides)) {
     updateData.heroSlides = await normalizeSlides(req.body.heroSlides);
+  }
+
+  if (Array.isArray(req.body.categoryShowcase)) {
+    updateData.categoryShowcase = await normalizeCategoryShowcase(req.body.categoryShowcase, settings.categoryShowcase || []);
   }
 
   if (Array.isArray(req.body.shippingZones)) {

@@ -112,6 +112,7 @@ const defaultSettings = {
       ctaLink: "/products",
     },
   ],
+  categoryShowcase: [],
 };
 
 export const fetchSiteSettings = createAsyncThunk(
@@ -172,6 +173,7 @@ const siteSettingsSlice = createSlice({
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
           shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
           faqItems: Array.isArray(action.payload?.faqItems) && action.payload.faqItems.length ? action.payload.faqItems : defaultSettings.faqItems,
+          categoryShowcase: Array.isArray(action.payload?.categoryShowcase) ? action.payload.categoryShowcase : defaultSettings.categoryShowcase,
         };
       })
       .addCase(fetchSiteSettings.rejected, (state, action) => {
@@ -194,6 +196,7 @@ const siteSettingsSlice = createSlice({
           heroSlides: action.payload?.heroSlides?.length ? action.payload.heroSlides : defaultSettings.heroSlides,
           shippingZones: action.payload?.shippingZones?.length ? action.payload.shippingZones : defaultSettings.shippingZones,
           faqItems: Array.isArray(action.payload?.faqItems) && action.payload.faqItems.length ? action.payload.faqItems : defaultSettings.faqItems,
+          categoryShowcase: Array.isArray(action.payload?.categoryShowcase) ? action.payload.categoryShowcase : defaultSettings.categoryShowcase,
         };
       })
       .addCase(updateSiteSettings.rejected, (state, action) => {
