@@ -1,14 +1,19 @@
 import React from 'react';
-import Product from './Product'; // Assuming ProductCard is Product.jsx
+import Product from './Product';
 import '../componentStyles/ProductSectionBlock.css';
+// Importing Home.css for shared styling. In a larger refactor,
+// common styles like .home-intro-card might be moved to a global stylesheet.
+import '../pageStyles/Home.css';
 
 const ProductSectionBlock = ({ section }) => {
   if (!section.products || section.products.length === 0) return null;
 
   return (
     <section className="product-section-block">
-      <div className="section-heading-frame">
-        <h2>{section.name}</h2>
+      <div className="home-intro-card">
+        <p className="home-kicker"></p> {/* Placeholder for consistent design */}
+        <h2 className="home-heading">{section.name}</h2>
+        <p className="home-supporting-copy"></p> {/* Placeholder for consistent design */}
       </div>
       <div className="section-products-grid">
         {section.products.map(product => (
