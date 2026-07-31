@@ -7,6 +7,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import PageTitle from "../components/PageTitle";
 import AdminSidebar from "../components/AdminSidebar";
+import Loader from "../components/Loader";
 import { clearSettingsError, fetchSiteSettings, updateSiteSettings } from "../features/settings/siteSettingsSlice";
 import "../AdminStyles/BannerManager.css";
 import "../AdminStyles/CategoryShowcaseManager.css";
@@ -25,34 +26,9 @@ const createEmptyItem = () => ({
   isFeatured: true,
 });
 
-const toDataUrl = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
-function CategoryShowcaseManager() {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { settings, loading, saving, error } = useSelector((state) => state.settings);
-  const [items, setItems] = useState([createEmptyItem()]);
-  const [availableCategories, setAvailableCategories] = useState([]);
-
-  useEffect(() => {
-    dispatch(fetchSiteSettings());
-  }, [dispatch]);
-
-  useEffect(() => {
-    axios.get("/api/v1/products/categories")
-      .then((res) => setAvailableCategories(res.data.categories || []))
-      .catch(() => setAvailableCategories([]));
-  }, []);
-
-  useEffect(() => {
-    if (settings?.categoryShowcase?.length) {
-      setItems(settings.categoryShowcase.map((item) => ({
+const mapServerItems = (categoryShowcase = []) => (
+  categoryShowcase.length
+    ? categoryShowcase.map((item) => ({
         clientId: item._id || generateId(),
         categoryName: item.categoryName || "",
         image: item.image || null,
@@ -61,9 +37,35 @@ function CategoryShowcaseManager() {
         size: item.size || "small",
         order: item.order ?? 0,
         isFeatured: item.isFeatured !== false,
-      })));
-    }
-  }, [settings]);
+      }))
+    : [createEmptyItem()]
+);
+
+const toDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+// Outer component: owns the initial fetch only. The form below is not
+// rendered (and therefore cannot be edited) until that fetch has
+// definitively finished, which removes the race where an admin adds/fills
+// tiles while the request is still in flight and then has that fetch's
+// result silently overwrite their unsaved edits.
+function CategoryShowcaseManager() {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const { error } = useSelector((state) => state.settings);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchSiteSettings())
+      .unwrap()
+      .catch(() => {})
+      .finally(() => setIsReady(true));
+  }, [dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -71,6 +73,38 @@ function CategoryShowcaseManager() {
       dispatch(clearSettingsError());
     }
   }, [dispatch, error]);
+
+  return (
+    <>
+      <Navbar />
+      <GoToDashboard />
+      <PageTitle title={t("template.categoryShowcase.pageTitle")} />
+
+      <div className="banner-manager-shell">
+        <AdminSidebar />
+        {isReady ? <CategoryShowcaseForm /> : <Loader />}
+      </div>
+    </>
+  );
+}
+
+// Once mounted, this form's local `items` state is the single source of
+// truth for the rest of the session — it is never overwritten by a
+// background fetch. It only re-initializes if the whole component remounts
+// (e.g. the admin navigates away and back), which naturally reloads fresh
+// server data via the outer component above.
+function CategoryShowcaseForm() {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const { settings, saving } = useSelector((state) => state.settings);
+  const [items, setItems] = useState(() => mapServerItems(settings?.categoryShowcase));
+  const [availableCategories, setAvailableCategories] = useState([]);
+
+  useEffect(() => {
+    axios.get("/api/v1/products/categories")
+      .then((res) => setAvailableCategories(res.data.categories || []))
+      .catch(() => setAvailableCategories([]));
+  }, []);
 
   const updateItem = (clientId, field, value) => {
     setItems((prev) => prev.map((item) => (item.clientId === clientId ? { ...item, [field]: value } : item)));
@@ -110,137 +144,132 @@ function CategoryShowcaseManager() {
 
     dispatch(updateSiteSettings({ categoryShowcase }))
       .unwrap()
-      .then(() => {
+      .then((updatedSettings) => {
         toast.success(t("template.categoryShowcase.updated"), {
           position: "top-center",
           autoClose: 2500,
         });
-      });
+        // Replace local base64 image drafts with the hosted {url, publicId}
+        // the server just returned, so a follow-up save (without a page
+        // reload) doesn't re-upload the same image bytes to Cloudinary again.
+        setItems(mapServerItems(updatedSettings?.categoryShowcase));
+      })
+      .catch(() => {});
   };
 
   return (
-    <>
-      <Navbar />
-      <GoToDashboard />
-      <PageTitle title={t("template.categoryShowcase.pageTitle")} />
-
-      <div className="banner-manager-shell">
-        <AdminSidebar />
-
-        <main className="banner-manager-main">
-          <div className="banner-manager-header">
-            <div>
-              <h1>{t("template.categoryShowcase.pageTitle")}</h1>
-              <p>{t("template.categoryShowcase.headerDesc")}</p>
-            </div>
-            <div className="banner-manager-actions">
-              <button type="button" className="banner-manager-add" onClick={addItem}>
-                <Add fontSize="small" />
-                {t("template.categoryShowcase.addTile")}
-              </button>
-              <button type="submit" form="category-showcase-form" className="banner-manager-save" disabled={saving || loading}>
-                <Save fontSize="small" />
-                {saving ? t("template.common.saving") : t("template.categoryShowcase.saveTiles")}
-              </button>
-            </div>
-          </div>
-
-          <form id="category-showcase-form" className="banner-manager-grid" onSubmit={handleSubmit}>
-            {items.map((item, index) => (
-              <section className="banner-slide-card" key={item.clientId}>
-                <div className="banner-slide-head">
-                  <div className="banner-slide-title-group">
-                    <GridView />
-                    <div>
-                      <h2>{t("template.categoryShowcase.tile")} {index + 1}</h2>
-                      <p>{t("template.categoryShowcase.tileDesc")}</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="banner-remove-btn"
-                    onClick={() => removeItem(item.clientId)}
-                    aria-label={`Remove tile ${index + 1}`}
-                  >
-                    <DeleteOutline fontSize="small" />
-                  </button>
-                </div>
-
-                <label>
-                  {t("template.categoryShowcase.category")}
-                  <select
-                    value={item.categoryName}
-                    onChange={(e) => updateItem(item.clientId, "categoryName", e.target.value)}
-                  >
-                    <option value="">{t("template.categoryShowcase.selectCategory")}</option>
-                    {availableCategories.map((categoryName) => (
-                      <option value={categoryName} key={categoryName}>{categoryName}</option>
-                    ))}
-                  </select>
-                </label>
-
-                <div className="file-input-wrapper">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id={`category-showcase-file-${item.clientId}`}
-                    onChange={(e) => handleImageChange(e, item.clientId)}
-                  />
-                  <label htmlFor={`category-showcase-file-${item.clientId}`} className="file-input-label banner-file-input-label">
-                    <AddPhotoAlternate fontSize="small" />
-                    {t("template.categoryShowcase.uploadImage")}
-                  </label>
-                </div>
-
-                {item.image ? (
-                  <div className="banner-preview-wrapper">
-                    <img
-                      src={typeof item.image === "string" ? item.image : item.image?.url}
-                      alt={`${t("template.categoryShowcase.tile")} ${index + 1}`}
-                      className="banner-preview-image"
-                    />
-                  </div>
-                ) : null}
-
-                <label>
-                  {t("template.categoryShowcase.title")}
-                  <input value={item.title} onChange={(e) => updateItem(item.clientId, "title", e.target.value)} placeholder={t("template.categoryShowcase.titlePlaceholder")} />
-                </label>
-
-                <label>
-                  {t("template.categoryShowcase.subtitle")}
-                  <input value={item.subtitle} onChange={(e) => updateItem(item.clientId, "subtitle", e.target.value)} placeholder={t("template.categoryShowcase.subtitlePlaceholder")} />
-                </label>
-
-                <div className="banner-inline-fields">
-                  <label>
-                    {t("template.categoryShowcase.size")}
-                    <select value={item.size} onChange={(e) => updateItem(item.clientId, "size", e.target.value)}>
-                      <option value="small">{t("template.categoryShowcase.sizeSmall")}</option>
-                      <option value="large">{t("template.categoryShowcase.sizeLarge")}</option>
-                    </select>
-                  </label>
-
-                  <label>
-                    {t("template.categoryShowcase.order")}
-                    <input type="number" value={item.order} onChange={(e) => updateItem(item.clientId, "order", e.target.value)} />
-                  </label>
-                </div>
-
-                <label className="category-showcase-featured">
-                  <input
-                    type="checkbox"
-                    checked={item.isFeatured}
-                    onChange={(e) => updateItem(item.clientId, "isFeatured", e.target.checked)}
-                  />
-                  {t("template.categoryShowcase.showOnHomepage")}
-                </label>
-              </section>
-            ))}
-          </form>
-        </main>
+    <main className="banner-manager-main">
+      <div className="banner-manager-header">
+        <div>
+          <h1>{t("template.categoryShowcase.pageTitle")}</h1>
+          <p>{t("template.categoryShowcase.headerDesc")}</p>
+        </div>
+        <div className="banner-manager-actions">
+          <button type="button" className="banner-manager-add" onClick={addItem}>
+            <Add fontSize="small" />
+            {t("template.categoryShowcase.addTile")}
+          </button>
+          <button type="submit" form="category-showcase-form" className="banner-manager-save" disabled={saving}>
+            <Save fontSize="small" />
+            {saving ? t("template.common.saving") : t("template.categoryShowcase.saveTiles")}
+          </button>
+        </div>
       </div>
-    </>
+
+      <form id="category-showcase-form" className="banner-manager-grid" onSubmit={handleSubmit}>
+        {items.map((item, index) => (
+          <section className="banner-slide-card" key={item.clientId}>
+            <div className="banner-slide-head">
+              <div className="banner-slide-title-group">
+                <GridView />
+                <div>
+                  <h2>{t("template.categoryShowcase.tile")} {index + 1}</h2>
+                  <p>{t("template.categoryShowcase.tileDesc")}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="banner-remove-btn"
+                onClick={() => removeItem(item.clientId)}
+                aria-label={`Remove tile ${index + 1}`}
+              >
+                <DeleteOutline fontSize="small" />
+              </button>
+            </div>
+
+            <label>
+              {t("template.categoryShowcase.category")}
+              <select
+                value={item.categoryName}
+                onChange={(e) => updateItem(item.clientId, "categoryName", e.target.value)}
+              >
+                <option value="">{t("template.categoryShowcase.selectCategory")}</option>
+                {availableCategories.map((categoryName) => (
+                  <option value={categoryName} key={categoryName}>{categoryName}</option>
+                ))}
+              </select>
+            </label>
+
+            <div className="file-input-wrapper">
+              <input
+                type="file"
+                accept="image/*"
+                id={`category-showcase-file-${item.clientId}`}
+                onChange={(e) => handleImageChange(e, item.clientId)}
+              />
+              <label htmlFor={`category-showcase-file-${item.clientId}`} className="file-input-label banner-file-input-label">
+                <AddPhotoAlternate fontSize="small" />
+                {t("template.categoryShowcase.uploadImage")}
+              </label>
+            </div>
+
+            {item.image ? (
+              <div className="banner-preview-wrapper">
+                <img
+                  src={typeof item.image === "string" ? item.image : item.image?.url}
+                  alt={`${t("template.categoryShowcase.tile")} ${index + 1}`}
+                  className="banner-preview-image"
+                />
+              </div>
+            ) : null}
+
+            <label>
+              {t("template.categoryShowcase.title")}
+              <input value={item.title} onChange={(e) => updateItem(item.clientId, "title", e.target.value)} placeholder={t("template.categoryShowcase.titlePlaceholder")} />
+            </label>
+
+            <label>
+              {t("template.categoryShowcase.subtitle")}
+              <input value={item.subtitle} onChange={(e) => updateItem(item.clientId, "subtitle", e.target.value)} placeholder={t("template.categoryShowcase.subtitlePlaceholder")} />
+            </label>
+
+            <div className="banner-inline-fields">
+              <label>
+                {t("template.categoryShowcase.size")}
+                <select value={item.size} onChange={(e) => updateItem(item.clientId, "size", e.target.value)}>
+                  <option value="small">{t("template.categoryShowcase.sizeSmall")}</option>
+                  <option value="large">{t("template.categoryShowcase.sizeLarge")}</option>
+                </select>
+              </label>
+
+              <label>
+                {t("template.categoryShowcase.order")}
+                <input type="number" value={item.order} onChange={(e) => updateItem(item.clientId, "order", e.target.value)} />
+              </label>
+            </div>
+
+            <label className="category-showcase-featured">
+              <input
+                type="checkbox"
+                checked={item.isFeatured}
+                onChange={(e) => updateItem(item.clientId, "isFeatured", e.target.checked)}
+              />
+              {t("template.categoryShowcase.showOnHomepage")}
+            </label>
+          </section>
+        ))}
+      </form>
+    </main>
   );
 }
 
