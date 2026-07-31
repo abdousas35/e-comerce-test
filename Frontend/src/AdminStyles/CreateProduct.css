@@ -1,6 +1,6 @@
 .create-product-container {
-  width: 100%;
-  max-width: 750px;
+  width: 90%;
+  max-width: 1200px;
   margin: 120px auto 0;
   padding: 20px;
   box-sizing: border-box;
@@ -8,7 +8,7 @@
 
 .product-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   margin: 0 auto;
   background-color: var(--surface-soft-color);
   padding: 20px;
