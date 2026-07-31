@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import axios from "axios";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Product from "../components/Product";
 import ImageSlider from "../components/ImageSlider";
 import CategoryShowcase from "../components/CategoryShowcase";
-import ProductSections from "../components/ProductSections";
+import ProductSectionBlock from "../components/ProductSectionBlock";
 import PageTitle from "../components/PageTitle";
 import MetaTags from "../components/MetaTags";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,12 +17,16 @@ import "../pageStyles/Home.css";
 function Home() {
   const { loading, error, products } = useSelector((state) => state.product);
   const { settings } = useSelector((state) => state.settings);
+  const [sections, setSections] = useState([]);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const featuredProducts = products.slice(0, 8);
 
   useEffect(() => {
     dispatch(getProduct({}));
+    axios.get('/api/v1/homepage-sections')
+      .then(({ data }) => setSections(data.sections))
+      .catch(err => console.error("Failed to fetch sections", err));
   }, [dispatch]);
 
   return (
@@ -54,9 +59,12 @@ function Home() {
       />
       <ImageSlider />
       <CategoryShowcase />
-      <ProductSections />
-
+      
       <div className="home-container fade-in">
+        {sections.map(section => (
+          <ProductSectionBlock key={section._id} section={section} />
+        ))}
+
         <section className="home-intro-card">
           <p className="home-kicker">{settings?.tagline}</p>
           <h2 className="home-heading">{t("home.trendingNow")}</h2>

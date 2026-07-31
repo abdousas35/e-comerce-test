@@ -5,6 +5,41 @@ import HandleAsyncError from "../middleware/HandleAsyncError.js";
 import { logAdminAction } from "../utils/adminLog.js";
 
 /**
+ * @route GET /api/v1/homepage-sections
+ * @desc Get active sections with their products for the homepage.
+ * @access Public
+ */
+export const getHomepageSections = HandleAsyncError(async (req, res, next) => {
+  const sections = await Section.aggregate([
+    { $match: { isActive: true } },
+    { $sort: { order: 1, createdAt: 1 } },
+    {
+      $lookup: {
+        from: "products",
+        let: { sectionId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $in: ["$$sectionId", "$sections"] } } },
+          { $limit: 10 } 
+        ],
+        as: "products"
+      }
+    },
+    {
+      $project: {
+        name: 1,
+        slug: 1,
+        products: 1
+      }
+    }
+  ]);
+
+  res.status(200).json({
+    success: true,
+    sections,
+  });
+});
+
+/**
  * @route GET /api/v1/sections
  * @desc Active sections only, ordered — used by the Products page tabs and
  *       the CreateProduct/UpdateProduct multi-select.

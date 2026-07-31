@@ -45,4 +45,6 @@ sectionSchema.pre("validate", function (next) {
     next();
 });
 
+sectionSchema.index({ isActive: 1, order: 1 });
+
 export default mongoose.model("Section", sectionSchema);

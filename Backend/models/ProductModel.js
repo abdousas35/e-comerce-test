@@ -252,6 +252,7 @@ productSchema.pre("validate", function (next) {
     next();
 });
 
+productSchema.index({ sections: 1 });
 
 export default mongoose.model("Product", productSchema, "products");
 

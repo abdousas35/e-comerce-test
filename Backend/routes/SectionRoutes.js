@@ -6,11 +6,13 @@ import {
   updateSection,
   deleteSection,
   reorderSections,
+  getHomepageSections,
 } from "../controller/SectionController.js";
 import { verifyUserAuth, roleBasedAccess } from "../middleware/userAuth.js";
 
 const router = express.Router();
 
+router.route("/homepage-sections").get(getHomepageSections);
 router.route("/sections").get(getActiveSections);
 
 router.route("/admin/sections").get(verifyUserAuth, roleBasedAccess("admin"), getAllSections);
