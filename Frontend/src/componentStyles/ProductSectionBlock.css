@@ -10,6 +10,7 @@
   max-width: none; /* Remove previous max-width to allow it to expand with parent */
 }
 
+/* Redundant with JS capitalization, but good for CSS consistency */
 .product-section-block .home-heading::first-letter {
   text-transform: uppercase;
 }

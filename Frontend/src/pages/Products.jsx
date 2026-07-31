@@ -109,9 +109,15 @@ function Products() {
       <Navbar />
 
       <div className="container">
-        {sections.map(section => (
-          <ProductSectionBlock key={section._id} section={section} />
-        ))}
+        {category ? (
+          <div className="home-intro-card" style={{ maxWidth: '1400px', margin: '40px auto' }}>
+            <h2 className="home-heading" style={{ textTransform: 'capitalize' }}>{category}</h2>
+          </div>
+        ) : (
+          sections.map(section => (
+            <ProductSectionBlock key={section._id} section={section} />
+          ))
+        )}
       </div>
 
       <hr />
