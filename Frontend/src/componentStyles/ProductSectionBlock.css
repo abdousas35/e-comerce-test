@@ -1,5 +1,17 @@
 .product-section-block {
-  margin: 40px 0;
+  margin: 40px auto; /* Center the block and provide vertical margin */
+  max-width: 1400px; /* Make it almost full page width */
+  width: 100%; /* Ensure it takes full width up to max-width */
+  padding: 0 20px; /* Add some horizontal padding */
+}
+
+/* Ensure the home-intro-card also adapts to the new max-width if it's the parent */
+.product-section-block .home-intro-card {
+  max-width: none; /* Remove previous max-width to allow it to expand with parent */
+}
+
+.product-section-block .home-heading::first-letter {
+  text-transform: uppercase;
 }
 
 .section-products-grid {
