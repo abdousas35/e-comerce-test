@@ -4,12 +4,10 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import "../componentStyles/Footer.css";
-import { useScrollReveal } from "../hooks/useScrollReveal.js";
 
 function Footer() {
   const { t } = useTranslation();
   const { settings } = useSelector((state) => state.settings);
-  const [ref, isVisible] = useScrollReveal();
   const year = new Date().getFullYear();
   const socialItems = [
     { key: "instagram", href: settings?.socialLinks?.instagram, icon: <Instagram className="social-icon" /> },
@@ -19,7 +17,7 @@ function Footer() {
   ].filter((item) => item.href);
 
   return (
-    <footer ref={ref} className={`footer ${isVisible ? "reveal-visible" : "reveal-hidden"}`}>
+    <footer className="footer">
       <div className="footer-container">
         <div className="footer-section contact">
           <h3>{t("footer.contactUs")}</h3>

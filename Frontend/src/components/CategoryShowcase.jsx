@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "../componentStyles/CategoryShowcase.css";
-import { useScrollReveal } from "../hooks/useScrollReveal.js";
 
 function CategoryShowcase() {
   const { t } = useTranslation();
   const { settings } = useSelector((state) => state.settings);
-  const [ref, isVisible] = useScrollReveal();
 
   const tiles = (settings?.categoryShowcase || [])
     .filter((item) => item.isFeatured !== false && item.image?.url && item.categoryName)
@@ -17,7 +15,7 @@ function CategoryShowcase() {
   if (tiles.length === 0) return null;
 
   return (
-    <section ref={ref} className={`category-showcase ${isVisible ? "reveal-visible" : "reveal-hidden"}`}>
+    <section className="category-showcase">
       <div className="category-showcase-header">
         <span className="category-showcase-eyebrow">{t("home.categoryShowcase.eyebrow")}</span>
         <h2>{t("home.categoryShowcase.title")}</h2>
