@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { fetchAllOrders, removeErrors, deleteOrder } from "../features/admin/adminSlice";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Visibility } from '@mui/icons-material';
 import GoToDashboard from "../components/GoToDashboard";
 
 function OrdersList() {
@@ -127,21 +127,17 @@ const handleDelete = (id, status) => {
                   <td>{order.totalPrice} TND</td>
                   <td>{order.orderItems?.length || 0}</td>
                   <td>
-
-                    <Link to={`/admin/orderUpdate/${order._id}`} className="action-icon edit-icon">
-
-                      <Edit />
-
+                    <Link to={`/order/${order._id}`} className="action-icon view-icon" title={t("orders.viewOrder") || "View order"}>
+                      <Visibility />
                     </Link>
 
-                    <button className="action-icon delete-icon" onClick={() => handleDelete(order._id, order.orderStatus)}>
+                    <Link to={`/admin/orderUpdate/${order._id}`} className="action-icon edit-icon" title={t("admin.orders.updateStatus") || "Update status"}>
+                      <Edit />
+                    </Link>
 
+                    <button className="action-icon delete-icon" onClick={() => handleDelete(order._id, order.orderStatus)} title={t("admin.orders.delete") || "Delete"}>
                       <Delete />
-
                     </button>
-
-
-
                   </td>
 
                 </tr>

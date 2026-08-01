@@ -63,6 +63,14 @@
     transition: background-color 0.2s ease;
   }
   
+  .view-icon {
+    color: var(--info-color);
+  }
+  
+  .view-icon:hover {
+    background-color: color-mix(in srgb, var(--info-color) 10%, transparent);
+  }
+
   .edit-icon {
     color: var(--primary-main);
   }
