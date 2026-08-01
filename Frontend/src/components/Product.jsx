@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 function Product({product}) {
 
     const [rating, setrating] = useState(0);
+    const [ref, isVisible] = useScrollReveal();
     const { t } = useTranslation();
     const handleRatingChange = (newRating) => {
 
@@ -21,7 +22,7 @@ function Product({product}) {
 
 
   return (
-    <div className="product-card">
+    <div ref={ref} className={`product-card ${isVisible ? "reveal-visible" : "reveal-hidden"}`}>
       <Link to={`/product/${product._id}`} className="product_id">
         <div className="product-media">
           <img src={product.image[0]?.url || "/images/default.jpg"} alt={product.name} className="product-image-card" />

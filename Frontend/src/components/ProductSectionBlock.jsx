@@ -4,9 +4,12 @@ import '../componentStyles/ProductSectionBlock.css';
 // Importing Home.css for shared styling. In a larger refactor,
 // common styles like .home-intro-card might be moved to a global stylesheet.
 import '../pageStyles/Home.css';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const ProductSectionBlock = ({ section }) => {
   if (!section.products || section.products.length === 0) return null;
+
+  const [ref, isVisible] = useScrollReveal();
 
   const capitalizeFirstLetter = (string) => {
     if (!string) return '';
@@ -14,7 +17,7 @@ const ProductSectionBlock = ({ section }) => {
   };
 
   return (
-    <section className="product-section-block">
+    <section ref={ref} className={`product-section-block ${isVisible ? 'reveal-visible' : 'reveal-hidden'}`}>
       <div className="home-intro-card">
         <p className="home-kicker"></p> {/* Placeholder for consistent design */}
         <h2 className="home-heading">{capitalizeFirstLetter(section.name)}</h2>
