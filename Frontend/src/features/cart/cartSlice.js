@@ -3,35 +3,29 @@ import axios from "axios";
 import { resolveApiMessage, tMessage } from "../../utils/translateApiMessage";
 
 
-// Finds a single option (e.g. the "Rouge" option inside the "Couleur" group)
-// across every group on a product, by its _id.
-const findOptionById = (product, optionId) => {
-  if (!optionId) return null;
-  for (const group of product?.optionGroups || []) {
-    const match = (group.options || []).find((option) => option._id === optionId);
-    if (match) return { ...match, groupName: group.name };
-  }
-  return null;
+// Finds a single combination on a product by its id.
+const findCombinationById = (product, comboId) => {
+  if (!comboId) return null;
+  return (product?.combinations || []).find((combo) => String(combo._id) === String(comboId)) || null;
 };
 
 // Add items to cart
 export const addItemsToCart = createAsyncThunk(
   "cart/AddItemsToCart",
-  async ({ id, quantity, optionId = "", product }, { dispatch, rejectWithValue }) => {
+  async ({ id, quantity, comboId = "", product }, { dispatch, rejectWithValue }) => {
 
-    const selectedOption = optionId ? findOptionById(product, optionId) : null;
-    const itemPrice = selectedOption?.price ?? product.price;
-    const cartKey = `${product._id}-${selectedOption?._id || "default"}`;
+    const selectedCombination = comboId ? findCombinationById(product, comboId) : null;
+    const itemPrice = selectedCombination?.price ?? product.price;
+    const cartKey = `${product._id}-${selectedCombination?._id || "default"}`;
     const optimisticItem = {
         cartKey,
         product: product._id,
         name: product.name,
-        // Keep the product's main image unless the chosen option has its own images
-        image: selectedOption?.images?.[0]?.url || product.image[0].url,
+        image: selectedCombination?.images?.[0]?.url || product.image[0].url,
         price: itemPrice,
-        stock: selectedOption?.stock ?? product.stock,
-        optionId: selectedOption?._id || "",
-        optionLabel: selectedOption ? `${selectedOption.groupName}: ${selectedOption.value}` : "",
+        stock: selectedCombination?.stock ?? product.stock,
+        comboId: selectedCombination?._id || "",
+        optionLabel: selectedCombination ? selectedCombination.selections.map((selection) => `${selection.groupName}: ${selection.value}`).join(" / ") : "",
         quantity,
         optimistic: true 
     };
@@ -41,21 +35,21 @@ export const addItemsToCart = createAsyncThunk(
     try {
       const {data} = await axios.get(`/api/v1/product/${id}`);
       const serverProduct = data.product;
-      const serverSelectedOption = optionId ? findOptionById(serverProduct, optionId) : null;
+      const serverSelectedCombination = comboId ? findCombinationById(serverProduct, comboId) : null;
       const productDiscount = Number(serverProduct.discount || 0);
-      const serverItemPrice = Math.max(0, (serverSelectedOption?.price ?? serverProduct.price) - productDiscount);
-      const serverItemStock = serverSelectedOption?.stock ?? serverProduct.stock;
-      const serverCartKey = `${serverProduct._id}-${serverSelectedOption?._id || "default"}`;
+      const serverItemPrice = Math.max(0, (serverSelectedCombination?.price ?? serverProduct.price) - productDiscount);
+      const serverItemStock = serverSelectedCombination?.stock ?? serverProduct.stock;
+      const serverCartKey = `${serverProduct._id}-${serverSelectedCombination?._id || "default"}`;
 
       return {
         cartKey: serverCartKey,
         product: serverProduct._id,
         name: serverProduct.name,
         price: serverItemPrice,
-        image: serverSelectedOption?.images?.[0]?.url || serverProduct.image[0].url,
+        image: serverSelectedCombination?.images?.[0]?.url || serverProduct.image[0].url,
         stock: serverItemStock,
-        optionId: serverSelectedOption?._id || "",
-        optionLabel: serverSelectedOption ? `${serverSelectedOption.groupName}: ${serverSelectedOption.value}` : "",
+        comboId: serverSelectedCombination?._id || "",
+        optionLabel: serverSelectedCombination ? serverSelectedCombination.selections.map((selection) => `${selection.groupName}: ${selection.value}`).join(" / ") : "",
         quantity
       } ;
     } catch (error) {
@@ -97,7 +91,7 @@ export const syncCartToServer = createAsyncThunk(
       const { cartItems } = getState().cart;
       const payload = cartItems.map((item) => ({
         product: item.product,
-        variantId: item.variantId || undefined,
+        comboId: item.comboId || item.variantId || undefined,
         quantity: item.quantity,
       }));
       const { data } = await axios.put("/api/v1/cart", { cartItems: payload });

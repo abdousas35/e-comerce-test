@@ -106,18 +106,13 @@ const reserveStock = async (orderItems) => {
     const product = await Product.findById(item.product);
     if (!product) continue;
 
-    if (item.variantId) {
-      const variant = product.variants?.find((v) => v._id.toString() === item.variantId.toString());
-      if (variant) {
-        variant.stock -= item.quantity;
+    if (item.comboId) {
+      const combination = product.combinations?.find((combo) => combo._id.toString() === item.comboId.toString());
+      if (combination) {
+        combination.stock = Math.max(0, Number(combination.stock || 0) - Number(item.quantity || 0));
       }
     } else {
-      product.stock -= item.quantity;
-    }
-
-    // Update total stock if variants exist
-    if (product.variants?.length > 0) {
-      product.stock = product.variants.reduce((acc, v) => acc + (Number(v.stock) || 0), 0);
+      product.stock = Math.max(0, Number(product.stock || 0) - Number(item.quantity || 0));
     }
 
     await product.save({ validateBeforeSave: false });
@@ -129,25 +124,20 @@ const releaseStock = async (orderItems) => {
     const product = await Product.findById(item.product);
     if (!product) continue;
 
-    if (item.variantId) {
-      const variant = product.variants?.find((v) => v._id.toString() === item.variantId.toString());
-      if (variant) {
-        variant.stock += item.quantity;
+    if (item.comboId) {
+      const combination = product.combinations?.find((combo) => combo._id.toString() === item.comboId.toString());
+      if (combination) {
+        combination.stock = Number(combination.stock || 0) + Number(item.quantity || 0);
       }
     } else {
-      product.stock += item.quantity;
-    }
-
-    // Update total stock if variants exist
-    if (product.variants?.length > 0) {
-      product.stock = product.variants.reduce((acc, v) => acc + (Number(v.stock) || 0), 0);
+      product.stock = Number(product.stock || 0) + Number(item.quantity || 0);
     }
 
     await product.save({ validateBeforeSave: false });
   }
 };
 
-const sanitizeVariantId = (value) => {
+const sanitizeComboId = (value) => {
   if (value === null || value === undefined) return null;
   if (typeof value === "string") {
     const trimmed = value.trim();
@@ -159,7 +149,7 @@ const sanitizeVariantId = (value) => {
 const normalizeIncomingOrderItems = (orderItems = []) => {
   return (orderItems || []).map((item) => ({
     ...item,
-    variantId: sanitizeVariantId(item.variantId),
+    comboId: sanitizeComboId(item.comboId ?? item.variantId),
   }));
 };
 
@@ -173,30 +163,27 @@ const normalizeOrderItems = async (orderItems = []) => {
     }
 
     let availableStock = Number(product.stock) || 0;
-    let variantSnapshot = {
-      variantId: null,
+    let comboSnapshot = {
+      comboId: null,
       variantLabel: "",
-      selectedOptions: { size: "", color: "" },
+      selectedOptions: {},
       sku: "",
       price: Number(item.price) || Number(product.price) || 0,
     };
 
-    if (item.variantId) {
-      const selectedVariant = product.variants?.find((variant) => variant._id.toString() === item.variantId.toString());
-      if (!selectedVariant) {
-        throw new HandelError(`Variant not found for product ${product.name}`, 404);
+    if (item.comboId) {
+      const selectedCombination = product.combinations?.find((combo) => combo._id.toString() === item.comboId.toString());
+      if (!selectedCombination) {
+        throw new HandelError(`Combination not found for product ${product.name}`, 404);
       }
 
-      availableStock = Number(selectedVariant.stock) || 0;
-      variantSnapshot = {
-        variantId: selectedVariant._id,
-        variantLabel: selectedVariant.label || "",
-        selectedOptions: {
-          size: selectedVariant.size || "",
-          color: selectedVariant.color || "",
-        },
-        sku: selectedVariant.sku || "",
-        price: Number(selectedVariant.price) || Number(product.price) || 0,
+      availableStock = Number(selectedCombination.stock) || 0;
+      comboSnapshot = {
+        comboId: selectedCombination._id,
+        variantLabel: selectedCombination.selections.map((selection) => `${selection.groupName}: ${selection.value}`).join(" / "),
+        selectedOptions: Object.fromEntries(selectedCombination.selections.map((selection) => [selection.groupName, selection.value])),
+        sku: "",
+        price: Number(selectedCombination.price) || Number(product.price) || 0,
       };
     }
 
@@ -206,14 +193,14 @@ const normalizeOrderItems = async (orderItems = []) => {
 
     normalizedOrderItems.push({
       name: item.name || product.name,
-      price: variantSnapshot.price,
+      price: comboSnapshot.price,
       quantity: Number(item.quantity) || 1,
       image: item.image || product.image?.[0]?.url || "",
       product: item.product,
-      variantId: variantSnapshot.variantId,
-      variantLabel: variantSnapshot.variantLabel,
-      selectedOptions: variantSnapshot.selectedOptions,
-      sku: variantSnapshot.sku,
+      comboId: comboSnapshot.comboId,
+      variantLabel: comboSnapshot.variantLabel,
+      selectedOptions: comboSnapshot.selectedOptions,
+      sku: comboSnapshot.sku,
     });
   }
 

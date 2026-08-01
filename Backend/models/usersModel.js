@@ -63,7 +63,7 @@ const UserSchema = new mongoose.Schema({
                 ref: 'Product', 
                 required: true 
             },
-            variantId: { type: String },
+            comboId: { type: String },
             quantity: { type: Number, default: 1 }
         }
     ],

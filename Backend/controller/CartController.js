@@ -6,21 +6,21 @@ import ErrorHandler from "../utils/handelError.js";
 const buildPopulatedCart = (user) =>
   user.cart.map(item => {
     if (!item.product) return null;
-    const selectedVariant = item.variantId
-      ? item.product.variants.find(v => v._id.toString() === item.variantId)
+    const selectedCombination = item.comboId
+      ? item.product.combinations?.find((combo) => String(combo._id) === String(item.comboId)) || null
       : null;
-    const price = selectedVariant?.price ?? item.product.price;
-    const stock = selectedVariant?.stock ?? item.product.stock;
+    const price = selectedCombination?.price ?? item.product.price;
+    const stock = selectedCombination?.stock ?? item.product.stock;
     const discount = item.product.discount || 0;
     return {
-      cartKey: `${item.product._id}-${item.variantId || 'default'}`,
+      cartKey: `${item.product._id}-${item.comboId || 'default'}`,
       product: item.product._id,
       name: item.product.name,
       price: Math.max(0, price - discount),
-      image: item.product.image?.[0]?.url,
+      image: selectedCombination?.images?.[0]?.url || item.product.image?.[0]?.url,
       stock,
-      variantId: item.variantId,
-      variantLabel: selectedVariant?.label,
+      comboId: item.comboId,
+      variantLabel: selectedCombination ? selectedCombination.selections.map((selection) => `${selection.groupName}: ${selection.value}`).join(" / ") : "",
       quantity: item.quantity,
     };
   }).filter(Boolean);
@@ -34,7 +34,7 @@ export const getUserCart = HandleAsyncError(async (req, res, next) => {
   const user = await UserModel.findById(req.user.id).populate({
     path: 'cart.product',
     model: 'Product',
-    select: 'name price image stock variants discount'
+    select: 'name price image stock optionGroups combinations discount'
   });
 
   if (!user) return next(new ErrorHandler("User not found", 404));
@@ -71,7 +71,7 @@ export const mergeCarts = HandleAsyncError(async (req, res, next) => {
     const dbCartItem = user.cart.find(
       (item) =>
         item.product.toString() === guestItem.product &&
-        String(item.variantId) === String(guestItem.variantId)
+        String(item.comboId) === String(guestItem.comboId)
     );
 
     if (dbCartItem) {
@@ -81,7 +81,7 @@ export const mergeCarts = HandleAsyncError(async (req, res, next) => {
       // Item does not exist, add it
       user.cart.push({
         product: guestItem.product,
-        variantId: guestItem.variantId,
+        comboId: guestItem.comboId,
         quantity: guestItem.quantity,
       });
     }
@@ -92,7 +92,7 @@ export const mergeCarts = HandleAsyncError(async (req, res, next) => {
   const updatedUser = await UserModel.findById(userId).populate({
     path: 'cart.product',
     model: 'Product',
-    select: 'name price image stock variants discount'
+    select: 'name price image stock optionGroups combinations discount'
   });
 
   res.status(200).json({
@@ -116,7 +116,7 @@ export const updateCart = HandleAsyncError(async (req, res, next) => {
 
   user.cart = cartItems.map(item => ({
     product: item.product,
-    variantId: item.variantId || undefined,
+    comboId: item.comboId || undefined,
     quantity: item.quantity || 1,
   }));
   user.cartUpdatedAt = new Date();
@@ -125,7 +125,7 @@ export const updateCart = HandleAsyncError(async (req, res, next) => {
   const updatedUser = await UserModel.findById(req.user.id).populate({
     path: 'cart.product',
     model: 'Product',
-    select: 'name price image stock variants discount'
+    select: 'name price image stock optionGroups combinations discount'
   });
 
   res.status(200).json({ success: true, cart: buildPopulatedCart(updatedUser) });

@@ -14,31 +14,26 @@ import axios from "axios";
 
 const generateId = () => `id-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-const createEmptyOption = () => ({
-  id: generateId(),
-  value: "",
-  price: "",
-  stock: "",
-  images: [],
-});
-
 const createEmptyGroup = () => ({
   id: generateId(),
   name: "",
-  options: [createEmptyOption()],
+  values: [""],
 });
 
 const mapProductOptionGroups = (optionGroups = []) =>
   optionGroups.map((group) => ({
     id: group._id || generateId(),
     name: group.name || "",
-    options: (group.options || []).map((option) => ({
-      id: option._id || generateId(),
-      value: option.value || "",
-      price: option.price ?? "",
-      stock: option.stock ?? "",
-      images: option.images || [],
-    })),
+    values: Array.isArray(group.values) ? group.values : [],
+  }));
+
+const mapProductCombinations = (combinations = []) =>
+  combinations.map((combo) => ({
+    id: combo._id || generateId(),
+    selections: Array.isArray(combo.selections) ? combo.selections : [],
+    price: combo.price ?? "",
+    stock: combo.stock ?? "",
+    images: combo.images || [],
   }));
 
 function UpdateProduct() {
@@ -81,6 +76,7 @@ function UpdateProductForm({ product }) {
   const [category, setCategory] = useState(product.category || "");
   const [discount, setDiscount] = useState(product.discount || 0);
   const [optionGroups, setOptionGroups] = useState(() => mapProductOptionGroups(product.optionGroups));
+  const [combinations, setCombinations] = useState(() => mapProductCombinations(product.combinations));
   const [availableSections, setAvailableSections] = useState([]);
   const [selectedSections, setSelectedSections] = useState(() => (
     (product.sections || []).map((section) => (typeof section === "string" ? section : section._id))
@@ -134,39 +130,61 @@ function UpdateProductForm({ product }) {
     )));
   };
 
-  const addOption = (groupId) => {
+  const addValue = (groupId) => {
     setOptionGroups((current) => current.map((group) => (
-      group.id === groupId ? { ...group, options: [...group.options, createEmptyOption()] } : group
+      group.id === groupId ? { ...group, values: [...group.values, ""] } : group
     )));
   };
 
-  const removeOption = (groupId, optionId) => {
+  const removeValue = (groupId, valueIndex) => {
     setOptionGroups((current) => current.map((group) => (
-      group.id === groupId
-        ? { ...group, options: group.options.filter((option) => option.id !== optionId) }
-        : group
+      group.id === groupId ? { ...group, values: group.values.filter((_, index) => index !== valueIndex) } : group
     )));
   };
 
-  const updateOptionField = (groupId, optionId, field, value) => {
+  const updateValue = (groupId, valueIndex, newValue) => {
     setOptionGroups((current) => current.map((group) => (
-      group.id === groupId
-        ? {
-            ...group,
-            options: group.options.map((option) => (
-              option.id === optionId ? { ...option, [field]: value } : option
-            )),
-          }
-        : group
+      group.id === groupId ? { ...group, values: group.values.map((value, index) => (index === valueIndex ? newValue : value)) } : group
     )));
   };
 
-  const handleOptionImages = async (groupId, optionId, files) => {
+  const generateCombinations = () => {
+    const validGroups = optionGroups.filter((group) => group.name.trim() && group.values.some((value) => value.trim()));
+    if (validGroups.length === 0) return;
+
+    const build = (index, currentSelections) => {
+      if (index === validGroups.length) {
+        return [currentSelections];
+      }
+
+      const group = validGroups[index];
+      return group.values
+        .filter((value) => value.trim())
+        .flatMap((value) => build(index + 1, [...currentSelections, { groupName: group.name, value }]));
+    };
+
+    const generated = build(0, []);
+    const nextCombinations = generated.map((selections) => ({
+      id: generateId(),
+      selections,
+      price: "",
+      stock: "",
+      images: [],
+    }));
+
+    setCombinations(nextCombinations);
+  };
+
+  const updateCombinationField = (comboId, field, value) => {
+    setCombinations((current) => current.map((combo) => (combo.id === comboId ? { ...combo, [field]: value } : combo)));
+  };
+
+  const handleCombinationImages = async (comboId, files) => {
     const fileList = Array.from(files);
     if (!fileList.length) return;
     try {
       const processedImages = await compressFilesToBase64(fileList);
-      updateOptionField(groupId, optionId, "images", processedImages);
+      updateCombinationField(comboId, "images", processedImages);
     } catch {
       toast.error(t("user.updateProfile.avatarProcessFailed"), { position: "top-center", autoClose: 3000 });
     }
@@ -196,16 +214,18 @@ function UpdateProductForm({ product }) {
       .filter((group) => group.name.trim() !== "")
       .map((group) => ({
         name: group.name.trim(),
-        options: group.options
-          .filter((option) => option.value || option.price || option.stock || option.images.length > 0)
-          .map((option) => ({
-            value: option.value,
-            price: option.price,
-            stock: option.stock,
-            images: option.images,
-          })),
+        values: group.values.filter((value) => value.trim() !== ""),
       }))
-      .filter((group) => group.options.length > 0);
+      .filter((group) => group.values.length > 0);
+
+    const cleanedCombinations = combinations
+      .filter((combo) => combo.selections.length > 0)
+      .map((combo) => ({
+        selections: combo.selections,
+        price: combo.price,
+        stock: combo.stock,
+        images: combo.images,
+      }));
 
     const payload = {
       name,
@@ -217,6 +237,7 @@ function UpdateProductForm({ product }) {
       category,
       discount,
       optionGroups: cleanedOptionGroups,
+      combinations: cleanedCombinations,
       sections: selectedSections,
     };
 
@@ -264,76 +285,65 @@ function UpdateProductForm({ product }) {
                 </button>
               </div>
 
-              {group.options.map((option) => (
-                <div key={option.id} className="variant-row option-row">
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder={group.name ? group.name : t("admin.products.optionValuePlaceholder")}
-                    value={option.value}
-                    onChange={(e) => updateOptionField(group.id, option.id, "value", e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="form-input"
-                    placeholder={t("admin.products.variantPrice")}
-                    value={option.price}
-                    onChange={(e) => updateOptionField(group.id, option.id, "price", e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="form-input"
-                    placeholder={t("admin.products.variantStock")}
-                    value={option.stock}
-                    onChange={(e) => updateOptionField(group.id, option.id, "stock", e.target.value)}
-                  />
-
-                  <div className="file-input-container option-image-input">
-                    <div className="file-input-wrapper">
-                      <input
-                        type="file"
-                        id={`update-option-images-${option.id}`}
-                        accept="image/*"
-                        className="form-input-file"
-                        multiple
-                        onChange={(e) => handleOptionImages(group.id, option.id, e.target.files)}
-                      />
-                      <label htmlFor={`update-option-images-${option.id}`} className="file-input-label">
-                        {t("admin.products.chooseImages")}
-                      </label>
-                    </div>
-                    {option.images.length > 0 && (
-                      <div className="image-preview-container">
-                        {option.images.map((img, index) => (
-                          <img
-                            src={typeof img === "string" ? img : img.url}
-                            alt={t("admin.products.preview")}
-                            className="image-preview"
-                            key={index}
-                          />
-                        ))}
-                      </div>
-                    )}
+              <div className="variant-row option-row">
+                {group.values.map((value, index) => (
+                  <div key={`${group.id}-${index}`} className="option-value-row">
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder={group.name ? `${group.name} ${index + 1}` : t("admin.products.optionValuePlaceholder")}
+                      value={value}
+                      onChange={(e) => updateValue(group.id, index, e.target.value)}
+                    />
+                    {group.values.length > 1 ? (
+                      <button type="button" className="submit-btn" onClick={() => removeValue(group.id, index)}>
+                        {t("admin.products.removeVariant")}
+                      </button>
+                    ) : null}
                   </div>
-
-                  {group.options.length > 1 ? (
-                    <button type="button" className="submit-btn" onClick={() => removeOption(group.id, option.id)}>
-                      {t("admin.products.removeVariant")}
-                    </button>
-                  ) : null}
-                </div>
-              ))}
-
-              <button type="button" className="submit-btn" onClick={() => addOption(group.id)}>
-                {t("admin.products.addOption")}
-              </button>
+                ))}
+                <button type="button" className="submit-btn" onClick={() => addValue(group.id)}>
+                  {t("admin.products.addOption")}
+                </button>
+              </div>
             </div>
           ))}
 
           <button type="button" className="submit-btn" onClick={addGroup}>
             {t("admin.products.addGroup")}
           </button>
+          <button type="button" className="submit-btn" onClick={generateCombinations}>
+            Generate combinations
+          </button>
         </div>
+
+        {combinations.length > 0 ? (
+          <div className="variant-editor">
+            <h3>Combinations</h3>
+            {combinations.map((combo) => (
+              <div key={combo.id} className="option-group-card">
+                <div className="option-group-header">
+                  <strong>{combo.selections.map((selection) => `${selection.groupName}: ${selection.value}`).join(" / ")}</strong>
+                </div>
+                <div className="variant-row option-row">
+                  <input type="number" className="form-input" placeholder={t("admin.products.variantPrice")} value={combo.price} onChange={(e) => updateCombinationField(combo.id, "price", e.target.value)} />
+                  <input type="number" className="form-input" placeholder={t("admin.products.variantStock")} value={combo.stock} onChange={(e) => updateCombinationField(combo.id, "stock", e.target.value)} />
+                  <div className="file-input-container option-image-input">
+                    <div className="file-input-wrapper">
+                      <input type="file" id={`update-combo-images-${combo.id}`} accept="image/*" className="form-input-file" multiple onChange={(e) => handleCombinationImages(combo.id, e.target.files)} />
+                      <label htmlFor={`update-combo-images-${combo.id}`} className="file-input-label">{t("admin.products.chooseImages")}</label>
+                    </div>
+                    {combo.images.length > 0 ? (
+                      <div className="image-preview-container">
+                        {combo.images.map((img, index) => (<img src={typeof img === "string" ? img : img.url} alt={t("admin.products.preview")} className="image-preview" key={`${combo.id}-${index}`} />))}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         <div className="variant-editor">
           <h3>{t("admin.products.productSections")}</h3>

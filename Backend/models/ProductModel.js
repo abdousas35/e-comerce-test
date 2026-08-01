@@ -8,44 +8,23 @@ const createSlug = (value = "") =>
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 
-const variantSchema = new mongoose.Schema(
+const combinationSelectionSchema = new mongoose.Schema(
     {
-        label: {
+        groupName: {
             type: String,
             trim: true,
-            default: ""
+            required: true
         },
-        sku: {
+        value: {
             type: String,
             trim: true,
-            default: ""
-        },
-        size: {
-            type: String,
-            trim: true,
-            default: ""
-        },
-        color: {
-            type: String,
-            trim: true,
-            default: ""
-        },
-        price: {
-            type: Number,
-            required: true,
-            min: [0, "Variant price cannot be negative"]
-        },
-        stock: {
-            type: Number,
-            required: true,
-            min: [0, "Variant stock cannot be negative"],
-            default: 0
+            required: true
         }
     },
-    { _id: true }
+    { _id: false }
 );
 
-const optionImageSchema = new mongoose.Schema(
+const combinationImageSchema = new mongoose.Schema(
     {
         publicId: {
             type: String,
@@ -59,26 +38,25 @@ const optionImageSchema = new mongoose.Schema(
     { _id: false }
 );
 
-const productOptionSchema = new mongoose.Schema(
+const combinationSchema = new mongoose.Schema(
     {
-        value: {
-            type: String,
-            trim: true,
-            required: [true, "Please enter an option value"]
+        selections: {
+            type: [combinationSelectionSchema],
+            default: []
         },
         price: {
             type: Number,
             required: true,
-            min: [0, "Option price cannot be negative"]
+            min: [0, "Combination price cannot be negative"]
         },
         stock: {
             type: Number,
             required: true,
-            min: [0, "Option stock cannot be negative"],
+            min: [0, "Combination stock cannot be negative"],
             default: 0
         },
         images: {
-            type: [optionImageSchema],
+            type: [combinationImageSchema],
             default: []
         }
     },
@@ -92,8 +70,8 @@ const optionGroupSchema = new mongoose.Schema(
             trim: true,
             required: [true, "Please enter an option group name"]
         },
-        options: {
-            type: [productOptionSchema],
+        values: {
+            type: [String],
             default: []
         }
     },
@@ -164,12 +142,12 @@ const productSchema = new mongoose.Schema({
         required: [true, "Please Enter Product Category"],
 
     },
-    variants: {
-        type: [variantSchema],
-        default: []
-    },
     optionGroups: {
         type: [optionGroupSchema],
+        default: []
+    },
+    combinations: {
+        type: [combinationSchema],
         default: []
     },
     sections: {
@@ -228,26 +206,6 @@ const productSchema = new mongoose.Schema({
 productSchema.pre("validate", function (next) {
     if (this.name) {
         this.slug = createSlug(this.name);
-    }
-
-    if (Array.isArray(this.variants) && this.variants.length > 0) {
-        const totalVariantStock = this.variants.reduce((acc, variant) => acc + (Number(variant.stock) || 0), 0);
-        this.stock = totalVariantStock;
-
-        const cheapestVariant = this.variants.reduce((lowest, variant) => {
-            if (!lowest) return variant;
-            return Number(variant.price) < Number(lowest.price) ? variant : lowest;
-        }, null);
-
-        if (cheapestVariant?.price !== undefined) {
-            this.price = Number(cheapestVariant.price);
-        }
-
-        this.variants = this.variants.map((variant) => ({
-            ...variant.toObject?.() || variant,
-            label: variant.label || [variant.size, variant.color].filter(Boolean).join(" / ") || "Default variant",
-            sku: variant.sku || createSlug(`${this.name}-${variant.size || ""}-${variant.color || ""}-${variant._id || ""}`)
-        }));
     }
     next();
 });

@@ -25,9 +25,7 @@ const createSlug = (value = "") =>
     .replace(/^-+|-+$/g, "");
 
 // Parses the raw optionGroups payload (JSON string or array) coming from the
-// admin form. Shape: [{ name: "Couleur", options: [{ value, price, stock, images }] }]
-// Images are left untouched here (can be base64 strings or already-uploaded
-// {publicId, url} objects) — uploading happens separately in uploadOptionGroupImages.
+// admin form. Shape: [{ name: "Couleur", values: ["Rouge", "Bleu"] }]
 const parseOptionGroups = (rawGroups = []) => {
   let parsedGroups = rawGroups;
 
@@ -45,42 +43,48 @@ const parseOptionGroups = (rawGroups = []) => {
 
   return parsedGroups
     .map((group) => {
-      const options = Array.isArray(group.options) ? group.options : [];
-
-      const cleanedOptions = options
-        .map((option) => ({
-          value: option.value || "",
-          price: Number(option.price) || 0,
-          stock: Number(option.stock) || 0,
-          images: Array.isArray(option.images) ? option.images : option.images ? [option.images] : [],
-        }))
-        .filter((option) => option.value);
+      const values = Array.isArray(group.values)
+        ? group.values.map((value) => String(value || "").trim()).filter(Boolean)
+        : [];
 
       return {
         name: (group.name || "").trim(),
-        options: cleanedOptions,
+        values,
       };
     })
-    .filter((group) => group.name && group.options.length > 0);
+    .filter((group) => group.name && group.values.length > 0);
 };
 
-// Flattens every option across every group into one list — used to derive
-// the overall product price/stock from whatever options the admin filled in.
-const getAllOptions = (optionGroups = []) =>
-  optionGroups.reduce((acc, group) => acc.concat(Array.isArray(group.options) ? group.options : []), []);
+const parseCombinations = (rawCombinations = []) => {
+  let parsedCombinations = rawCombinations;
 
-const getEffectiveStock = (optionGroups = [], fallbackStock = 0) => {
-  const allOptions = getAllOptions(optionGroups);
-  return allOptions.length > 0
-    ? allOptions.reduce((acc, option) => acc + (Number(option.stock) || 0), 0)
-    : Number(fallbackStock) || 0;
-};
+  if (typeof rawCombinations === "string") {
+    try {
+      parsedCombinations = JSON.parse(rawCombinations);
+    } catch {
+      parsedCombinations = [];
+    }
+  }
 
-const getEffectivePrice = (optionGroups = [], fallbackPrice = 0) => {
-  const allOptions = getAllOptions(optionGroups);
-  return allOptions.length > 0
-    ? Math.min(...allOptions.map((option) => Number(option.price) || 0))
-    : Number(fallbackPrice) || 0;
+  if (!Array.isArray(parsedCombinations)) {
+    return [];
+  }
+
+  return parsedCombinations
+    .map((combination) => ({
+      selections: Array.isArray(combination.selections)
+        ? combination.selections
+            .filter((selection) => selection?.groupName && selection?.value)
+            .map((selection) => ({
+              groupName: String(selection.groupName).trim(),
+              value: String(selection.value).trim(),
+            }))
+        : [],
+      price: Number(combination.price) || 0,
+      stock: Number(combination.stock) || 0,
+      images: Array.isArray(combination.images) ? combination.images : combination.images ? [combination.images] : [],
+    }))
+    .filter((combination) => combination.selections.length > 0);
 };
 
 const parseCsvLine = (line = "") => {
@@ -153,37 +157,31 @@ const uploadImages = async (images = [], folder = "products") => {
   return imagesLinks;
 };
 
-// Walks every option in every group and uploads any images that are still
-// raw base64 strings (new uploads), leaving already-uploaded {publicId, url}
-// objects untouched (relevant when editing an existing product).
-const uploadOptionGroupImages = async (optionGroups = []) => {
-  const uploadedGroups = [];
+// Uploads any raw base64 images attached to each combination while leaving
+// already uploaded objects untouched.
+const uploadCombinationsImages = async (combinations = []) => {
+  const uploadedCombinations = [];
 
-  for (const group of optionGroups) {
-    const uploadedOptions = [];
+  for (const combination of combinations) {
+    const alreadyUploaded = (combination.images || []).filter((img) => img && typeof img === "object" && img.url);
+    const rawImages = (combination.images || []).filter((img) => typeof img === "string");
+    const newlyUploaded = rawImages.length > 0 ? await uploadImages(rawImages, "products/combinations") : [];
 
-    for (const option of group.options) {
-      const alreadyUploaded = option.images.filter((img) => img && typeof img === "object" && img.url);
-      const rawImages = option.images.filter((img) => typeof img === "string");
-      const newlyUploaded = rawImages.length > 0 ? await uploadImages(rawImages, "products/options") : [];
-
-      uploadedOptions.push({
-        ...option,
-        images: [...alreadyUploaded, ...newlyUploaded],
-      });
-    }
-
-    uploadedGroups.push({ ...group, options: uploadedOptions });
+    uploadedCombinations.push({
+      ...combination,
+      images: [...alreadyUploaded, ...newlyUploaded],
+    });
   }
 
-  return uploadedGroups;
+  return uploadedCombinations;
 };
 
 export const createProducts = async (req, res, next) => {
   try {
-    const { name, price, description, keywords, stock, image, category, optionGroups, discount, sections } = req.body;
+    const { name, price, description, keywords, stock, image, category, optionGroups, combinations, discount, sections } = req.body;
     const parsedOptionGroups = parseOptionGroups(optionGroups);
-    const normalizedOptionGroups = await uploadOptionGroupImages(parsedOptionGroups);
+    const parsedCombinations = parseCombinations(combinations);
+    const normalizedCombinations = await uploadCombinationsImages(parsedCombinations);
 
     if (!image || image.length === 0) {
       return res.status(400).json({ message: "Images are required" });
@@ -194,14 +192,15 @@ export const createProducts = async (req, res, next) => {
     const product = await Product.create({
       name,
       slug: createSlug(name),
-      price: getEffectivePrice(normalizedOptionGroups, price),
+      price: Number(price) || 0,
       discount: Number(discount) || 0,
       description,
       keywords: keywords || "",
-      stock: getEffectiveStock(normalizedOptionGroups, stock),
+      stock: Number(stock) || 0,
       category: category || "Default",
       image: imagesLinks,
-      optionGroups: normalizedOptionGroups,
+      optionGroups: parsedOptionGroups,
+      combinations: normalizedCombinations,
       sections: sanitizeSectionIds(sections),
     });
 
@@ -303,24 +302,12 @@ export const updateProduct = HandleAsyncError(async (req, res, next) => {
   }
 
   if (typeof req.body.optionGroups !== "undefined") {
-    const parsedOptionGroups = parseOptionGroups(req.body.optionGroups);
-    const normalizedOptionGroups = await uploadOptionGroupImages(parsedOptionGroups);
+    req.body.optionGroups = parseOptionGroups(req.body.optionGroups);
+  }
 
-    // Clean up cloudinary images that belonged to options which no longer exist / no longer reference them
-    const previousPublicIds = new Set(
-      getAllOptions(product.optionGroups).flatMap((option) => option.images.map((img) => img.publicId))
-    );
-    const nextPublicIds = new Set(
-      getAllOptions(normalizedOptionGroups).flatMap((option) => option.images.map((img) => img.publicId))
-    );
-    const removedPublicIds = [...previousPublicIds].filter((publicId) => !nextPublicIds.has(publicId));
-    for (const publicId of removedPublicIds) {
-      await cloudinary.uploader.destroy(publicId);
-    }
-
-    req.body.optionGroups = normalizedOptionGroups;
-    req.body.stock = getEffectiveStock(normalizedOptionGroups, req.body.stock);
-    req.body.price = getEffectivePrice(normalizedOptionGroups, req.body.price ?? product.price);
+  if (typeof req.body.combinations !== "undefined") {
+    const parsedCombinations = parseCombinations(req.body.combinations);
+    req.body.combinations = await uploadCombinationsImages(parsedCombinations);
   }
 
   if (typeof req.body.sections !== "undefined") {
@@ -523,6 +510,7 @@ export const importProductsFromCsv = HandleAsyncError(async (req, res, next) => 
       price,
       stock,
       optionGroups: [],
+      combinations: [],
       image:
         imageUrls.length > 0
           ? imageUrls.map((url, imageIndex) => ({

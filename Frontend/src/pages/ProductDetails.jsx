@@ -20,8 +20,7 @@ function ProductDetails() {
   const [comment, setComment] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
   const [userRating, setUserRating] = useState(0);
-  const [selections, setSelections] = useState({}); // groupId -> optionId
-  const [activeOption, setActiveOption] = useState(null); // last option touched by the user
+  const [selectedValues, setSelectedValues] = useState({});
   const [relatedProducts, setRelatedProducts] = useState([]);
 
   const dispatch = useDispatch();
@@ -35,20 +34,37 @@ function ProductDetails() {
   const { settings } = useSelector((state) => state.settings);
 
   const optionGroups = product?.optionGroups || [];
+  const combinations = product?.combinations || [];
+
+  const availableValuesForGroup = (groupName) => {
+    const otherSelections = Object.entries(selectedValues).filter(([name]) => name !== groupName);
+    return Array.from(new Set(
+      combinations
+        .filter((combo) => otherSelections.every(([name, value]) => combo.selections.some((selection) => selection.groupName === name && selection.value === value)))
+        .flatMap((combo) => combo.selections.filter((selection) => selection.groupName === groupName).map((selection) => selection.value))
+    ));
+  };
+
+  const matchingCombo = useMemo(() => {
+    if (optionGroups.length === 0) return null;
+    if (optionGroups.some((group) => !selectedValues[group.name])) {
+      return null;
+    }
+    return combinations.find((combo) => {
+      const selectionMap = new Map(combo.selections.map((selection) => [selection.groupName, selection.value]));
+      return optionGroups.every((group) => selectionMap.get(group.name) === selectedValues[group.name]);
+    }) || null;
+  }, [combinations, optionGroups, selectedValues]);
 
   const effectiveStock = useMemo(() => {
-    if (activeOption && activeOption.stock !== "" && activeOption.stock !== undefined && activeOption.stock !== null) {
-      return Number(activeOption.stock);
-    }
+    if (matchingCombo) return Number(matchingCombo.stock ?? 0);
     return product?.stock ?? 0;
-  }, [activeOption, product]);
+  }, [matchingCombo, product]);
 
   const effectivePrice = useMemo(() => {
-    if (activeOption && activeOption.price !== "" && activeOption.price !== undefined && activeOption.price !== null) {
-      return Number(activeOption.price);
-    }
+    if (matchingCombo) return Number(matchingCombo.price ?? product?.price ?? 0);
     return product?.price ?? 0;
-  }, [activeOption, product]);
+  }, [matchingCombo, product]);
 
   const discountAmount = Number(product?.discount || 0);
   const discountedPrice = Math.max(0, effectivePrice - discountAmount);
@@ -80,21 +96,17 @@ function ProductDetails() {
     dispatch(createReview({ rating: userRating, comment, productId: id }));
   };
 
-  const handleOptionSelect = (group, optionId) => {
-    const groupId = group._id || group.id;
-    const option = (group.options || []).find((o) => (o._id || o.id) === optionId);
-
-    setSelections((prev) => ({ ...prev, [groupId]: optionId }));
-    setActiveOption(option || null);
-
-    if (option?.images?.length > 0) {
-      const firstImage = option.images[0]?.url || option.images[0];
-      setSelectedImage(firstImage);
-    }
-    // if the option has no images, keep whatever image is currently shown
+  const handleOptionSelect = (groupName, value) => {
+    setSelectedValues((prev) => {
+      const next = { ...prev, [groupName]: value };
+      return Object.fromEntries(Object.entries(next).filter(([name, selectedValue]) => {
+        if (name === groupName) return true;
+        return availableValuesForGroup(name).includes(selectedValue);
+      }));
+    });
   };
 
-  const allGroupsSelected = optionGroups.every((group) => selections[group._id || group.id]);
+  const allGroupsSelected = optionGroups.every((group) => selectedValues[group.name]);
 
   const addToCart = () => {
     if (optionGroups.length > 0 && !allGroupsSelected) {
@@ -105,20 +117,23 @@ function ProductDetails() {
       toast.error(t("productDetails.outOfStock"), { position: "top-center", autoClose: 3000 });
       return;
     }
-    const optionId = activeOption?._id || activeOption?.id || "";
-    dispatch(addItemsToCart({ id, quantity, optionId, product }));
+    if (!matchingCombo) {
+      toast.error(t("productDetails.selectVariant"), { position: "top-center", autoClose: 3000 });
+      return;
+    }
+    dispatch(addItemsToCart({ id, quantity, comboId: matchingCombo._id, product }));
   };
 
   const buildQuickBuyItem = () => {
     const itemPrice = Math.max(0, effectivePrice - discountAmount);
     return {
-      cartKey: `${product._id}-${JSON.stringify(selections)}`,
+      cartKey: `${product._id}-${matchingCombo?._id || "default"}`,
       product: product._id,
       name: product.name,
       price: itemPrice,
-      image: selectedImage || product.image?.[0]?.url || "",
+      image: matchingCombo?.images?.[0]?.url || selectedImage || product.image?.[0]?.url || "",
       stock: effectiveStock,
-      selectedOptions: selections,
+      selectedOptions: selectedValues,
       quantity,
     };
   };
@@ -184,8 +199,7 @@ function ProductDetails() {
     if (product && product.image && product.image.length > 0) {
       setSelectedImage(product.image[0].url);
       setQuantity(1);
-      setSelections({});
-      setActiveOption(null);
+      setSelectedValues({});
     }
   }, [product]);
 
@@ -270,21 +284,18 @@ function ProductDetails() {
             </div>
 
             {optionGroups.map((group) => {
-              const groupId = group._id || group.id;
+              const availableValues = availableValuesForGroup(group.name);
               return (
-                <div className="variant-selector" key={groupId}>
+                <div className="variant-selector" key={group.name}>
                   <span className="quantity-label">{group.name}:</span>
                   <select
-                    value={selections[groupId] || ""}
-                    onChange={(e) => handleOptionSelect(group, e.target.value)}
+                    value={selectedValues[group.name] || ""}
+                    onChange={(e) => handleOptionSelect(group.name, e.target.value)}
                   >
                     <option value="" disabled>{t("productDetails.selectVariant")}</option>
-                    {(group.options || []).map((option) => {
-                      const optionId = option._id || option.id;
-                      return (
-                        <option key={optionId} value={optionId}>{option.value}</option>
-                      );
-                    })}
+                    {(group.values || []).filter((value) => availableValues.length === 0 || availableValues.includes(value)).map((value) => (
+                      <option key={value} value={value}>{value}</option>
+                    ))}
                   </select>
                 </div>
               );

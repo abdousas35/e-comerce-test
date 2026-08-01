@@ -150,7 +150,7 @@ const orderSchema = new mongoose.Schema({
                 ref: "Product"
 
             },
-            variantId: {
+            comboId: {
                 type: mongoose.Schema.Types.ObjectId,
                 default: null
             },
