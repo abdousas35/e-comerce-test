@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { CONFIG } from "../config/config";
 import axios from "axios";
 import debounce from "lodash/debounce";
+import MobileMenu from "./MobileMenu";
 
 const ANNOUNCEMENT_REPEAT_COUNT = 3;
 const SEARCH_DEBOUNCE_MS = 350;
@@ -332,6 +333,24 @@ function Navbar() {
           </div>
         </div>
 
+        <MobileMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          menuRef={menuRef}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearchSubmit={handleSearchSubmit}
+          categories={categories}
+          currentCategory={currentCategory}
+          onCategoryChange={handleCategoryChange}
+          isAuthenticated={isAuthenticated}
+          user={user}
+          onLogout={logoutUser}
+          onNavigate={goTo}
+          settings={settings}
+          t={t}
+        />
+
         {!isAdminRoute && (
           <div className="navbar-search-row" ref={searchWrapperRef}>
             <form className="search-form navbar-search-form" onSubmit={handleSearchSubmit} autoComplete="off">
@@ -391,31 +410,6 @@ function Navbar() {
           </div>
         )}
 
-        <div ref={menuRef} className={`navbar-mobile-panel ${isMenuOpen ? "show" : ""}`}>
-          <div className="navbar-links mobile-links">
-            <ul>
-              <li><Link to="/" className="Navbar-button" onClick={closeMenus}>{t("navbar.home")}</Link></li>
-              <li><Link to="/products" className="Navbar-button" onClick={closeMenus}>{t("navbar.products")}</Link></li>
-              <li><Link to="/about-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.aboutUs")}</Link></li>
-              <li><Link to="/contact-us" className="Navbar-button" onClick={closeMenus}>{t("navbar.contactUs")}</Link></li>
-              {categories.length > 0 && (
-                <li>
-                  <select
-                    className="navbar-category-select"
-                    onChange={handleCategoryChange}
-                    value={currentCategory}
-                    aria-label={t("navbar.categories")}
-                  >
-                    <option value="">{t("navbar.allCategories")}</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </li>
-              )}
-            </ul>
-          </div>
-        </div>
       </div>
 
       {isHomeRoute && settings?.announcementEnabled && settings?.announcementText ? (
