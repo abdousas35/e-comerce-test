@@ -203,6 +203,22 @@ function ProductDetails() {
     }
   }, [product]);
 
+  useEffect(() => {
+    if (matchingCombo?.images?.length) {
+      const comboImage = typeof matchingCombo.images[0] === "string"
+        ? matchingCombo.images[0]
+        : matchingCombo.images[0]?.url;
+      if (comboImage) {
+        setSelectedImage(comboImage);
+      }
+      return;
+    }
+
+    if (Object.keys(selectedValues).length === 0 && product?.image?.length) {
+      setSelectedImage(product.image[0].url);
+    }
+  }, [matchingCombo, product, selectedValues]);
+
   if (loading || cartLoading || reviewLoading) return <Loader />;
   if (error || !product) {
     return (
