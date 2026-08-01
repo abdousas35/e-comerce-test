@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import "../componentStyles/Footer.css";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useScrollReveal } from "../hooks/useScrollReveal.js";
 
 function Footer() {
   const { t } = useTranslation();

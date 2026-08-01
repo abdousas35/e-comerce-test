@@ -4,7 +4,7 @@ import '../componentStyles/ProductSectionBlock.css';
 // Importing Home.css for shared styling. In a larger refactor,
 // common styles like .home-intro-card might be moved to a global stylesheet.
 import '../pageStyles/Home.css';
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useScrollReveal } from '../hooks/useScrollReveal.js';
 
 const ProductSectionBlock = ({ section }) => {
   if (!section.products || section.products.length === 0) return null;

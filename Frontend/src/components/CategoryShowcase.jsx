@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "../componentStyles/CategoryShowcase.css";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import { useScrollReveal } from "../hooks/useScrollReveal.js";
 
 function CategoryShowcase() {
   const { t } = useTranslation();
