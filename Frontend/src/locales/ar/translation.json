@@ -253,6 +253,7 @@
     "orderSummary": "ملخص الطلب",
     "shippingCharges": "رسوم الشحن",
     "confirmOrder": "تأكيد الطلب",
+    "acceptInstructions": "أوافق على شروط الدفع عند الاستلام",
     "success": "تم تقديم الطلب بنجاح",
     "createFailed": "فشل إنشاء الطلب. حاول مرة أخرى.",
     "confirmFailed": "فشل تأكيد الطلب. حاول مرة أخرى.",

@@ -253,6 +253,7 @@
     "orderSummary": "Resume de la commande",
     "shippingCharges": "Frais de livraison",
     "confirmOrder": "Confirmer la commande",
+    "acceptInstructions": "J'accepte les conditions de paiement à la livraison",
     "success": "Commande passee avec succes",
     "createFailed": "Echec de la creation de la commande. Veuillez reessayer.",
     "confirmFailed": "Echec de la confirmation de commande. Veuillez reessayer.",

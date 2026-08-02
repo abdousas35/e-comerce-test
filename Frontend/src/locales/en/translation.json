@@ -252,6 +252,7 @@
     "orderSummary": "Order Summary",
     "shippingCharges": "Shipping Charges",
     "confirmOrder": "Confirm Order",
+    "acceptInstructions": "I agree to the cash on delivery terms",
     "success": "Order placed successfully",
     "createFailed": "Order creation failed. Please try again.",
     "confirmFailed": "Order confirmation failed. Please try again.",
