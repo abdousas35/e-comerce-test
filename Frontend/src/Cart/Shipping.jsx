@@ -52,7 +52,6 @@ function Shipping() {
   const [selectedCity, setSelectedCity] = useState(shippingInfo.selectedCity || "");
   const [cities, setCities] = useState([]);
   const [address, setAddress] = useState(shippingInfo.address || "");
-  const [pincode, setPincode] = useState(shippingInfo.pincode || "");
   const [phoneNumber, setPhoneNumber] = useState(shippingInfo.phoneNumber || "");
   const [fullName, setFullName] = useState(shippingInfo.fullName || user?.name || "");
   const [email, setEmail] = useState(shippingInfo.email || user?.email || "");
@@ -99,12 +98,12 @@ function Shipping() {
       return;
     }
 
-    if (!selectedState || !selectedCity || !address || !pincode || !fullName || (!isAuthenticated && !email)) {
+    if (!selectedState || !selectedCity || !address || !fullName || (!isAuthenticated && !email)) {
       toast.error(t("cart.fillRequired"), { position: "top-center", autoClose: 3000 });
       return;
     }
 
-    dispatch(saveShippingInfo({ address, pincode, phoneNumber, selectedState, selectedCity, country: "Tunisia", fullName, email }));
+    dispatch(saveShippingInfo({ address, phoneNumber, selectedState, selectedCity, country: "Tunisia", fullName, email }));
     toast.success(t("cart.shippingSaved"), { position: "top-center", autoClose: 3000 });
     navigate("/order/confirm");
   };
@@ -147,11 +146,6 @@ function Shipping() {
             <div className="shipping-form-group">
               <label htmlFor="address">{t("cart.address")}</label>
               <input type="text" required name="address" id="address" placeholder={t("cart.enterAddress")} value={address} onChange={(e) => setAddress(e.target.value)} />
-            </div>
-
-            <div className="shipping-form-group">
-              <label htmlFor="pinCode">{t("cart.pinCode")}</label>
-              <input type="text" inputMode="numeric" required name="pinCode" id="pinCode" placeholder={t("cart.enterPinCode")} value={pincode} onChange={(e) => setPincode(e.target.value)} />
             </div>
 
             <div className="shipping-form-group">

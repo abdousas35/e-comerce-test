@@ -117,7 +117,6 @@ function OrderConfirm() {
           address: shippingInfo.address,
           city: shippingInfo.selectedCity,
           state: shippingInfo.selectedState,
-          pincode: shippingInfo.pincode,
           country: shippingInfo.country || t("orderConfirm.tunisia", "Tunisia"),
           phoneNumber: shippingInfo.phoneNumber,
         },
@@ -196,7 +195,7 @@ function OrderConfirm() {
                   <tr>
                     <td>{shippingInfo.fullName || user?.name || "-"}</td>
                     <td>{shippingInfo.phoneNumber}</td>
-                    <td>{shippingInfo.address}, {shippingInfo.selectedCity}, {shippingInfo.selectedState}, {shippingInfo.pincode}</td>
+                    <td>{shippingInfo.address}, {shippingInfo.selectedCity}, {shippingInfo.selectedState}</td>
                   </tr>
                 </tbody>
               </table>
