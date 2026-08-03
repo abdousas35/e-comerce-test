@@ -45,6 +45,10 @@
     "followMe": "Follow me",
     "aboutUs": "About Us",
     "sellingProducts": "Selling products",
+    "quickLinks": "Quick Links",
+    "faq": "FAQ",
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms & Conditions",
     "copyright": "{{year}} ABOUDE 3ammek. All rights reserved"
   },
   "imageSlider": {
@@ -146,7 +150,12 @@
     "remove": "Remove",
     "continue": "Continue",
     "create": "Create",
-    "somethingWrong": "Something went wrong. Please try again."
+    "somethingWrong": "Something went wrong. Please try again.",
+    "errorBoundary": {
+      "title": "Something went wrong.",
+      "message": "We've been notified and are looking into it. Please try reloading the page.",
+      "reload": "Reload Page"
+    }
   },
   "pagination": {
     "next": "Next",
@@ -202,6 +211,7 @@
   },
   "cart": {
     "pageTitle": "Your Cart",
+    "selection": "Selection",
     "mustLogin": "You must be logged in to access the cart",
     "empty": "Your cart is empty",
     "viewProducts": "View Products",
@@ -321,6 +331,8 @@
       "created": "Product created successfully",
       "updated": "Product updated successfully",
       "updateFailed": "Failed to update product. Please try again.",
+      "generateCombinations": "Generate combinations",
+      "combinations": "Combinations",
       "productImage": "Product Image",
       "productName": "Product Name",
       "productPrice": "Product Price",
@@ -382,6 +394,11 @@
       "deleted": "Order deleted successfully",
       "deleteFailed": "Failed to delete order. Please try again.",
       "updateStatus": "Update Order Status",
+      "trackingNumber": "Tracking number",
+      "courier": "Courier",
+      "trackingUrl": "Tracking URL",
+      "note": "Note",
+      "adminNote": "Admin note",
       "selectStatus": "Select Status",
       "statusUpdated": "Order status updated successfully",
       "statusUpdateFailed": "Failed to update order status. Please try again.",
@@ -446,6 +463,8 @@
       "latestProducts": "Latest Products",
       "recentOrders": "Recent Orders",
       "order": "Order",
+      "shipped": "Shipped",
+      "loading": "Loading...",
       "lowStockProducts": "Low Stock Products",
       "productName": "Product Name",
       "stock": "Stock",
@@ -506,7 +525,19 @@
       "legalContentTitle": "Legal Pages",
       "legalContentDesc": "Write and format your Terms & Conditions and Privacy Policy content shown to customers.",
       "termsAndConditions": "Terms and Conditions",
-      "privacyPolicy": "Privacy Policy"
+      "privacyPolicy": "Privacy Policy",
+      "termsPlaceholder": "Write your terms and conditions...",
+      "privacyPlaceholder": "Write your privacy policy...",
+      "faqTitle": "FAQ",
+      "faqDescription": "Add, edit, and manage your frequently asked questions shown on the public FAQ page.",
+      "faqItemsLabel": "FAQ Items",
+      "faqAddButton": "Add FAQ",
+      "faqItemLabel": "FAQ #{{index}}",
+      "faqRemoveButton": "Remove",
+      "faqQuestionLabel": "Question",
+      "faqQuestionPlaceholder": "Write your question here...",
+      "faqAnswerLabel": "Answer",
+      "faqAnswerPlaceholder": "Write your answer here..."
     },
     "banners": {
       "pageTitle": "Banner Management",
@@ -517,7 +548,10 @@
       "slide": "Slide",
       "slideDesc": "Hero image, copy, and call-to-action.",
       "imageUrl": "Image URL",
+      "imageUrlPlaceholder": "https://...",
       "uploadImage": "Upload image",
+      "slideAlt": "Slide {{index}}",
+      "removeSlide": "Remove slide {{index}}",
       "title": "Title",
       "subtitle": "Subtitle",
       "ctaLabel": "CTA Label",
@@ -562,6 +596,7 @@
       "inactive": "Inactive",
       "create": "Create coupon",
       "allCoupons": "All coupons",
+      "minOrderLabel": "Min order",
       "enterCode": "Enter a coupon code first.",
       "applied": "Coupon applied successfully",
       "applyFailed": "Failed to apply coupon",

@@ -73,7 +73,7 @@ function CouponsManager() {
         <main className="coupons-main">
           <div className="coupons-header">
             <div>
-              <h1>Coupons</h1>
+              <h1>{t("template.coupons.pageTitle")}</h1>
               <p>{t("template.coupons.headerDesc")}</p>
             </div>
           </div>
@@ -82,7 +82,7 @@ function CouponsManager() {
             <div className="coupons-section-title">
               <Discount />
               <div>
-                <h2>Create coupon</h2>
+                <h2>{t("template.coupons.create")}</h2>
                 <p>{t("template.coupons.createDesc")}</p>
               </div>
             </div>
@@ -134,7 +134,7 @@ function CouponsManager() {
                   <div>
                     <strong>{coupon.code}</strong>
                     <p>{coupon.type === "percent" ? `${coupon.value}% off` : `${coupon.value} off`}</p>
-                    <span>Min order: {coupon.minOrderAmount || 0}</span>
+                    <span>{t("template.coupons.minOrderLabel")}: {coupon.minOrderAmount || 0}</span>
                   </div>
                   <button type="button" className="coupon-delete-btn" onClick={() => handleDelete(coupon._id)}>
                     <DeleteOutline fontSize="small" />

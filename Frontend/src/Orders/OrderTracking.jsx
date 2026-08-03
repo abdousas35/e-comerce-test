@@ -103,10 +103,10 @@ function OrderTracking() {
               <article>
                 <h3>{t("orders.orderSummary")}</h3>
                 <p>{order?.orderItems?.length || 0} {t("orders.items")}</p>
-                <p>Total: {order?.totalPrice}</p>
-                <p>Shipping: {order?.shippingPrice}</p>
-                {order?.trackingNumber ? <p>Tracking: {order.trackingNumber}</p> : null}
-                {order?.courier ? <p>Courier: {order.courier}</p> : null}
+                <p>{t("orderConfirm.totalPrice")}: {order?.totalPrice}</p>
+                <p>{t("orderConfirm.shippingCharges")}: {order?.shippingPrice}</p>
+                {order?.trackingNumber ? <p>{t("admin.orders.trackingNumber")}: {order.trackingNumber}</p> : null}
+                {order?.courier ? <p>{t("admin.orders.courier")}: {order.courier}</p> : null}
               </article>
             </div>
           </section>

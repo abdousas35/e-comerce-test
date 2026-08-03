@@ -310,13 +310,13 @@ function CreateProduct() {
               {t("admin.products.addGroup")}
             </button>
             <button type="button" className="submit-btn" onClick={generateCombinations}>
-              Generate combinations
+              {t("admin.products.generateCombinations")}
             </button>
           </div>
 
           {combinations.length > 0 ? (
             <div className="variant-editor">
-              <h3>Combinations</h3>
+              <h3>{t("admin.products.combinations")}</h3>
               {combinations.map((combo) => (
                 <div key={combo.id} className="option-group-card">
                   <div className="option-group-header">

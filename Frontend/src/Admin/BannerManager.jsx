@@ -126,7 +126,7 @@ function BannerManagerForm() {
     <main className="banner-manager-main">
       <div className="banner-manager-header">
         <div>
-          <h1>Banner Management</h1>
+          <h1>{t("template.banners.pageTitle")}</h1>
           <p>{t("template.banners.headerDesc")}</p>
         </div>
         <div className="banner-manager-actions">
@@ -156,7 +156,7 @@ function BannerManagerForm() {
                 type="button"
                 className="banner-remove-btn"
                 onClick={() => removeSlide(index)}
-                aria-label={`Remove slide ${index + 1}`}
+                aria-label={t("template.banners.removeSlide", { index: index + 1 })}
               >
                 <DeleteOutline fontSize="small" />
               </button>
@@ -164,7 +164,7 @@ function BannerManagerForm() {
 
             <label>
               {t("template.banners.imageUrl")}
-              <input value={slide.image} onChange={(e) => handleSlideChange(index, "image", e.target.value)} placeholder="https://..." />
+              <input value={slide.image} onChange={(e) => handleSlideChange(index, "image", e.target.value)} placeholder={t("template.banners.imageUrlPlaceholder")} />
             </label>
 
             <div className="file-input-wrapper">
@@ -182,7 +182,7 @@ function BannerManagerForm() {
 
             {slide.image ? (
               <div className="banner-preview-wrapper">
-                <img src={slide.image} alt={`Slide ${index + 1}`} className="banner-preview-image" />
+                <img src={slide.image} alt={t("template.banners.slideAlt", { index: index + 1 })} className="banner-preview-image" />
               </div>
             ) : null}
           </section>

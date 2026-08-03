@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FormatBold,
   FormatItalic,
@@ -33,8 +34,10 @@ function unwrapElement(el) {
   parent.removeChild(el);
 }
 
-function RichTextEditor({ value, onChange, placeholder = "Start typing..." }) {
+function RichTextEditor({ value, onChange, placeholder }) {
   const editorRef = useRef(null);
+  const { t } = useTranslation();
+  const placeholderText = placeholder || t("template.richTextEditor.placeholder");
 
   // Sync initial and external changes to innerHTML, avoiding cursor jumps
   useEffect(() => {
@@ -188,60 +191,60 @@ function RichTextEditor({ value, onChange, placeholder = "Start typing..." }) {
   return (
     <div className="rich-text-editor">
       <div className="editor-toolbar">
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("STRONG")} title="Bold">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("STRONG")} title={t("template.richTextEditor.bold")}>
           <FormatBold fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("EM")} title="Italic">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("EM")} title={t("template.richTextEditor.italic")}>
           <FormatItalic fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("U")} title="Underline">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("U")} title={t("template.richTextEditor.underline")}>
           <FormatUnderlined fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("S")} title="Strikethrough">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleInline("S")} title={t("template.richTextEditor.strikethrough")}>
           <FormatStrikethrough fontSize="small" />
         </button>
 
         <span className="toolbar-separator" />
 
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("h1")} title="Heading 1">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("h1")} title={t("template.richTextEditor.heading1")}>
           <Title fontSize="small" style={{ transform: "scale(1.2)" }} />
           <span className="btn-subtext">H1</span>
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("h2")} title="Heading 2">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("h2")} title={t("template.richTextEditor.heading2")}>
           <Title fontSize="small" />
           <span className="btn-subtext">H2</span>
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("p")} title="Paragraph">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setBlockFormat("p")} title={t("template.richTextEditor.paragraph")}>
           <span className="btn-text">P</span>
         </button>
 
         <span className="toolbar-separator" />
 
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleList("ul")} title="Bullet List">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleList("ul")} title={t("template.richTextEditor.bulletList")}>
           <FormatListBulleted fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleList("ol")} title="Numbered List">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleList("ol")} title={t("template.richTextEditor.numberedList")}>
           <FormatListNumbered fontSize="small" />
         </button>
 
         <span className="toolbar-separator" />
 
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("left")} title="Align Left">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("left")} title={t("template.richTextEditor.alignLeft")}>
           <FormatAlignLeft fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("center")} title="Align Center">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("center")} title={t("template.richTextEditor.alignCenter")}>
           <FormatAlignCenter fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("right")} title="Align Right">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("right")} title={t("template.richTextEditor.alignRight")}>
           <FormatAlignRight fontSize="small" />
         </button>
-        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("justify")} title="Align Justify">
+        <button type="button" className="toolbar-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => setAlignment("justify")} title={t("template.richTextEditor.alignJustify")}>
           <FormatAlignJustify fontSize="small" />
         </button>
 
         <span className="toolbar-separator" />
 
-        <button type="button" className="toolbar-btn toolbar-btn-danger" onMouseDown={(e) => e.preventDefault()} onClick={clearFormatting} title="Clear Formatting">
+        <button type="button" className="toolbar-btn toolbar-btn-danger" onMouseDown={(e) => e.preventDefault()} onClick={clearFormatting} title={t("template.richTextEditor.clearFormatting")}>
           <FormatClear fontSize="small" />
         </button>
       </div>
@@ -251,7 +254,7 @@ function RichTextEditor({ value, onChange, placeholder = "Start typing..." }) {
         className="editor-content-area"
         contentEditable
         onInput={handleInput}
-        data-placeholder={placeholder}
+        data-placeholder={placeholderText}
         style={{ minHeight: "180px" }}
       />
     </div>

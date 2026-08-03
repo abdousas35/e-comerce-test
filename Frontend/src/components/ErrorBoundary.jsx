@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -17,13 +18,14 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
-          <h2>Something went wrong.</h2>
-          <p>We've been notified and are looking into it. Please try reloading the page.</p>
-          <button onClick={() => window.location.reload()}>Reload Page</button>
+          <h2>{t("common.errorBoundary.title")}</h2>
+          <p>{t("common.errorBoundary.message")}</p>
+          <button onClick={() => window.location.reload()}>{t("common.errorBoundary.reload")}</button>
         </div>
       );
     }
@@ -32,4 +34,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default ErrorBoundary;
+export default withTranslation()(ErrorBoundary);

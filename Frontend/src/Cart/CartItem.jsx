@@ -82,7 +82,7 @@ function CartItem({ item }) {
         <div className="item-details">
           <h3 className="item-name">{item.name}</h3>
           <p className="item-price"><strong>{t("product.price")}:</strong> {item.price}</p>
-          {item.variantLabel ? <p className="item-price"><strong>Selection:</strong> {item.variantLabel}</p> : null}
+          {item.variantLabel ? <p className="item-price"><strong>{t("cart.selection")}:</strong> {item.variantLabel}</p> : null}
         </div>
       </div>
 

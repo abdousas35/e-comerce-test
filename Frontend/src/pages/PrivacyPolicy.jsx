@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,6 +11,7 @@ import "../pageStyles/StaticPages.css";
 
 function PrivacyPolicy() {
   const { settings } = useSelector((state) => state.settings);
+  const { t } = useTranslation();
   const content = settings?.privacyPolicy || "";
   const sanitizedContent = DOMPurify.sanitize(content);
 
@@ -23,7 +25,7 @@ function PrivacyPolicy() {
         />
       </Helmet>
       <Navbar />
-      <PageTitle title="Privacy Policy" />
+      <PageTitle title={t("template.static.privacyPolicyTitle")} />
       <MetaTags
         title={`Privacy Policy | ${settings?.storeName || "Store"}`}
         description="Learn how customer information is collected, used, and protected across the store."
@@ -33,9 +35,9 @@ function PrivacyPolicy() {
 
       <main className="static-page-shell">
         <section className="static-page-card static-page-hero">
-          <p className="static-kicker">Legal</p>
-          <h1>Privacy policy</h1>
-          <p>Learn how we handle your information.</p>
+          <p className="static-kicker">{t("template.static.legal")}</p>
+          <h1>{t("template.static.privacyPolicyTitle")}</h1>
+          <p>{t("template.static.privacyPolicyIntro")}</p>
         </section>
 
         <section className="static-page-card static-legal-stack">

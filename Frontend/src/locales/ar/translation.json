@@ -45,6 +45,10 @@
     "followMe": "تابعني",
     "aboutUs": "من نحن",
     "sellingProducts": "بيع المنتجات",
+    "quickLinks": "روابط سريعة",
+    "faq": "الأسئلة الشائعة",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsAndConditions": "الشروط والأحكام",
     "copyright": "{{year}} ABOUDE 3ammek. جميع الحقوق محفوظة"
   },
   "imageSlider": {
@@ -146,7 +150,12 @@
     "remove": "حذف",
     "continue": "متابعة",
     "create": "إنشاء",
-    "somethingWrong": "حدث خطأ ما. حاول مرة أخرى."
+    "somethingWrong": "حدث خطأ ما. حاول مرة أخرى.",
+    "errorBoundary": {
+      "title": "حدث خطأ ما.",
+      "message": "تم إبلاغنا ونحن نعمل على حل المشكلة. يرجى إعادة تحميل الصفحة.",
+      "reload": "إعادة تحميل الصفحة"
+    }
   },
   "pagination": {
     "next": "التالي",
@@ -203,6 +212,7 @@
   },
   "cart": {
     "pageTitle": "سلتك",
+    "selection": "الاختيار",
     "mustLogin": "يجب تسجيل الدخول للوصول إلى السلة",
     "empty": "سلتك فارغة",
     "viewProducts": "عرض المنتجات",
@@ -322,6 +332,8 @@
       "created": "تم إنشاء المنتج بنجاح",
       "updated": "تم تحديث المنتج بنجاح",
       "updateFailed": "فشل تحديث المنتج. حاول مرة أخرى.",
+      "generateCombinations": "إنشاء التوليفات",
+      "combinations": "التوليفات",
       "productImage": "صورة المنتج",
       "productName": "اسم المنتج",
       "productPrice": "سعر المنتج",
@@ -383,6 +395,11 @@
       "deleted": "تم حذف الطلب بنجاح",
       "deleteFailed": "فشل حذف الطلب. حاول مرة أخرى.",
       "updateStatus": "تحديث حالة الطلب",
+      "trackingNumber": "رقم التتبع",
+      "courier": "شركة الشحن",
+      "trackingUrl": "رابط التتبع",
+      "note": "ملاحظة",
+      "adminNote": "ملاحظة المسؤول",
       "selectStatus": "اختر الحالة",
       "statusUpdated": "تم تحديث حالة الطلب بنجاح",
       "statusUpdateFailed": "فشل تحديث حالة الطلب. حاول مرة أخرى.",
@@ -446,7 +463,9 @@
       "outOfStock": "غير متوفر",
       "latestProducts": "أحدث المنتجات",
       "recentOrders": "أحدث الطلبات",
-      "order": "الطلب"
+      "order": "الطلب",
+      "shipped": "تم الشحن",
+      "loading": "جارٍ التحميل..."
     },
     "settings": {
       "pageTitle": "إعدادات الإدارة",
@@ -502,7 +521,19 @@
       "legalContentTitle": "الصفحات القانونية",
       "legalContentDesc": "اكتب ونسق محتوى الشروط والأحكام وسياسة الخصوصية التي تظهر للعملاء.",
       "termsAndConditions": "الشروط والأحكام",
-      "privacyPolicy": "سياسة الخصوصية"
+      "privacyPolicy": "سياسة الخصوصية",
+      "termsPlaceholder": "اكتب شروطك وأحكامك...",
+      "privacyPlaceholder": "اكتب سياسة الخصوصية...",
+      "faqTitle": "الأسئلة الشائعة",
+      "faqDescription": "أضف أو عدّل أو إدارة الأسئلة المتكررة التي تظهر في صفحة الأسئلة الشائعة العامة.",
+      "faqItemsLabel": "عناصر الأسئلة الشائعة",
+      "faqAddButton": "إضافة سؤال",
+      "faqItemLabel": "سؤال #{{index}}",
+      "faqRemoveButton": "حذف",
+      "faqQuestionLabel": "السؤال",
+      "faqQuestionPlaceholder": "اكتب سؤالك هنا...",
+      "faqAnswerLabel": "الإجابة",
+      "faqAnswerPlaceholder": "اكتب إجابتك هنا..."
     },
     "banners": {
       "pageTitle": "إدارة البنرات",
@@ -513,7 +544,10 @@
       "slide": "سلايد",
       "slideDesc": "صورة الهيرو والنص وزر الإجراء.",
       "imageUrl": "رابط الصورة",
+      "imageUrlPlaceholder": "https://...",
       "uploadImage": "رفع صورة",
+      "slideAlt": "الشريحة {{index}}",
+      "removeSlide": "إزالة الشريحة {{index}}",
       "title": "العنوان",
       "subtitle": "الوصف",
       "ctaLabel": "نص الزر",
@@ -558,6 +592,7 @@
       "inactive": "غير نشط",
       "create": "إنشاء كوبون",
       "allCoupons": "كل الكوبونات",
+      "minOrderLabel": "الحد الأدنى للطلب",
       "enterCode": "أدخل كود الكوبون أولاً.",
       "applied": "تم تطبيق الكوبون بنجاح",
       "applyFailed": "فشل تطبيق الكوبون",
@@ -596,6 +631,23 @@
       "noAddress": "لا يوجد عنوان",
       "noPhone": "لا يوجد رقم هاتف"
     },
+    "richTextEditor": {
+      "placeholder": "ابدأ الكتابة...",
+      "bold": "عريض",
+      "italic": "مائل",
+      "underline": "تسطير",
+      "strikethrough": "شطب",
+      "heading1": "العنوان 1",
+      "heading2": "العنوان 2",
+      "paragraph": "فقرة",
+      "bulletList": "قائمة نقطية",
+      "numberedList": "قائمة رقمية",
+      "alignLeft": "محاذاة إلى اليسار",
+      "alignCenter": "محاذاة إلى الوسط",
+      "alignRight": "محاذاة إلى اليمين",
+      "alignJustify": "توزيع",
+      "clearFormatting": "مسح التنسيق"
+    },
     "home": {
       "brandReadyTitle": "واجهة جاهزة للهوية",
       "brandReadyDesc": "بدّل الشعار والألوان ونصوص الصفحة الرئيسية لكل عميل بسرعة.",
@@ -624,7 +676,22 @@
       "about": "من نحن",
       "ourStore": "متجرنا",
       "getInTouch": "تواصل معنا",
-      "storeAddress": "عنوان متجرك"
+      "storeAddress": "عنوان متجرك",
+      "faqTitle": "الأسئلة الشائعة",
+      "faqDescription": "أسئلة شائعة حول الطلبات والشحن والدعم وسياسات المتجر.",
+      "faqHeading": "الأسئلة الشائعة",
+      "faqIntro": "استخدم هذه الصفحة للإجابة على الأسئلة التي يطرحها العملاء قبل تقديم الطلب.",
+      "support": "الدعم",
+      "pageNotFound": "الصفحة غير موجودة",
+      "notFoundTitle": "تعذر العثور على هذه الصفحة",
+      "notFoundMessage": "قد تكون الروابط قديمة أو تم نقل الصفحة أو أن العنوان غير صحيح.",
+      "backToHome": "العودة إلى الصفحة الرئيسية",
+      "browseProducts": "تصفح المنتجات",
+      "privacyPolicyTitle": "سياسة الخصوصية",
+      "privacyPolicyIntro": "تعرف على كيفية التعامل مع معلوماتك.",
+      "legal": "قانوني",
+      "termsTitle": "الشروط والأحكام",
+      "termsIntro": "يرجى قراءة هذه الشروط بعناية قبل استخدام متجرك."
     }
   },
   "api": {

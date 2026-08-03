@@ -800,7 +800,7 @@ function AdminSettings() {
 
                     onChange={(html) => handleFieldChange("termsAndConditions", html)}
 
-                    placeholder="Write your terms and conditions..."
+                    placeholder={t("template.settings.termsPlaceholder")}
 
                   />
 
@@ -822,7 +822,7 @@ function AdminSettings() {
 
                     onChange={(html) => handleFieldChange("privacyPolicy", html)}
 
-                    placeholder="Write your privacy policy..."
+                    placeholder={t("template.settings.privacyPlaceholder")}
 
                   />
 
@@ -836,8 +836,8 @@ function AdminSettings() {
               <div className="admin-settings-section-title">
                 <Description />
                 <div>
-                  <h2>FAQ</h2>
-                  <p>Add, edit, and manage your frequently asked questions shown on the public FAQ page.</p>
+                  <h2>{t("template.settings.faqTitle")}</h2>
+                  <p>{t("template.settings.faqDescription")}</p>
                 </div>
               </div>
 
@@ -845,39 +845,39 @@ function AdminSettings() {
                 <div className="admin-settings-full">
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                     <span className="admin-settings-label-text" style={{ display: "block", fontWeight: "600" }}>
-                      FAQ Items
+                      {t("template.settings.faqItemsLabel")}
                     </span>
                     <button type="button" className="admin-settings-save-btn" onClick={addFaqItem} style={{ padding: "8px 12px", minWidth: "auto" }}>
-                      + Add FAQ
+                      + {t("template.settings.faqAddButton")}
                     </button>
                   </div>
 
                   {(formData.faqItems || []).map((item, index) => (
                     <div key={index} style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "12px", marginBottom: "12px", background: "#fafafa" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <strong>FAQ #{index + 1}</strong>
+                        <strong>{t("template.settings.faqItemLabel", { index: index + 1 })}</strong>
                         <button type="button" onClick={() => removeFaqItem(index)} style={{ color: "#dc2626", background: "transparent", border: "none", cursor: "pointer" }}>
-                          Remove
+                          {t("template.settings.faqRemoveButton")}
                         </button>
                       </div>
 
                       <label className="admin-settings-full" style={{ marginBottom: "8px" }}>
-                        Question
+                        {t("template.settings.faqQuestionLabel")}
                         <textarea
                           rows="2"
                           value={item.question || ""}
                           onChange={(e) => handleFaqChange(index, "question", e.target.value)}
-                          placeholder="Write your question here..."
+                          placeholder={t("template.settings.faqQuestionPlaceholder")}
                         />
                       </label>
 
                       <label className="admin-settings-full">
-                        Answer
+                        {t("template.settings.faqAnswerLabel")}
                         <textarea
                           rows="4"
                           value={item.answer || ""}
                           onChange={(e) => handleFaqChange(index, "answer", e.target.value)}
-                          placeholder="Write your answer here..."
+                          placeholder={t("template.settings.faqAnswerPlaceholder")}
                         />
                       </label>
                     </div>

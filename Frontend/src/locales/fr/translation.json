@@ -45,6 +45,10 @@
     "followMe": "Suivez-moi",
     "aboutUs": "A propos",
     "sellingProducts": "Vente de produits",
+    "quickLinks": "Liens rapides",
+    "faq": "FAQ",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsAndConditions": "Conditions générales",
     "copyright": "{{year}} ABOUDE 3ammek. Tous droits reserves"
   },
   "imageSlider": {
@@ -146,7 +150,12 @@
     "remove": "Supprimer",
     "continue": "Continuer",
     "create": "Creer",
-    "somethingWrong": "Une erreur est survenue. Veuillez reessayer."
+    "somethingWrong": "Une erreur est survenue. Veuillez reessayer.",
+    "errorBoundary": {
+      "title": "Une erreur est survenue.",
+      "message": "Nous avons été avertis et nous examinons le problème. Veuillez recharger la page.",
+      "reload": "Recharger la page"
+    }
   },
   "pagination": {
     "next": "Suivant",
@@ -203,6 +212,7 @@
   },
   "cart": {
     "pageTitle": "Votre panier",
+    "selection": "Sélection",
     "mustLogin": "Vous devez etre connecte pour acceder au panier",
     "empty": "Votre panier est vide",
     "viewProducts": "Voir les produits",
@@ -322,6 +332,8 @@
       "created": "Produit cree avec succes",
       "updated": "Produit mis a jour avec succes",
       "updateFailed": "Echec de la mise a jour du produit. Veuillez reessayer.",
+      "generateCombinations": "Générer les combinaisons",
+      "combinations": "Combinaisons",
       "productImage": "Image produit",
       "productName": "Nom du produit",
       "productPrice": "Prix du produit",
@@ -383,6 +395,11 @@
       "deleted": "Commande supprimee avec succes",
       "deleteFailed": "Echec de la suppression de la commande. Veuillez reessayer.",
       "updateStatus": "Mettre a jour le statut",
+      "trackingNumber": "Numéro de suivi",
+      "courier": "Transporteur",
+      "trackingUrl": "URL de suivi",
+      "note": "Note",
+      "adminNote": "Note administrateur",
       "selectStatus": "Selectionner le statut",
       "statusUpdated": "Statut de commande mis a jour avec succes",
       "statusUpdateFailed": "Echec de mise a jour du statut. Veuillez reessayer.",
@@ -444,7 +461,9 @@
       "outOfStock": "Rupture",
       "latestProducts": "Derniers produits",
       "recentOrders": "Commandes recentes",
-      "order": "Commande"
+      "order": "Commande",
+      "shipped": "Expédiée",
+      "loading": "Chargement..."
     },
     "settings": {
       "pageTitle": "Parametres admin",
@@ -472,7 +491,19 @@
       "legalContentTitle": "Pages Légales",
       "legalContentDesc": "Rédigez et formatez le contenu de vos Conditions Générales et de votre Politique de Confidentialité présenté aux clients.",
       "termsAndConditions": "Conditions Générales",
-      "privacyPolicy": "Politique de Confidentialité"
+      "privacyPolicy": "Politique de Confidentialité",
+      "termsPlaceholder": "Rédigez vos conditions générales...",
+      "privacyPlaceholder": "Rédigez votre politique de confidentialité...",
+      "faqTitle": "FAQ",
+      "faqDescription": "Ajoutez, modifiez et gérez les questions fréquentes affichées sur la page FAQ publique.",
+      "faqItemsLabel": "Éléments FAQ",
+      "faqAddButton": "Ajouter une FAQ",
+      "faqItemLabel": "FAQ #{{index}}",
+      "faqRemoveButton": "Supprimer",
+      "faqQuestionLabel": "Question",
+      "faqQuestionPlaceholder": "Écrivez votre question ici...",
+      "faqAnswerLabel": "Réponse",
+      "faqAnswerPlaceholder": "Écrivez votre réponse ici..."
     },
     "banners": {
       "pageTitle": "Gestion des bannieres",
@@ -483,7 +514,10 @@
       "slide": "Slide",
       "slideDesc": "Image hero, texte et bouton d'action.",
       "imageUrl": "URL de l'image",
+      "imageUrlPlaceholder": "https://...",
       "uploadImage": "Televerser l'image",
+      "slideAlt": "Diapositive {{index}}",
+      "removeSlide": "Supprimer la diapositive {{index}}",
       "title": "Titre",
       "subtitle": "Sous-titre",
       "ctaLabel": "Texte du bouton",
@@ -528,6 +562,7 @@
       "inactive": "Inactif",
       "create": "Creer le coupon",
       "allCoupons": "Tous les coupons",
+      "minOrderLabel": "Commande minimum",
       "enterCode": "Entrez d'abord un code promo.",
       "applied": "Coupon applique avec succes",
       "applyFailed": "Echec de l'application du coupon",
@@ -566,6 +601,23 @@
       "noAddress": "Aucune adresse fournie",
       "noPhone": "Aucun telephone fourni"
     },
+    "richTextEditor": {
+      "placeholder": "Commencez à écrire...",
+      "bold": "Gras",
+      "italic": "Italique",
+      "underline": "Souligner",
+      "strikethrough": "Barré",
+      "heading1": "Titre 1",
+      "heading2": "Titre 2",
+      "paragraph": "Paragraphe",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée",
+      "alignLeft": "Aligner à gauche",
+      "alignCenter": "Centrer",
+      "alignRight": "Aligner à droite",
+      "alignJustify": "Justifier",
+      "clearFormatting": "Effacer le formatage"
+    },
     "home": {
       "brandReadyTitle": "Vitrine prete pour la marque",
       "brandReadyDesc": "Changez logo, couleurs et texte d'accueil rapidement pour chaque client.",
@@ -594,7 +646,22 @@
       "about": "A propos",
       "ourStore": "Notre boutique",
       "getInTouch": "Contactez-nous",
-      "storeAddress": "Adresse de votre boutique"
+      "storeAddress": "Adresse de votre boutique",
+      "faqTitle": "FAQ",
+      "faqDescription": "Questions fréquentes sur les commandes, la livraison, le support et les politiques de la boutique.",
+      "faqHeading": "Questions fréquentes",
+      "faqIntro": "Utilisez cette page pour répondre aux questions que les clients posent avant de passer une commande.",
+      "support": "Assistance",
+      "pageNotFound": "Page introuvable",
+      "notFoundTitle": "Cette page est introuvable",
+      "notFoundMessage": "Le lien est peut-être obsolète, la page a été déplacée ou l'adresse est incorrecte.",
+      "backToHome": "Retour à l'accueil",
+      "browseProducts": "Parcourir les produits",
+      "privacyPolicyTitle": "Politique de confidentialité",
+      "privacyPolicyIntro": "Découvrez comment nous gérons vos informations.",
+      "legal": "Légal",
+      "termsTitle": "Conditions générales",
+      "termsIntro": "Veuillez lire attentivement ces conditions avant d'utiliser notre boutique."
     }
   },
   "api": {

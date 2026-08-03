@@ -219,7 +219,7 @@ function Dashboard() {
 
             <div className="stat-box">
               <ShoppingCart className="icon" />
-              <h3>Shipped</h3>
+              <h3>{t("template.dashboard.shipped")}</h3>
               <p>{orderStats.shipped}</p>
             </div>
 
@@ -252,10 +252,10 @@ function Dashboard() {
               <table className="product-table">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
+                    <th>{t("admin.common.no")}</th>
+                    <th>{t("admin.common.name")}</th>
+                    <th>{t("product.price")}</th>
+                    <th>{t("admin.common.stock")}</th>
                   </tr>
                 </thead>
 

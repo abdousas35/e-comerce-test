@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageTitle from "../components/PageTitle";
@@ -9,6 +10,7 @@ import "../pageStyles/StaticPages.css";
 
 function FAQ() {
   const { settings } = useSelector((state) => state.settings);
+  const { t } = useTranslation();
   const faqItems = Array.isArray(settings?.faqItems) && settings.faqItems.length
     ? settings.faqItems
     : [
@@ -29,26 +31,26 @@ function FAQ() {
   return (
     <>
       <Helmet>
-        <title>{`FAQ - ${settings?.storeName || "Store"}`}</title>
+        <title>{`${t("template.static.faqTitle")} - ${settings?.storeName || "Store"}`}</title>
         <meta
           name="description"
           content={`Find answers to common questions about delivery, returns, support, and shop policies for ${settings?.storeName || "our store"}.`}
         />
       </Helmet>
       <Navbar />
-      <PageTitle title="FAQ" />
+      <PageTitle title={t("template.static.faqTitle")} />
       <MetaTags
-        title={`FAQ | ${settings?.storeName || "Store"}`}
-        description="Frequently asked questions about orders, shipping, support, and store policies."
+        title={`${t("template.static.faqTitle")} | ${settings?.storeName || "Store"}`}
+        description={t("template.static.faqDescription")}
         keywords="faq, help, support, shipping, returns"
         path="/faq"
       />
 
       <main className="static-page-shell">
         <section className="static-page-card static-page-hero">
-          <p className="static-kicker">Support</p>
-          <h1>Frequently asked questions</h1>
-          <p>Use this page to answer the questions customers ask before they place an order.</p>
+          <p className="static-kicker">{t("template.static.support")}</p>
+          <h1>{t("template.static.faqHeading")}</h1>
+          <p>{t("template.static.faqIntro")}</p>
         </section>
 
         <section className="static-page-card static-faq-list">

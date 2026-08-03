@@ -97,13 +97,13 @@ function OrderDetails() {
               </tr>
               {order?.trackingNumber ? (
                 <tr className="table-row">
-                  <th className="table-cell">Tracking</th>
+                  <th className="table-cell">{t("admin.orders.trackingNumber")}</th>
                   <td className="table-cell">{order.trackingNumber}</td>
                 </tr>
               ) : null}
               {order?.courier ? (
                 <tr className="table-row">
-                  <th className="table-cell">Courier</th>
+                  <th className="table-cell">{t("admin.orders.courier")}</th>
                   <td className="table-cell">{order.courier}</td>
                 </tr>
               ) : null}

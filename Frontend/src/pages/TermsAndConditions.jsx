@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,6 +11,7 @@ import "../pageStyles/StaticPages.css";
 
 function TermsAndConditions() {
   const { settings } = useSelector((state) => state.settings);
+  const { t } = useTranslation();
   const content = settings?.termsAndConditions || "";
   const sanitizedContent = DOMPurify.sanitize(content);
 
@@ -23,7 +25,7 @@ function TermsAndConditions() {
         />
       </Helmet>
       <Navbar />
-      <PageTitle title="Terms and Conditions" />
+      <PageTitle title={t("template.static.termsTitle")} />
       <MetaTags
         title={`Terms and Conditions | ${settings?.storeName || "Store"}`}
         description="Store terms, order conditions, and usage policies for customers."
@@ -33,9 +35,9 @@ function TermsAndConditions() {
 
       <main className="static-page-shell">
         <section className="static-page-card static-page-hero">
-          <p className="static-kicker">Legal</p>
-          <h1>Terms and conditions</h1>
-          <p>Please read these terms carefully before using our store.</p>
+          <p className="static-kicker">{t("template.static.legal")}</p>
+          <h1>{t("template.static.termsTitle")}</h1>
+          <p>{t("template.static.termsIntro")}</p>
         </section>
 
         <section className="static-page-card static-legal-stack">

@@ -43,13 +43,13 @@ function Footer() {
         </div>
 
         <div className="footer-section footer-links-section">
-          <h3>Quick Links</h3>
+          <h3>{t("footer.quickLinks")}</h3>
           <div className="footer-quick-links">
             <Link to="/about-us">{t("navbar.aboutUs")}</Link>
             <Link to="/contact-us">{t("navbar.contactUs")}</Link>
-            <Link to="/faq">FAQ</Link>
-            <Link to="/privacy-policy">Privacy Policy</Link>
-            <Link to="/terms-and-conditions">Terms & Conditions</Link>
+            <Link to="/faq">{t("footer.faq")}</Link>
+            <Link to="/privacy-policy">{t("footer.privacyPolicy")}</Link>
+            <Link to="/terms-and-conditions">{t("footer.termsAndConditions")}</Link>
           </div>
         </div>
       </div>

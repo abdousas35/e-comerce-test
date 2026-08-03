@@ -94,10 +94,10 @@ function UpdateOrderStatus() {
                 </select>
               </div>
 
-              <div className="form-section-title">Shipping</div>
+              <div className="form-section-title">{t("cart.shippingInfo")}</div>
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="trackingNumber">Tracking number</label>
+                  <label htmlFor="trackingNumber">{t("admin.orders.trackingNumber")}</label>
                   <input
                     type="text"
                     id="trackingNumber"
@@ -107,7 +107,7 @@ function UpdateOrderStatus() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="courier">Courier</label>
+                  <label htmlFor="courier">{t("admin.orders.courier")}</label>
                   <input
                     type="text"
                     id="courier"
@@ -118,7 +118,7 @@ function UpdateOrderStatus() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="trackingUrl">Tracking URL</label>
+                <label htmlFor="trackingUrl">{t("admin.orders.trackingUrl")}</label>
                 <input
                   type="text"
                   id="trackingUrl"
@@ -127,9 +127,9 @@ function UpdateOrderStatus() {
                 />
               </div>
 
-              <div className="form-section-title">Note</div>
+              <div className="form-section-title">{t("admin.orders.note")}</div>
               <div className="form-group">
-                <label htmlFor="note">Admin note</label>
+                <label htmlFor="note">{t("admin.orders.adminNote")}</label>
                 <input
                   type="text"
                   id="note"
