@@ -17,6 +17,18 @@ function OrdersList() {
 
   const { orders, loading, error } = useSelector((state) => state.admin);
 
+  const getTranslatedStatus = (status) => {
+    const statusMap = {
+      Pending: t("admin.orders.statusOptions.pending"),
+      Confirmed: t("admin.orders.statusOptions.confirmed"),
+      Processing: t("orders.processing"),
+      Shipped: t("admin.orders.statusOptions.shipped"),
+      Delivered: t("orders.delivered"),
+      Cancelled: t("admin.orders.statusOptions.cancelled"),
+    };
+
+    return statusMap[status] || status || t("admin.orders.pending");
+  };
 
   useEffect(() => {
     dispatch(fetchAllOrders());
@@ -122,20 +134,20 @@ const handleDelete = (id, status) => {
 
                   <td>{index + 1}</td>
                   <td className={`order-status ${order.orderStatus ? order.orderStatus.toLowerCase() : ""}`}>
-                    {order.orderStatus || t("admin.orders.pending")}
+                    {getTranslatedStatus(order.orderStatus)}
                   </td>
                   <td>{order.totalPrice} TND</td>
                   <td>{order.orderItems?.length || 0}</td>
                   <td>
-                    <Link to={`/order/${order._id}`} className="action-icon view-icon" title={t("orders.viewOrder") || "View order"}>
+                    <Link to={`/order/${order._id}`} className="action-icon view-icon" title={t("orders.viewOrder")}>
                       <Visibility />
                     </Link>
 
-                    <Link to={`/admin/orderUpdate/${order._id}`} className="action-icon edit-icon" title={t("admin.orders.updateStatus") || "Update status"}>
+                    <Link to={`/admin/orderUpdate/${order._id}`} className="action-icon edit-icon" title={t("admin.orders.updateStatus")}>
                       <Edit />
                     </Link>
 
-                    <button className="action-icon delete-icon" onClick={() => handleDelete(order._id, order.orderStatus)} title={t("admin.orders.delete") || "Delete"}>
+                    <button className="action-icon delete-icon" onClick={() => handleDelete(order._id, order.orderStatus)} title={t("admin.orders.delete")}>
                       <Delete />
                     </button>
                   </td>

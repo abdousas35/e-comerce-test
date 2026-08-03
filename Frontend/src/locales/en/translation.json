@@ -389,6 +389,15 @@
       "noOrders": "No Orders Found",
       "numberOfItems": "Number of Items",
       "pending": "Pending",
+      "delete": "Delete",
+      "statusOptions": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
       "cannotDeleteProcessing": "You cannot delete this order until it is delivered.",
       "deleteConfirm": "Are you sure you want to delete this order?",
       "deleted": "Order deleted successfully",

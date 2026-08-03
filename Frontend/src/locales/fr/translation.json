@@ -390,6 +390,15 @@
       "noOrders": "Aucune commande trouvee",
       "numberOfItems": "Nombre d'articles",
       "pending": "En attente",
+      "delete": "Supprimer",
+      "statusOptions": {
+        "pending": "En attente",
+        "confirmed": "Confirmée",
+        "processing": "En cours",
+        "shipped": "Expédiée",
+        "delivered": "Livrée",
+        "cancelled": "Annulée"
+      },
       "cannotDeleteProcessing": "Vous ne pouvez pas supprimer cette commande avant sa livraison.",
       "deleteConfirm": "Etes-vous sur de vouloir supprimer cette commande ?",
       "deleted": "Commande supprimee avec succes",

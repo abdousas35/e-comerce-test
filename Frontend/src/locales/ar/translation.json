@@ -390,6 +390,15 @@
       "noOrders": "لا توجد طلبات",
       "numberOfItems": "عدد العناصر",
       "pending": "قيد الانتظار",
+      "delete": "حذف",
+      "statusOptions": {
+        "pending": "قيد الانتظار",
+        "confirmed": "تم تأكيده",
+        "processing": "قيد المعالجة",
+        "shipped": "تم الشحن",
+        "delivered": "تم التسليم",
+        "cancelled": "ملغي"
+      },
       "cannotDeleteProcessing": "لا يمكنك حذف هذا الطلب حتى يتم تسليمه.",
       "deleteConfirm": "هل أنت متأكد من حذف هذا الطلب؟",
       "deleted": "تم حذف الطلب بنجاح",

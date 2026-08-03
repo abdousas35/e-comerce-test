@@ -85,12 +85,12 @@ function UpdateOrderStatus() {
                   onChange={(e) => setStatus(e.target.value)}
                 >
                   <option value="">{t("admin.orders.selectStatus")}</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Confirmed">Confirmed</option>
+                  <option value="Pending">{t("admin.orders.statusOptions.pending")}</option>
+                  <option value="Confirmed">{t("admin.orders.statusOptions.confirmed")}</option>
                   <option value="Processing">{t("orders.processing")}</option>
-                  <option value="Shipped">Shipped</option>
+                  <option value="Shipped">{t("admin.orders.statusOptions.shipped")}</option>
                   <option value="Delivered">{t("orders.delivered")}</option>
-                  <option value="Cancelled">Cancelled</option>
+                  <option value="Cancelled">{t("admin.orders.statusOptions.cancelled")}</option>
                 </select>
               </div>
 
